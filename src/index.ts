@@ -1,4 +1,4 @@
-type ParseInt<T extends string> = T extends `${infer N extends number}`
+type ParseNumber<T extends string> = T extends `${infer N extends number}`
   ? N
   : never
 
@@ -28,10 +28,16 @@ type ExpandToArray<
   : Rest
 
 type _Add<X extends string, Y extends string> = [
-  ...ExpandToArray<ParseInt<X>>,
-  ...ExpandToArray<ParseInt<Y>>
+  ...ExpandToArray<ParseNumber<X>>,
+  ...ExpandToArray<ParseNumber<Y>>
 ]["length"]
 
 export type Add<X extends string, Y extends string> = _Add<X, Y> extends number
   ? `${_Add<X, Y>}`
+  : never
+
+export type Abs<X extends string> = ParseNumber<X> extends number
+  ? X extends `-${infer V}`
+    ? V
+    : X
   : never
