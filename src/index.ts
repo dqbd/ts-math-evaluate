@@ -41,3 +41,9 @@ export type Abs<X extends string> = ParseNumber<X> extends number
     ? V
     : X
   : never
+
+export type Neg<X extends string> = ParseNumber<X> extends number
+  ? X extends `-${infer V}`
+    ? V
+    : `-${X}`
+  : never
