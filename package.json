@@ -5,7 +5,10 @@
   "repository": "git@github.com:dqbd/ts-math-evaluator.git",
   "author": "Duong Tat Dat <david@duong.cz>",
   "license": "MIT",
-  "devDependencies": {
+  "scripts": {
+    "test": "eslint --ext .js,.ts test"
+  },
+  "dependencies": {
     "@typescript-eslint/eslint-plugin": "^5.44.0",
     "@typescript-eslint/parser": "^5.44.0",
     "eslint": "^8.28.0",
