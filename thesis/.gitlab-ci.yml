@@ -1,0 +1,45 @@
+image: texlive/texlive
+
+LuaLaTeX:
+    script: 
+        - sed 's/\[czech/\[slovak/' ctufit-thesis.tex > ctufit-thesis-sk.tex
+        - sed 's/\[czech/\[english/' ctufit-thesis.tex > ctufit-thesis-en.tex
+        - latexmk -pdflua ctufit-thesis.tex
+        - latexmk -pdflua ctufit-thesis-en.tex
+        - latexmk -pdflua ctufit-thesis-sk.tex
+
+XeLaTeX:
+    script: 
+        - sed 's/\[czech/\[slovak/' ctufit-thesis.tex > ctufit-thesis-sk.tex
+        - sed 's/\[czech/\[english/' ctufit-thesis.tex > ctufit-thesis-en.tex
+        - latexmk -pdfxe ctufit-thesis.tex
+        - latexmk -pdfxe ctufit-thesis-en.tex
+        - latexmk -pdfxe ctufit-thesis-sk.tex
+
+pdfLaTeX:
+    script: 
+        - sed 's/\[czech/\[slovak/' ctufit-thesis.tex > ctufit-thesis-sk.tex
+        - sed 's/\[czech/\[english/' ctufit-thesis.tex > ctufit-thesis-en.tex
+        - latexmk -pdf ctufit-thesis.tex
+        - latexmk -pdf ctufit-thesis-en.tex
+        - latexmk -pdf ctufit-thesis-sk.tex
+    artifacts:
+        paths:
+            - ctufit-thesis.pdf
+            - ctufit-thesis-en.pdf
+            - ctufit-thesis-sk.pdf
+
+LaTeX:
+    script: 
+        - DEBIAN_FRONTEND=noninteractive apt-get update
+        - DEBIAN_FRONTEND=noninteractive apt-get -yq install ghostscript
+        - sed 's/\[czech/\[slovak/' ctufit-thesis.tex > ctufit-thesis-sk.tex
+        - sed 's/\[czech/\[english/' ctufit-thesis.tex > ctufit-thesis-en.tex
+        - latexmk -pdfps ctufit-thesis.tex
+        - latexmk -pdfps ctufit-thesis-en.tex
+        - latexmk -pdfps ctufit-thesis-sk.tex
+    artifacts:
+        paths:
+            - ctufit-thesis.pdf
+            - ctufit-thesis-en.pdf
+            - ctufit-thesis-sk.pdf
