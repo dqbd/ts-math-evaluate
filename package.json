@@ -1,0 +1,15 @@
+{
+  "name": "ts-math-evaluator",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:dqbd/ts-math-evaluator.git",
+  "author": "Duong Tat Dat <david@duong.cz>",
+  "license": "MIT",
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^5.44.0",
+    "@typescript-eslint/parser": "^5.44.0",
+    "eslint": "^8.28.0",
+    "eslint-plugin-expect-type": "^0.2.1",
+    "typescript": "^4.9.3"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "extends": ["plugin:eslint-plugin-expect-type/recommended"],
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "project": "./tsconfig.json"
+  },
+  "plugins": ["eslint-plugin-expect-type"],
+  "root": true,
+  "rules": {
+    "expect-type/expect": "error"
+  }
+}
