@@ -1,11 +1,18 @@
-type ParseNumber<T extends string> = T extends `${infer N extends number}`
-  ? N
-  : never
+type ParseNumber<T extends string | number> =
+  T extends `${infer N extends number}` ? N : never
 
+type ParseFloat<T extends string | number> =
+  `${T}` extends `${infer Int extends number}.${infer Frac extends string}`
+    ? { int: Int; frac: Frac }
+    : never
+
+type Z = ParseFloat<"3.123">
 type ExpandByOne<
   V extends number,
   List extends Array<any> = []
 > = List["length"] extends V ? List : ExpandByOne<V, [0, ...List]>
+
+type C = Z["frac"]
 
 type ExpandByTen<R extends Array<0>> = [
   ...R,
@@ -21,7 +28,7 @@ type ExpandByTen<R extends Array<0>> = [
 ]
 
 type ExpandToArray<
-  T extends string,
+  T extends string | number,
   Rest extends Array<any> = []
 > = `${T}` extends `${infer L extends number}${infer R}`
   ? ExpandToArray<R, [...ExpandByTen<Rest>, ...ExpandByOne<L>]>
