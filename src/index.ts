@@ -4,6 +4,8 @@ type ParseNumber<T extends string | number> =
 type ParseFloat<T extends string | number> =
   `${T}` extends `${infer Int extends number}.${infer Frac extends string}`
     ? { int: Int; frac: Frac }
+    : `${T}` extends `${infer Int extends number}`
+    ? { int: Int; frac: "" }
     : never
 
 type Z = ParseFloat<"3.123">
