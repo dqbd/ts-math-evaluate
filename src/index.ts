@@ -8,7 +8,6 @@ type ParseFloat<T extends string | number> =
     ? { int: Int; frac: "" }
     : never
 
-type Z = ParseFloat<"3.123">
 type ExpandByOne<
   V extends number,
   List extends Array<any> = []
