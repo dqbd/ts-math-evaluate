@@ -1,5 +1,5 @@
 type ParseNumber<T extends string | number> =
-  T extends `${infer N extends number}` ? N : never
+  `${T}` extends `${infer N extends number}` ? N : never
 
 type ParseFloat<T extends string | number> =
   `${T}` extends `${infer Int extends number}.${infer Frac extends string}`
@@ -155,47 +155,35 @@ type ExpandToArray<
   ? ExpandToArray<R, [...ExpandByTen<Rest>, ...ExpandByOne<L>]>
   : Rest
 
-type G<A extends any[], B extends any[]> = A extends []
-  ? "left"
+type IsLeftArrLarger<
+  A extends any[],
+  B extends any[]
+> = A["length"] extends B["length"]
+  ? true
+  : A extends []
+  ? true
   : B extends []
-  ? "right"
+  ? false
   : A extends [unknown, ...infer AR]
   ? B extends [unknown, ...infer BR]
-    ? G<AR, BR>
+    ? IsLeftArrLarger<AR, BR>
     : never
   : never
 
-type PadTest<A extends any[], TL extends number> = A["length"] extends TL
+type PadEnd<A extends any[], TL extends number> = A["length"] extends TL
   ? A
-  : PadTest<[...A, 0], TL>
+  : PadEnd<[...A, 0], TL>
 
-type MatchLength<Comp, A extends any[], B extends any[]> = Comp extends "left"
-  ? PadTest<A, B["length"]>
-  : Comp extends "right"
-  ? PadTest<B, A["length"]>
+type MatchLength<A extends any[], B extends any[]> = IsLeftArrLarger<
+  A,
+  B
+> extends infer Comp extends boolean
+  ? Comp extends true
+    ? [PadEnd<A, B["length"]>, B]
+    : Comp extends false
+    ? [A, PadEnd<B, A["length"]>]
+    : never
   : never
-
-type ReverseArray<A extends any[]> = A extends [...infer Rest, infer F]
-  ? [F, ...ReverseArray<Rest>]
-  : []
-
-type BitAnd<A extends boolean, B extends boolean> = A extends true
-  ? B extends true
-    ? true
-    : false
-  : false
-
-type BitOr<A extends boolean, B extends boolean> = A extends true
-  ? true
-  : B extends true
-  ? true
-  : false
-
-type BitXor<A extends boolean, B extends boolean> = [A, B] extends
-  | [true, false]
-  | [false, true]
-  ? true
-  : false
 
 type AddWithCarry<
   A extends number,
@@ -227,14 +215,15 @@ type SumArr<
     : never
   : Tmp
 
-type ZZZ = SumArr<[1, 2, 3], [9, 3, 7]>
-
-type _Add<X extends string, Y extends string> = [
+type _Add<X extends string | number, Y extends string | number> = [
   ...ExpandToArray<ParseNumber<X>>,
   ...ExpandToArray<ParseNumber<Y>>
 ]["length"]
 
-export type Add<X extends string, Y extends string> = _Add<X, Y> extends number
+export type Add<X extends string | number, Y extends string | number> = _Add<
+  X,
+  Y
+> extends number
   ? `${_Add<X, Y>}`
   : never
 
@@ -250,8 +239,47 @@ export type Neg<X extends string> = ParseNumber<X> extends number
     : `-${X}`
   : never
 
-// Development types
-type A = [0, 1, 3, 8, 2, 1]
-type B = [2, 1]
-type XXX = MatchLength<G<B, A>, B, A>
-type YYY = ReverseArray<[1, 2, 3, 2, 2]>
+type ExplodeFloat<T extends string> =
+  T extends `${infer Digit extends number}${infer Rest}`
+    ? [Digit, ...ExplodeFloat<Rest>]
+    : []
+
+type CompressSumArr<T extends number[]> = T extends [
+  infer A extends number,
+  ...infer R extends number[]
+]
+  ? `${A}${CompressSumArr<R>}`
+  : ""
+
+type StringifyFrac<T extends { int: number; frac: string }> =
+  `${T["int"]}.${T["frac"]}`
+
+type _AddFrac<
+  A extends string | number,
+  B extends string | number
+> = ParseFloat<A> extends infer AF extends { int: number; frac: string }
+  ? ParseFloat<B> extends infer BF extends { int: number; frac: string }
+    ? _Add<AF["int"], BF["int"]> extends infer IntValue extends number
+      ? MatchLength<
+          ExplodeFloat<AF["frac"]>,
+          ExplodeFloat<BF["frac"]>
+        > extends infer MatchArray extends [number[], number[]]
+        ? SumArr<MatchArray[0], MatchArray[1]> extends [
+            infer FracResult extends number[],
+            infer Carry extends boolean
+          ]
+          ? Carry extends true
+            ? { int: _Add<IntValue, 1>; frac: CompressSumArr<FracResult> }
+            : Carry extends false
+            ? { int: IntValue; frac: CompressSumArr<FracResult> }
+            : never
+          : never
+        : never
+      : never
+    : never
+  : never
+
+export type AddFrac<
+  A extends string | number,
+  B extends string | number
+> = StringifyFrac<_AddFrac<A, B>>
