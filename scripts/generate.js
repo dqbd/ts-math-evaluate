@@ -19,7 +19,7 @@ const mulMapCarry = digit.map((x) =>
 )
 
 fs.writeFileSync(
-  path.resolve(__dirname, "../src/map.ts"),
+  path.resolve(__dirname, "../src/utils/map.ts"),
   prettier.format(
     `export type AddMapCarry = ${JSON.stringify(addMapCarry)}
     export type SubMapCarry = ${JSON.stringify(subMapCarry)}`,
