@@ -6,153 +6,57 @@
 %---------------------------------------------------------------
 \setcounter{page}{1}
 
-% The following environment can be used as a mini-introduction for a chapter. Use that any way it pleases you (or comment it out). It can contain, for instance, a summary of the chapter. Or, there can be a quotation.
-\begin{chapterabstract}
-  \lipsum[1]
-\end{chapterabstract}
-
-\lipsum[2][1-4]{} [1]
-
-TypeScript is a strongly typed programming language built as a superset of JavaScript \cite{DocumentationTypeScriptJavaScript}.
-
 %---------------------------------------------------------------
-\section{Ut enim ad minim veniam}
+\section{The Race to add types to JavaScript}
 %---------------------------------------------------------------
 
-\lipsum[6-7]
+ECMAScript (also known as JavaScript) is a dynamically typed programming language, where users do not need to assign types to a variable or a function and the type is inferred automatically by the JavaScript engine. This is a great feature of JavaScript, which lowers the barrier of entry to writing JavaScript code and allows developers to prototype and write code quickly, proven by the growth of popularity of JavaScript in the last decade, making it the most commonly used programming language according to the 2022 Stack Overflow Developer Survey \cite{StackOverflowDeveloper}.
 
-\begin{figure}
-  \centering
-  %\includegraphics[scale=0.4]{pic/index}
-  \resizebox{\textwidth}{!}{
-    \begin{tikzpicture}[level/.style={sibling distance=60mm/#1}]
-      \node [circle,draw] (z){$n$}
-      child {node [circle,draw] (a) {$\frac{n}{2}$}
-          child {node [circle,draw] (b) {$\frac{n}{2^2}$}
-              child {node {$\vdots$}
-                  child {node [circle,draw] (d) {$\frac{n}{2^k}$}}
-                  child {node [circle,draw] (e) {$\frac{n}{2^k}$}}
-                }
-              child {node {$\vdots$}}
-            }
-          child {node [circle,draw] (g) {$\frac{n}{2^2}$}
-              child {node {$\vdots$}}
-              child {node {$\vdots$}}
-            }
-        }
-      child {node [circle,draw] (j) {$\frac{n}{2}$}
-          child {node [circle,draw] (k) {$\frac{n}{2^2}$}
-              child {node {$\vdots$}}
-              child {node {$\vdots$}}
-            }
-          child {node [circle,draw] (l) {$\frac{n}{2^2}$}
-              child {node {$\vdots$}}
-              child {node (c){$\vdots$}
-                  child {node [circle,draw] (o) {$\frac{n}{2^k}$}}
-                  child {node [circle,draw] (p) {$\frac{n}{2^k}$}
-                      child [grow=right] {node (q) {$=$} edge from parent[draw=none]
-                          child [grow=right] {node (q) {$O_{k = \lg n}(n)$} edge from parent[draw=none]
-                              child [grow=up] {node (r) {$\vdots$} edge from parent[draw=none]
-                                  child [grow=up] {node (s) {$O_2(n)$} edge from parent[draw=none]
-                                      child [grow=up] {node (t) {$O_1(n)$} edge from parent[draw=none]
-                                          child [grow=up] {node (u) {$O_0(n)$} edge from parent[draw=none]}
-                                        }
-                                    }
-                                }
-                              child [grow=down] {node (v) {$O(n \cdot \lg n)$}edge from parent[draw=none]}
-                            }
-                        }
-                    }
-                }
-            }
-        };
-      \path (a) -- (j) node [midway] {+};
-      \path (b) -- (g) node [midway] {+};
-      \path (k) -- (l) node [midway] {+};
-      \path (k) -- (g) node [midway] {+};
-      \path (d) -- (e) node [midway] {+};
-      \path (o) -- (p) node [midway] {+};
-      \path (o) -- (e) node (x) [midway] {$\cdots$}
-      child [grow=down] {
-          node (y) {$O\left(\displaystyle\sum_{i = 0}^k 2^i \cdot \frac{n}{2^i}\right)$}
-          edge from parent[draw=none]
-        };
-      \path (q) -- (r) node [midway] {+};
-      \path (s) -- (r) node [midway] {+};
-      \path (s) -- (t) node [midway] {+};
-      \path (s) -- (l) node [midway] {=};
-      \path (t) -- (u) node [midway] {+};
-      \path (z) -- (u) node [midway] {=};
-      \path (j) -- (t) node [midway] {=};
-      \path (y) -- (x) node [midway] {$\Downarrow$};
-      \path (v) -- (y)
-      node (w) [midway] {$O\left(\displaystyle\sum_{i = 0}^k n\right) = O(k \cdot n)$};
-      \path (q) -- (v) node [midway] {=};
-      \path (e) -- (x) node [midway] {+};
-      \path (o) -- (x) node [midway] {+};
-      \path (y) -- (w) node [midway] {$=$};
-      \path (v) -- (w) node [midway] {$\Leftrightarrow$};
-      \path (r) -- (c) node [midway] {$\cdots$};
-    \end{tikzpicture}}
-  \caption{~Lorem ipsum dolor sit amet}\label{img:index}
-\end{figure}
+However, dynamic typing has its own drawbacks, as it is harder to spot trivial errors in the code without running it beforehand and it is more difficult to refactor the code without breaking it, which often lead to poor software quality \cite{fardJSNOSEDetectingJavaScript2013a}. Proponents of static typing insist that static types allows developers to spot potential bugs and mistakes earlier during development and that it allows for better tooling, such as more rich code completion and refactoring tools.
 
-%---------------------------------------------------------------
-\section{Ut enim ad minim veniam}
-%---------------------------------------------------------------
+There is an upcoming TC39 proposal for adding type annotations, broadly inspired by TypeScript syntax \cite{ECMAScriptProposalType2023}. These annotation are only used for build-time tooling, these annotation are ignored in runtime and the proposal suggests these annotations to be erased by an additional build-step. Even though users can already provide static types using JSDoc right now, the syntax is not as clean as the proposed TypeScript-like syntax.
 
-\lipsum[2-4]
+Regardless, there are many languages which aim to introduce static typing to JavaScript, such as Flow, ReasonML, ReScript or TypeScript, which has become one of the fastest growing languages according to 2022 Octoverse report by Github \cite{Octoverse2022State}.
 
-%---------------------------------------------------------------
-\subsection{Ut enim ad minim veniam}
-%---------------------------------------------------------------
+\subsection{Flow}
 
-Curabitur ligula sapien, pulvinar a vestibulum quis, facilisis vel sapien. Duis condimentum augue id magna semper rutrum. Aliquam ornare wisi eu metus. Fusce aliquam vestibulum ipsum. Vivamus ac leo pretium faucibus\ref{img:index}.
+Flow is a static type checker for JavaScript \cite{Flow2023}, which allows developers to annotate their code with static types. Flow is developed by Meta and is internally used in production by Facebook, Instagram and React Native. Type annotations in Flow are fully eraseable, which means that the type annotations can be fully removed from the Flow code to emit valid JavaScript code. The checking of these types is occurring at compile-time before removal in build-time. Flow is also a superset of JavaScript, which means any JavaScript code is a valid Flow code.
+
+One the primary goals of Flow is to provide type soundness; the ability to catch every error that might happen in runtime at compile-time, no matter how likely it is to happen. This means, that a valid Flow code can provide developers some guarantees about the type a value has in runtime, at the expense of catching errors, which are unlikely to happen in runtime.
+
+Both Flow and TypeScript are similar in regards to features at the time of writing. Most of the soundness differences between Flow and TypeScript has been addressed with the newer versions of TypeScript, even though soundness is a specific non-goal by the TypeScript team \cite{TypeScriptDesignGoals}. However, developers must opt-in to these features by setting \codeword|"strict"| to \codeword|"true"| in \codeword|tsconfig.json|, whereas in Flow these features are enabled by default.
+
+\subsection{Elm}
+
+\subsection{ClojureScript}
+
+\subsection{ReScript}
+
+ReScript is a programming language built on top of OCaml toolchain. Unlike Flow or TypeScript, ReScript is not a superset of JavaScript, instead the language compiles back to JavaScript. ReScript was created as a spin-off from Reason programming language and accompanying BuckleScript compiler, aiming to vertically integrate and streamline the adoption barrier caused by the need to be familiar with multiple unrelated tools and toolchains \cite{BuckleScriptReasonRebranding}.  
+
+The language aims to be more sound with more powerful type inference than TypeScript, borrowing the Hindler-Milner type system from OCaml implementation, thus most of times the types can be inferred automatically without the need to annotate them explicitly, whereas TypeScript utilizes bidirectional type checking \cite{ReconstructingTypeScriptPart}. 
+
+\subsection{TypeScript}
+
+TypeScript is a strongly typed programming language built as a superset of JavaScript. It is a language that compiles to JavaScript and adds static type checking to JavaScript \cite{DocumentationTypeScriptJavaScript}. TypeScript is built by Microsoft. 
+
+\section{Typescript syntax}
 
 \begin{itemize}
-  \item Ut enim ad minim veniam, quis nostrud
-  \item Ut enim ad minim
-  \item Ut enim ad minim veniam, quis
-        \begin{itemize}
-          \item Ut enim ad
-          \item Ut enim ad
-                \begin{itemize}
-                  \item Ut enim
-                  \item Ut enim
-                        \begin{itemize}
-                          \item Ut enim
-                          \item Ut enim
-                        \end{itemize}
-                \end{itemize}
-        \end{itemize}
+  \item Structural Typing - interfaces, objects
+  \item Nominal Typing - classes, enums
+  \item Generics
+  \item Utility types
+  \item Type inferrence, overriding types
+  \item Template literal types
 \end{itemize}
 
-\section{Class aptent taciti}
+\section{Typescript internals}
 
-\lipsum[2]
-
-\subsection{Class aptent taciti}
-
-\lipsum[6-7]
-
-\begin{enumerate}
-  \item Ut enim ad minim veniam, quis nostrud
-  \item Ut enim ad minim
-  \item Ut enim ad minim veniam, quis
-        \begin{enumerate}
-          \item Ut enim ad
-          \item Ut enim ad
-                \begin{enumerate}
-                  \item Ut enim
-                  \item Ut enim
-                        \begin{enumerate}
-                          \item Ut enim
-                          \item Ut enim
-                        \end{enumerate}
-                \end{enumerate}
-        \end{enumerate}
-\end{enumerate}
-
+\begin{itemize}
+  \item
+  \item
+\end{itemize}
 
 %---------------------------------------------------------------
 \section{Ut enim ad minim veniam, quis nostrud}
@@ -249,11 +153,7 @@ Nulla est. Maecenas fermentum, sem in pharetra pellentesque, velit turpis volutp
   Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos hymenaeos. Fusce suscipit libero eget elit. Etiam dui sem, fermentum vitae, sagittis id, malesuada in, quam. Aliquam id dolor. Curabitur bibendum justo non orci.
 \end{lemma}
 
-\lipsum[1-2]
-
 \subsection{Class aptent taciti sociosqu}
-
-\lipsum[4-5]
 
 %---------------------------------------------------------------
 \chapter{Lorem ipsum}
@@ -271,8 +171,6 @@ Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Curabitur sagittis hen
 
 \subsection{Class aptent taciti}
 
-\lipsum[2-3]
-
 \begin{description}
   \item[Kapitola 1] Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Curabitur sagittis hendrerit ante. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos hymenaeos. Cras pede libero, dapibus nec, pretium sit amet, tempor quis.
 
@@ -283,8 +181,4 @@ Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Curabitur sagittis hen
   \item[Kapitola 4] Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Curabitur sagittis hendrerit ante. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos hymenaeos. Cras pede libero, dapibus nec, pretium sit amet, tempor quis.
 \end{description}
 
-\lipsum[2]
-
 \section{Lorem ipsum dolor sit amet}
-
-\lipsum[3-5]

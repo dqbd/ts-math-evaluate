@@ -113,6 +113,11 @@
 % DEMO CONTENTS SETTINGS END
 %%%%%%%%%%%%%%%%%%%%%%
 
+\onehalfspacing
+\NewDocumentCommand{\codeword}{v}{%
+  \texttt{\textcolor{blue}{#1}}%
+}
+
 \begin{document} 
 \frontmatter\frontmatterinit % do not remove these two commands
 
@@ -209,14 +214,7 @@ Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Curabitur sagittis hen
 \chapter{Seznam zkratek}
 	
 \begin{tabular}{rl}
-DFA & Deterministic Finite Automaton\\
-FA & Finite Automaton\\
-LPS & Labelled Prüfer Sequence\\
-NFA & Nondeterministic Finite Automaton\\
-NPS & Numbered Prüfer Sequence\\
-XML & Extensible Markup Language\\
-XPath & XML Path Language\\
-XSLT & eXtensible Stylesheet Language Transformations\\
+TC39 & ECMA International, Technical Committee 39\\
 W3C & World Wide Web Consortium
 \end{tabular}
 %%%%%%%%%%%%%%%%%%%
