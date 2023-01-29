@@ -20,7 +20,7 @@ Regardless, there are many languages which aim to introduce static typing to Jav
 
 \subsection{Flow}
 
-Flow is a static type checker for JavaScript \cite{Flow2023}, which allows developers to annotate their code with static types. Flow is developed by Meta and is internally used in production by Facebook, Instagram and React Native. Type annotations in Flow are fully eraseable, which means that the type annotations can be fully removed from the Flow code to emit valid JavaScript code. The checking of these types is occurring at compile-time before removal in build-time. Flow is also a superset of JavaScript, which means any JavaScript code is a valid Flow code.
+Flow is a static type checker for JavaScript \cite{chaudhuriFastPreciseType2017,Flow2023}, which allows developers to annotate their code with static types. Flow is developed by Meta and is internally used in production by Facebook, Instagram and React Native. Type annotations in Flow are fully eraseable, which means that the type annotations can be fully removed from the Flow code to emit valid JavaScript code. The checking of these types is occurring at compile-time before removal in build-time. Flow is also a superset of JavaScript, which means any JavaScript code is a valid Flow code.
 
 One the primary goals of Flow is to provide type soundness; the ability to catch every error that might happen in runtime at compile-time, no matter how likely it is to happen. This means, that a valid Flow code can provide developers some guarantees about the type a value has in runtime, at the expense of catching errors, which are unlikely to happen in runtime.
 
@@ -32,13 +32,13 @@ Both Flow and TypeScript are similar in regards to features at the time of writi
 
 \subsection{ReScript}
 
-ReScript is a programming language built on top of OCaml toolchain. Unlike Flow or TypeScript, ReScript is not a superset of JavaScript, instead the language compiles back to JavaScript. ReScript was created as a spin-off from Reason programming language and accompanying BuckleScript compiler, aiming to vertically integrate and streamline the adoption barrier caused by the need to be familiar with multiple unrelated tools and toolchains \cite{BuckleScriptReasonRebranding}.  
+ReScript is a programming language built on top of OCaml toolchain. Unlike Flow or TypeScript, ReScript is not a superset of JavaScript, instead the language compiles back to JavaScript. ReScript was created as a spin-off from Reason programming language and accompanying BuckleScript compiler, aiming to vertically integrate and streamline the adoption barrier caused by the need to be familiar with multiple unrelated tools and toolchains \cite{BuckleScriptReasonRebranding}.
 
-The language aims to be more sound with more powerful type inference than TypeScript, borrowing the Hindler-Milner type system from OCaml implementation, thus most of times the types can be inferred automatically without the need to annotate them explicitly, whereas TypeScript utilizes bidirectional type checking \cite{ReconstructingTypeScriptPart}. 
+The language aims to be more sound with more powerful type inference than TypeScript, borrowing the Hindler-Milner type system from OCaml implementation, thus most of times the types can be inferred automatically without the need to annotate them explicitly, whereas TypeScript utilizes bidirectional type checking \cite{ReconstructingTypeScriptPart}.
 
 \subsection{TypeScript}
 
-TypeScript is a strongly typed programming language built as a superset of JavaScript. It is a language that compiles to JavaScript and adds static type checking to JavaScript \cite{DocumentationTypeScriptJavaScript}. TypeScript is built by Microsoft. 
+TypeScript is a strongly typed programming language built as a superset of JavaScript. It is a language that compiles to JavaScript and adds static type checking to JavaScript \cite{DocumentationTypeScriptJavaScript}. TypeScript is built by Microsoft.
 
 \section{Typescript syntax}
 
@@ -59,127 +59,3 @@ TypeScript is a strongly typed programming language built as a superset of JavaS
   \item AST
 \end{itemize}
 
-%---------------------------------------------------------------
-\section{Ut enim ad minim veniam, quis nostrud}
-%---------------------------------------------------------------
-
-Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Nulla non arcu lacinia neque faucibus fringilla. Vestibulum erat nulla, ullamcorper nec, rutrum non, nonummy ac, erat. Aliquam erat volutpat. Proin pede metus, vulputate nec, fermentum fringilla, vehicula vitae, justo.\footnote{Ut enim ad minim veniam, quis nostrud exercitation.} Etiam dictum tincidunt diam. In laoreet, magna id viverra tincidunt, sem odio bibendum justo, vel imperdiet sapien wisi sed libero. Nulla est. Maecenas fermentum, sem in pharetra pellentesque, velit turpis volutpat ante, in pharetra metus odio a lectus. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
-
-\begin{lstlisting}[caption={~Zbytečný kód},label=list:8-6,captionpos=t,float,abovecaptionskip=-\medskipamount,belowcaptionskip=\medskipamount,language=C]
-    #include<stdio.h>
-    #include<iostream>
-    // A comment
-    int main(void)
-    {
-        printf("Hello World\n");
-        return 0;
-    }
-\end{lstlisting}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% alternative using package minted for source highlighting
-% package minted requires execution with `-shell-escape'
-% e.g., `xelatex -shell-escape ctufit-thesis.tex'
-% \begin{listing}
-% \caption{Zbytečný kód}\label{list:8-6}
-% \begin{minted}{C}
-%     #include<stdio.h>
-%     #include<iostream>
-%     // A comment
-%     int main(void)
-%     {
-%         printf("Hello World\n");
-%         return 0;
-%     }
-% \end{minted}
-% \end{listing}
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Nullam feugiat, turpis at pulvinar vulputate, erat libero tristique tellus, nec bibendum odio risus sit amet ante. Aenean id metus id velit ullamcorper pulvinar. Fusce wisi. Integer lacinia. Aliquam id dolor. Pellentesque pretium lectus id turpis. Suspendisse sagittis ultrices augue. In laoreet, magna id viverra tincidunt, sem odio bibendum justo, vel imperdiet sapien wisi sed libero. Sed ac dolor sit amet purus malesuada congue. \cite{Crochemore2002}
-
-Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos hymenaeos. Fusce suscipit libero eget elit. Etiam dui sem, fermentum vitae, sagittis id, malesuada in, quam. Aliquam id dolor. Curabitur bibendum justo non orci. Duis viverra diam non justo. Curabitur ligula sapien, pulvinar a vestibulum quis, facilisis vel sapien. Duis condimentum augue id magna semper rutrum. Aliquam ornare wisi eu metus. Fusce aliquam vestibulum ipsum. Vivamus ac leo pretium faucibus. \cite{Motwani2014}
-
-%---------------------------------------------------------------
-\subsection{Ut enim ad minim veniam, quis nostrud}
-%---------------------------------------------------------------
-
-Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Nulla non arcu lacinia neque faucibus fringilla. Vestibulum erat nulla, ullamcorper nec, rutrum non, nonummy ac, erat. Aliquam erat volutpat. Proin pede metus, vulputate nec, fermentum fringilla, vehicula vitae, justo. Etiam dictum tincidunt diam. In laoreet, magna id viverra tincidunt, sem odio bibendum justo. \cite{Sestakova2018}
-
-\begin{table}\centering
-  \caption[Příklad tabulky]{~Zadávání matematiky}\label{tab:matematika}
-  \begin{tabular}{l|l|c|c}
-    Typ       & Prostředí          & \LaTeX{}ovská zkratka & \TeX{}ovská zkratka	\tabularnewline \hline
-    Text      & \verb|math|        & \verb|\(...\)|        & \verb|$...$|	\tabularnewline \hline
-    Displayed & \verb|displaymath| & \verb|\[...\]|        & \verb|$$...$$|	\tabularnewline
-  \end{tabular}
-\end{table}
-
-
-Nulla est. Maecenas fermentum, sem in pharetra pellentesque, velit turpis volutpat ante, in pharetra metus odio a lectus. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Nullam feugiat, turpis at pulvinar vulputate, erat libero tristique tellus, nec bibendum odio risus sit amet ante. Aenean id metus id velit ullamcorper pulvinar.
-
-\subsubsection{Class aptent taciti}
-
-\begin{definition}[Optional label]
-  Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos hymenaeos. Fusce suscipit libero eget elit. Etiam dui sem, fermentum vitae, sagittis id, malesuada in, quam. Aliquam id dolor. Curabitur bibendum justo non orci.
-\end{definition}
-
-\begin{example}
-  Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos hymenaeos. Fusce suscipit libero eget elit. Etiam dui sem, fermentum vitae, sagittis id, malesuada in, quam. Aliquam id dolor. Curabitur bibendum justo non orci.
-\end{example}
-
-\begin{theorem}
-  Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos hymenaeos. Fusce suscipit libero eget elit. Etiam dui sem, fermentum vitae, sagittis id, malesuada in, quam. Aliquam id dolor. Curabitur bibendum justo non orci.
-\end{theorem}
-
-\begin{proof}
-  Fusce suscipit libero eget elit. Etiam dui sem, fermentum vitae, sagittis id, malesuada in, quam. Aliquam id dolor. Curabitur bibendum justo non orci.
-\end{proof}
-
-\begin{corollary}
-  Fusce suscipit libero eget elit. Etiam dui sem, fermentum vitae, sagittis id, malesuada in, quam. Aliquam id dolor. Curabitur bibendum justo non orci.
-\end{corollary}
-
-\begin{proposition}
-  Fusce suscipit libero eget elit. Etiam dui sem, fermentum vitae, sagittis id, malesuada in, quam. Aliquam id dolor. Curabitur bibendum justo non orci.
-\end{proposition}
-
-\begin{note}
-  Fusce suscipit libero eget elit. Etiam dui sem, fermentum vitae, sagittis id, malesuada in, quam. Aliquam id dolor. Curabitur bibendum justo non orci.
-\end{note}
-
-\begin{remark}
-  Fusce suscipit libero eget elit. Etiam dui sem, fermentum vitae, sagittis id, malesuada in, quam. Aliquam id dolor. Curabitur bibendum justo non orci.
-\end{remark}
-
-\begin{lemma}
-  Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos hymenaeos. Fusce suscipit libero eget elit. Etiam dui sem, fermentum vitae, sagittis id, malesuada in, quam. Aliquam id dolor. Curabitur bibendum justo non orci.
-\end{lemma}
-
-\subsection{Class aptent taciti sociosqu}
-
-%---------------------------------------------------------------
-\chapter{Lorem ipsum}
-%---------------------------------------------------------------
-
-\begin{chapterabstract}
-  Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Curabitur sagittis hendrerit ante. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos hymenaeos. Cras pede libero, dapibus nec, pretium sit amet, tempor quis. Sed vel lectus. Donec odio tempus molestie, porttitor ut, iaculis quis, sem. Cras pede libero, dapibus nec, pretium sit amet, tempor quis. Sed vel lectus.
-\end{chapterabstract}
-
-Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Curabitur sagittis hendrerit ante. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos hymenaeos. Cras pede libero, dapibus nec, pretium sit amet, tempor quis. Sed vel lectus. Donec odio tempus molestie, porttitor ut, iaculis quis, sem. Suspendisse sagittis ultrices augue. Donec ipsum massa, ullamcorper in, auctor et, scelerisque sed, est. In sem justo, commodo ut, suscipit at, pharetra vitae, orci. Pellentesque pretium lectus id turpis. \cite{Kopka2004}
-
-\section{Donec odio tempus molestie}
-
-\lipsum[2] \cite{def:1, def:2}
-
-\subsection{Class aptent taciti}
-
-\begin{description}
-  \item[Kapitola 1] Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Curabitur sagittis hendrerit ante. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos hymenaeos. Cras pede libero, dapibus nec, pretium sit amet, tempor quis.
-
-  \item[Kapitola 2] Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Curabitur sagittis hendrerit ante. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos hymenaeos. Cras pede libero, dapibus nec, pretium sit amet, tempor quis.
-
-  \item[Kapitola 3] Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Curabitur sagittis hendrerit ante. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos hymenaeos. Cras pede libero, dapibus nec, pretium sit amet, tempor quis.
-
-  \item[Kapitola 4] Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Curabitur sagittis hendrerit ante. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos hymenaeos. Cras pede libero, dapibus nec, pretium sit amet, tempor quis.
-\end{description}
-
-\section{Lorem ipsum dolor sit amet}

@@ -36,6 +36,23 @@
   file = {/Users/duongtat/Zotero/storage/3UY47J3V/bucklescript-is-rebranding.html}
 }
 
+@article{chaudhuriFastPreciseType2017,
+  title = {Fast and Precise Type Checking for {{JavaScript}}},
+  author = {Chaudhuri, Avik and Vekris, Panagiotis and Goldman, Sam and Roch, Marshall and Levi, Gabriel},
+  date = {2017-10-12},
+  journaltitle = {Proceedings of the ACM on Programming Languages},
+  shortjournal = {Proc. ACM Program. Lang.},
+  volume = {1},
+  pages = {48:1--48:30},
+  doi = {10.1145/3133872},
+  url = {https://doi.org/10.1145/3133872},
+  urldate = {2023-01-29},
+  abstract = {In this paper we present the design and implementation of Flow, a fast and precise type checker for JavaScript that is used by thousands of developers on millions of lines of code at Facebook every day. Flow uses sophisticated type inference to understand common JavaScript idioms precisely. This helps it find non-trivial bugs in code and provide code intelligence to editors without requiring significant rewriting or annotations from the developer. We formalize an important fragment of Flow's analysis and prove its soundness. Furthermore, Flow uses aggressive parallelization and incrementalization to deliver near-instantaneous response times. This helps it avoid introducing any latency in the usual edit-refresh cycle of rapid JavaScript development. We describe the algorithms and systems infrastructure that we built to scale Flow's analysis.},
+  issue = {OOPSLA},
+  keywords = {JavaScript,Type Inference,Type Systems},
+  file = {/Users/duongtat/Zotero/storage/SLCVD9LA/Chaudhuri et al. - 2017 - Fast and precise type checking for JavaScript.pdf}
+}
+
 @online{dablerImplementingArithmeticTypeScript2021,
   title = {Implementing {{Arithmetic Within TypeScript}}’s {{Type System}}},
   author = {Dabler, Ryan},
@@ -82,6 +99,24 @@
   file = {/Users/duongtat/Zotero/storage/PY2MSYU3/Fard and Mesbah - 2013 - JSNOSE Detecting JavaScript Code Smells.pdf;/Users/duongtat/Zotero/storage/NACK3BUK/6648192.html}
 }
 
+@inproceedings{feldthausCheckingCorrectnessTypeScript2014,
+  title = {Checking Correctness of {{TypeScript}} Interfaces for {{JavaScript}} Libraries},
+  booktitle = {Proceedings of the 2014 {{ACM International Conference}} on {{Object Oriented Programming Systems Languages}} \& {{Applications}}},
+  author = {Feldthaus, Asger and Møller, Anders},
+  date = {2014-10-15},
+  series = {{{OOPSLA}} '14},
+  pages = {1--16},
+  publisher = {{Association for Computing Machinery}},
+  location = {{New York, NY, USA}},
+  doi = {10.1145/2660193.2660215},
+  url = {https://doi.org/10.1145/2660193.2660215},
+  urldate = {2023-01-29},
+  abstract = {The TypeScript programming language adds optional types to JavaScript, with support for interaction with existing JavaScript libraries via interface declarations. Such declarations have been written for hundreds of libraries, but they can be difficult to write and often contain errors, which may affect the type checking and misguide code completion for the application code in IDEs. We present a pragmatic approach to check correctness of TypeScript declaration files with respect to JavaScript library implementations. The key idea in our algorithm is that many declaration errors can be detected by an analysis of the library initialization state combined with a light-weight static analysis of the library function code. Our experimental results demonstrate the effectiveness of the approach: it has found 142 errors in the declaration files of 10 libraries, with an analysis time of a few minutes per library and with a low number of false positives. Our analysis of how programmers use library interface declarations furthermore reveals some practical limitations of the TypeScript type system.},
+  isbn = {978-1-4503-2585-1},
+  keywords = {program analysis,type checking},
+  file = {/Users/duongtat/Zotero/storage/CBK4U6DN/Feldthaus and Møller - 2014 - Checking correctness of TypeScript interfaces for .pdf}
+}
+
 @software{Flow2023,
   title = {Flow},
   date = {2023-01-29T12:33:40Z},
@@ -100,6 +135,16 @@
   urldate = {2023-01-29},
   abstract = {Hang out on the internet much and you\&\#39;ll hear gripes about how TypeScript isn\&\#39;t \&quot;sound,\&quot; and that this makes it a poor choice of language. In this post, I\&\#39;ll explain what this means and walk through the sources of unsoundness in TypeScript. Rest assured, TypeScript is a great language and it\&\#39;s never a good idea to listen to people on the internet!},
   file = {/Users/duongtat/Zotero/storage/FCQAU4A6/unsoundness.html}
+}
+
+@software{horvath-huntTshm2023,
+  title = {Tshm},
+  author = {Horvath-Hunt, Sam A.},
+  date = {2023-01-29T20:00:24Z},
+  origdate = {2020-12-10T23:40:20Z},
+  url = {https://github.com/samhh/tshm},
+  urldate = {2023-01-29},
+  abstract = {A parser and formatter for TypeScript declarations that outputs HM-style type signatures.}
 }
 
 @software{kawayilinlinKawayiLinLinTypescriptlodash2023,
