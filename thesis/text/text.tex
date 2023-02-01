@@ -7,7 +7,7 @@
 \setcounter{page}{1}
 
 %---------------------------------------------------------------
-\section{The Race to add types to JavaScript}
+\section{Prior Art}
 %---------------------------------------------------------------
 
 ECMAScript (also known as JavaScript) is a dynamically typed programming language, where users do not need to assign types to a variable or a function and the type is inferred automatically by the JavaScript engine. This is a great feature of JavaScript, which lowers the barrier of entry to writing JavaScript code and allows developers to prototype and write code quickly, proven by the growth of popularity of JavaScript in the last decade, making it the most commonly used programming language according to the 2022 Stack Overflow Developer Survey \cite{StackOverflowDeveloper}.
@@ -16,7 +16,19 @@ However, dynamic typing has its own drawbacks, as it is harder to spot trivial e
 
 There is an upcoming TC39 proposal for adding type annotations, broadly inspired by TypeScript syntax \cite{ECMAScriptProposalType2023}. These annotation are only used for build-time tooling, these annotation are ignored in runtime and the proposal suggests these annotations to be erased by an additional build-step. Even though users can already provide static types using JSDoc right now, the syntax is not as clean as the proposed TypeScript-like syntax.
 
-Regardless, there are many languages which aim to introduce static typing to JavaScript, such as Flow, ReasonML, ReScript or TypeScript, which has become one of the fastest growing languages according to 2022 Octoverse report by Github \cite{Octoverse2022State}.
+Regardless, there are many languages which aim to introduce static typing to JavaScript, such as Flow or TypeScript, or alternative languages which compile back to JavaScript, such as Elm or ReScript.
+
+\subsection{Elm}
+
+Elm is a functional programming language designed specifically for building web applications \cite{ElmDelightfulLanguage}. The language compiles to JavaScript and has a strong static Hindley-Milner based type system, which allows to infer types more often and reliably. Elm does not provide any escape hatches such as \codeword|any| in TypeScript, thus it is harder to write unsafe code, as the types must be valid in order for the code to be compiled.
+
+Elm also includes a lot of quality-of-life improvements and benefits, for instance: enforced purity of functions, out of the box immutability, \codeword|case| pattern matching, JSON decoders and encoders for strict parsing, \codeword|Maybe| and \codeword|Result| monads for avoiding \codeword|null| and \codeword|undefined| references or its own virtual DOM implementation for efficient rendering of interactive user interfaces. Notably, the Elm Architecture, where the application code is organized into three parts: model, update and view \cite{ElmArchitectureIntroduction}, has greatly inspired other libraries and frameworks like Redux \cite{PriorArtRedux2022}.
+
+\subsection{ReScript}
+
+ReScript is a programming language built on top of OCaml toolchain. Unlike Flow or TypeScript, ReScript is not a superset of JavaScript, instead the language compiles back to JavaScript. ReScript was created as a spin-off from Reason programming language and accompanying BuckleScript compiler, aiming to vertically integrate and streamline the adoption barrier caused by the need to be familiar with multiple unrelated tools and toolchains \cite{BuckleScriptReasonRebranding}.
+
+The language aims to be more sound with more powerful type inference than TypeScript, borrowing the Hindler-Milner type system from OCaml implementation, thus most of times the types can be inferred automatically without the need to annotate them explicitly, whereas TypeScript utilizes bidirectional type checking \cite{ReconstructingTypeScriptPart}.
 
 \subsection{Flow}
 
@@ -26,19 +38,15 @@ One the primary goals of Flow is to provide type soundness; the ability to catch
 
 Both Flow and TypeScript are similar in regards to features at the time of writing. Most of the soundness differences between Flow and TypeScript has been addressed with the newer versions of TypeScript, even though soundness is a specific non-goal by the TypeScript team \cite{TypeScriptDesignGoals}. However, developers must opt-in to these features by setting \codeword|"strict"| to \codeword|"true"| in \codeword|tsconfig.json|, whereas in Flow these features are enabled by default.
 
-\subsection{Elm}
-
-\subsection{ClojureScript}
-
-\subsection{ReScript}
-
-ReScript is a programming language built on top of OCaml toolchain. Unlike Flow or TypeScript, ReScript is not a superset of JavaScript, instead the language compiles back to JavaScript. ReScript was created as a spin-off from Reason programming language and accompanying BuckleScript compiler, aiming to vertically integrate and streamline the adoption barrier caused by the need to be familiar with multiple unrelated tools and toolchains \cite{BuckleScriptReasonRebranding}.
-
-The language aims to be more sound with more powerful type inference than TypeScript, borrowing the Hindler-Milner type system from OCaml implementation, thus most of times the types can be inferred automatically without the need to annotate them explicitly, whereas TypeScript utilizes bidirectional type checking \cite{ReconstructingTypeScriptPart}.
-
 \subsection{TypeScript}
 
-TypeScript is a strongly typed programming language built as a superset of JavaScript. It is a language that compiles to JavaScript and adds static type checking to JavaScript \cite{DocumentationTypeScriptJavaScript}. TypeScript is built by Microsoft.
+TypeScript is a staticly typed programming language developed and maintained by Microsoft \cite{TypeScriptJavaScriptSyntax}. It is a language that compiles to JavaScript and adds static type checking to JavaScript \cite{DocumentationTypeScriptJavaScript}. Unlike Elm or ReScript, TypeScript is a syntactical subset of JavaScript, which means that any valid JavaScript code can be a valid TypeScript code\footnote{With a lax compiler configuration}. Similar to Flow, type annotation provided by the developer are fully eraseable either by the TypeScript \codeword|tsc| compiler or by other community build tools, such as \codeword|babel|\cite{BabelCompilerNext}, \codeword|esbuild|\cite{EsbuildExtremelyFast} or \codeword|swc|\cite{SWCRustbasedPlatform}.
+
+Type system in TypeScript is considered to be less sound and more forgiving, as soundness is stated as an explicit non-goal for the design team of TypeScript \cite{TypeScriptDesignGoals}, emphasis on striking a balance between productivity and correctness. By default, TypeScript compiler is not strict and the language itself includes an escape hatch for developers to opt-out of type checking by using the \codeword|any| type or using \codeword|@ts-ignore| comment annotations. Nevertheless, with proper compiler configuration, the type system of TypeScript can be as sound as in Flow.
+
+Both Flow and TypeScript support advanced features such as generics and utility types, with the latter supporting template string literal types and better support for conditional types, unlocking the potential of writing more expressive types, which this master thesis will further explore in more detail.
+
+TypeScript has become the de-facto standard for writing JavaScript code with static types. With deep integration with Visual Studio Code \cite{VisualStudioCode}, rich build ecosystem and high compatibility with existing JavaScript libraries and tools, TypeScript has become one of the fastest growing language according to 2022 Octoverse report by Github \cite{Octoverse2022State}.
 
 \section{Typescript syntax}
 
