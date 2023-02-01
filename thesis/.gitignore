@@ -17,3 +17,4 @@ _minted-ctufit-thesis/
 *.synctex.gz
 *.toc
 !assignment-include.pdf
+!ctufit-thesis.pdf
