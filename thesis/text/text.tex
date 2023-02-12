@@ -10,7 +10,7 @@
 \section{Prior Art}
 %---------------------------------------------------------------
 
-ECMAScript (also known as JavaScript) is a dynamically typed programming language, where users do not need to assign types to a variable or a function and the type is inferred automatically by the JavaScript engine. This is a great feature of JavaScript, which lowers the barrier of entry to writing JavaScript code and allows developers to prototype and write code quickly, proven by the growth of popularity of JavaScript in the last decade, making it the most commonly used programming language according to the 2022 Stack Overflow Developer Survey \cite{StackOverflowDeveloper}.
+JavaScript is a dynamically typed programming language, where users do not need to assign types to a variable or a function and the type is inferred automatically by the JavaScript engine. This is a great feature of JavaScript, which lowers the barrier of entry to writing JavaScript code and allows developers to prototype and write code quickly, proven by the growth of popularity of JavaScript in the last decade, making it the most commonly used programming language according to the 2022 Stack Overflow Developer Survey \cite{StackOverflowDeveloper}.
 
 However, dynamic typing has its own drawbacks, as it is harder to spot trivial errors in the code without running it beforehand and it is more difficult to refactor the code without breaking it, which often lead to poor software quality \cite{fardJSNOSEDetectingJavaScript2013a}. Proponents of static typing insist that static types allows developers to spot potential bugs and mistakes earlier during development and that it allows for better tooling, such as more rich code completion and refactoring tools.
 
@@ -26,9 +26,9 @@ Elm also includes a lot of quality-of-life improvements and benefits, for instan
 
 \subsection{ReScript}
 
-ReScript is a programming language built on top of OCaml toolchain. Unlike Flow or TypeScript, ReScript is not a superset of JavaScript, instead the language compiles back to JavaScript. ReScript was created as a spin-off from Reason programming language and accompanying BuckleScript compiler, aiming to vertically integrate and streamline the adoption barrier caused by the need to be familiar with multiple unrelated tools and toolchains \cite{BuckleScriptReasonRebranding}.
+ReScript is a programming language built on top of OCaml toolchain. Unlike Flow or TypeScript, ReScript is not a superset of JavaScript, instead the language compiles to JavaScript. ReScript was created as a spin-off from Reason programming language and accompanying BuckleScript compiler, aiming to vertically integrate and streamline the adoption barrier caused by the need to be familiar with multiple unrelated tools and toolchains \cite{BuckleScriptReasonRebranding}.
 
-The language aims to be more sound with more powerful type inference than TypeScript, borrowing the Hindler-Milner type system from OCaml implementation, thus most of times the types can be inferred automatically without the need to annotate them explicitly, whereas TypeScript utilizes bidirectional type checking \cite{ReconstructingTypeScriptPart}.
+The language aims to be more sound with more powerful type inference than TypeScript, borrowing the Hindler-Milner type system from OCaml implementation \cite{EfficientInsightfulGeneralization,HistoryReScript2022}, thus most of times the types can be inferred automatically without the need to annotate them explicitly, whereas TypeScript utilizes bidirectional type checking \cite{ReconstructingTypeScriptPart}.
 
 \subsection{Flow}
 
