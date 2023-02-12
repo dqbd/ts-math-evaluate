@@ -22,56 +22,64 @@ Programovací jazyk TypeScript představil ve verzi 4.1 šablonové literálové
 3. Zvolte vhodný nástroj pro testování typových anotací a program otestujte funkčními testy.
 4. Diskutujte praktické využití meta typů, teoretické a praktické nedostatky plynoucí z typového systému TypeScript.
 
-
 ## Sections
 
 **Introduction**
 
-- Motivation for thesis 
+- Motivation for thesis
 - What is a type system (importance of type safety)
 
 **Analysis**
 
 - Static Typing in JS
-	- Elm
-	- ReScript
-	- ClojureScript?
-	- Flow
-	- TypeScript 
-		- Why it became so popular?
+  - Elm
+  - ReScript
+  - ClojureScript?
+  - Flow
+  - TypeScript
+    - Why it became so popular?
 - Core Typescript Syntax
-	- Structural Typing vs Nominal Typing
-	- Generics
-	- Utility Types
-	- Template Literal Types
+  - Types and their assignability
+    - Primitive Types
+    - Literal Types
+    - Structures (nominal typing vs. structural typing)
+    - Unions
+    - Intersections
+    - `unknown`, `never`, `any`
+  - `Record`
+  - `Array` and tuples
 - Type System of TypeScript
-	- Branching
-	- Recursion
-	- Type Inferrence
-	- Pattern Matching
-- TypeScript compiler internals 
 
-  > The idea behind explanation of compiler internals is to explain tracer returned by  `—generateTrace` and `—extendedDiagnostics` 
-	- Scanner / Parser / Binder 
-	- Compiler
-	- Checker
+  - Conditional Types and Inferrence
+  - Loops via Recursive Types
+  - Equality Checks
+  - Limitations
+
+- TypeScript compiler internals
+
+  > The idea behind explanation of compiler internals is to explain tracer returned by `—generateTrace` and `—extendedDiagnostics`
+
+  - Scanner / Parser / Binder
+  - Compiler
+  - Checker
+
 - Prior Art
-	- `kawayiLinLin/typescript-lodash` 
-	- `arielhs/ts-arithmetic` 
+  - `kawayiLinLin/typescript-lodash`
+  - `arielhs/ts-arithmetic`
 
 **Implementation**
 
 - Structure of the project
 - Explanation behind all of the methods
-	- Representation of numbers in TS (`array`, destructured object) 
+  - Representation of numbers in TS (`array`, destructured object)
 
 **Testing**
 
 - Unit tests, integration tests
-	- `eslint` 
-	- `eslint-plugin-expect-type` 
-	- Github Actions 
+  - `eslint`
+  - `eslint-plugin-expect-type`
+  - Github Actions
 - Performance testing
-	- Comparison between existing TS math libraries (performance tracing, extended diagnostics)
+  - Comparison between existing TS math libraries (performance tracing, extended diagnostics)
 
 **Conclusion**
