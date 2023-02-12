@@ -1,5 +1,7 @@
 # Math expression evaluator for literal types in TypeScript
 
+https://projects.fit.cvut.cz/theses/4604
+
 ## Assignment
 
 ### English
