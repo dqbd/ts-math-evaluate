@@ -1,6 +1,6 @@
-import { NumberLike, ParseNumber } from "./utils/parse"
+import { NumberLike, UnsafeParseNumber } from "./utils/parse"
 
-export type Neg<X extends NumberLike> = ParseNumber<X> extends number
+export type Neg<X extends NumberLike> = UnsafeParseNumber<X> extends number
   ? X extends `-${infer V}`
     ? V
     : `-${X}`

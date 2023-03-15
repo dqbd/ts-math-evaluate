@@ -1,17 +1,36 @@
 import { ExpandArrayByTen, PadStart } from "./array"
+import { And } from "./boolean"
 
 export type NumberLike = string | number
 
-export type ParseNumber<T extends NumberLike> =
-  `${T}` extends `${infer N extends number}` ? N : never
+type SignSymbol = "+" | "-"
+type NaN = "NaN"
 
-// TODO: validate if Int and Frac consist of numerical digits
-export type ParseFloat<T extends NumberLike> =
-  `${T}` extends `${infer Int extends string}.${infer Frac extends string}`
-    ? { int: `${Int}`; frac: Frac }
-    : `${T}` extends `${infer Int extends string}`
-    ? { int: `${Int}`; frac: "" }
-    : never
+type IsInt<S extends string> = S extends `${number}${infer Rest}`
+  ? Rest extends ""
+    ? true
+    : IsInt<Rest>
+  : false
+
+type _ParseFloat<S extends string> = S extends `${infer Int}.${infer Frac}`
+  ? And<IsInt<Int>, IsInt<Frac>> extends true
+    ? { int: Int; frac: Frac }
+    : NaN
+  : IsInt<S> extends true
+  ? { int: S; frac: "" }
+  : NaN
+
+export type ParseFloat<S extends NumberLike> =
+  `${S}` extends `${infer Sign extends SignSymbol}${infer Rest}`
+    ? _ParseFloat<Rest> extends { int: infer Int; frac: infer Frac }
+      ? { sign: Sign; int: Int; frac: Frac }
+      : NaN
+    : _ParseFloat<`${S}`> extends { int: infer Int; frac: infer Frac }
+    ? { sign: "+"; int: Int; frac: Frac }
+    : NaN
+
+export type UnsafeParseNumber<T extends NumberLike> =
+  `${T}` extends `${infer N extends number}` ? N : never
 
 export type StringifyFloat<T> = T extends { int: string; frac: string }
   ? T["frac"] extends ""
