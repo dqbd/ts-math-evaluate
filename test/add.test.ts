@@ -17,3 +17,9 @@ type FloatCase2 = Add<"3.123", "4">
 
 // $ExpectType "3.123"
 type FloatCase3 = Add<"3.123", "0">
+
+// $ExpectType "12001.0"
+type FloatCase4 = Add<"12000.0", "1">
+
+// $ExpectType "12000000000001.0123"
+type FloatCase5 = Add<"12000000000000.0123", "1">

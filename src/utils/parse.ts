@@ -7,12 +7,12 @@ export type ParseNumber<T extends NumberLike> =
 
 export type ParseFloat<T extends NumberLike> =
   `${T}` extends `${infer Int extends number}.${infer Frac extends string}`
-    ? { int: Int; frac: Frac }
+    ? { int: `${Int}`; frac: Frac }
     : `${T}` extends `${infer Int extends number}`
-    ? { int: Int; frac: "" }
+    ? { int: `${Int}`; frac: "" }
     : never
 
-export type StringifyFloat<T> = T extends { int: number; frac: string }
+export type StringifyFloat<T> = T extends { int: string; frac: string }
   ? T["frac"] extends ""
     ? `${T["int"]}`
     : `${T["int"]}.${T["frac"]}`
@@ -22,16 +22,16 @@ export type StringifyFloat<T> = T extends { int: number; frac: string }
     : never
   : never
 
-export type ExplodeFloatFrac<T extends string> =
+export type ExplodeDigit<T extends string> =
   T extends `${infer Digit extends number}${infer Rest}`
-    ? [Digit, ...ExplodeFloatFrac<Rest>]
+    ? [Digit, ...ExplodeDigit<Rest>]
     : []
 
-export type JoinFloatFrac<T extends number[]> = T extends [
+export type JoinDigit<T extends number[]> = T extends [
   infer A extends number,
   ...infer R extends number[]
 ]
-  ? `${A}${JoinFloatFrac<R>}`
+  ? `${A}${JoinDigit<R>}`
   : ""
 
 export type ExpandNumberToArray<

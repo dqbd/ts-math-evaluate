@@ -34,6 +34,17 @@ export type PadEndEqually<A extends any[], B extends any[]> = IsArrayLarger<
     : never
   : never
 
+export type PadStartEqually<A extends any[], B extends any[]> = IsArrayLarger<
+  A,
+  B
+> extends infer Comp extends boolean
+  ? Comp extends true
+    ? [PadStart<B["length"], A>, B]
+    : Comp extends false
+    ? [A, PadStart<A["length"], B>]
+    : never
+  : never
+
 export type ExpandArrayByTen<R extends Array<0>> = [
   ...R,
   ...R,
