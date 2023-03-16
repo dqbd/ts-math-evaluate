@@ -1,8 +1,14 @@
-import { NumberLike, ParseFloat, StringifyFloat } from "./utils/parse"
+import {
+  FloatNumber,
+  NumberLike,
+  ParseSignFloatNumber,
+  SignFloatNumber,
+  StringifySignFloat,
+} from "./utils/parse"
 
-export type Truncate<X extends NumberLike> = ParseFloat<X> extends {
-  sign: infer Sign
-  int: infer Int
-}
-  ? StringifyFloat<{ sign: Sign; int: Int; frac: "" }>
-  : never
+export type Truncate<Value extends NumberLike> =
+  ParseSignFloatNumber<Value> extends infer Number extends SignFloatNumber
+    ? StringifySignFloat<
+        SignFloatNumber<Number["sign"], FloatNumber<Number["float"]["int"], []>>
+      >
+    : never

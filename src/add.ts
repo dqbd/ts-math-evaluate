@@ -1,15 +1,55 @@
 import { AddMapCarry } from "./utils/map"
-import { PadEndEqually, PadStartEqually } from "./utils/array"
 import {
   NumberLike,
-  ParseFloat,
-  ExplodeDigit,
-  JoinDigit,
-  StringifyFloat,
+  ParseSignFloatNumber,
+  ExpandNumberToArray,
+  PadFloat,
+  FloatNumber,
+  SignFloatNumber,
+  Digit,
+  StringifySignFloat,
 } from "./utils/parse"
 import { Or } from "./utils/boolean"
+import { SubOperatorSwitch } from "./sub"
 
-// TODO: místo LUT expandovat do tuple
+type AsNumber<S extends string> = S extends `${infer N extends number}`
+  ? N
+  : never
+
+type SubWithCarryTuple<
+  Left extends number,
+  Right extends number,
+  Carry extends boolean
+> = ExpandNumberToArray<Left> extends [
+  ...infer U extends number[],
+  ...ExpandNumberToArray<Right>,
+  ...ExpandNumberToArray<Carry extends true ? 1 : 0>
+]
+  ? U
+  : never
+
+// $ExpectType 0
+type X0 = SubWithCarryTuple<1, 1, false>["length"]
+
+type AddWithCarryTuple<
+  Left extends number,
+  Right extends number,
+  Carry extends boolean
+> = [
+  ...ExpandNumberToArray<Left>,
+  ...ExpandNumberToArray<Right>,
+  ...ExpandNumberToArray<Carry extends true ? 1 : 0>
+]["length"] extends infer S extends number
+  ? `${S}` extends `${infer Head}${infer Tail}`
+    ? Tail extends ""
+      ? [AsNumber<Head>, false]
+      : [AsNumber<Tail>, true]
+    : never
+  : never
+
+// $ExpectType [0, true]
+type X1 = AddWithCarryTuple<9, 1, false>
+
 type AddWithCarry<
   Left extends number,
   Right extends number,
@@ -81,67 +121,55 @@ type AddArrCase3 = AddArr<[9, 0], [0, 9]>
 // $ExpectType [[0, 1, 1], true]
 type AddArrCase4 = AddArr<[0, 1, 2], [9, 9, 9]>
 
-type PadFloat<
-  A extends { int: number[]; frac: number[] },
-  B extends { int: number[]; frac: number[] }
-> = PadStartEqually<A["int"], B["int"]> extends [
-  infer IntA extends number[],
-  infer IntB extends number[]
-]
-  ? PadEndEqually<A["frac"], B["frac"]> extends [
-      infer FracA extends number[],
-      infer FracB extends number[]
-    ]
-    ? [{ int: IntA; frac: FracA }, { int: IntB; frac: FracB }]
-    : never
-  : never
-
-type _AddInner<
-  A extends { int: number[]; frac: number[] },
-  B extends { int: number[]; frac: number[] }
+export type AddFloatNumber<
+  A extends FloatNumber,
+  B extends FloatNumber
 > = PadFloat<A, B> extends [
-  { int: infer IntA extends number[]; frac: infer FracA extends number[] },
-  { int: infer IntB extends number[]; frac: infer FracB extends number[] }
+  FloatNumber<infer IntA, infer FracA>,
+  FloatNumber<infer IntB, infer FracB>
 ]
   ? AddArr<FracA, FracB> extends [
-      infer FracResult extends number[],
+      infer FracResult extends Digit[],
       infer FracCarry extends boolean
     ]
     ? AddArr<IntA, IntB> extends [
-        infer IntResult extends number[],
+        infer IntResult extends Digit[],
         infer IntCarry extends boolean
       ]
       ? IntCarry extends true
         ? FracCarry extends true
-          ? _AddInner<
-              { int: [1, ...IntResult]; frac: FracResult },
-              { int: [1]; frac: [] }
+          ? AddFloatNumber<
+              FloatNumber<[1, ...IntResult], FracResult>,
+              FloatNumber<[1], []>
             >
-          : { int: [1, ...IntResult]; frac: FracResult }
+          : FloatNumber<[1, ...IntResult], FracResult>
         : FracCarry extends true
-        ? _AddInner<
-            { int: IntResult; frac: FracResult },
-            { int: [1]; frac: [] }
+        ? AddFloatNumber<
+            FloatNumber<IntResult, FracResult>,
+            FloatNumber<[1], []>
           >
-        : { int: IntResult; frac: FracResult }
+        : FloatNumber<IntResult, FracResult>
       : never
     : never
   : never
 
-export type Add<A extends NumberLike, B extends NumberLike> = [
-  ParseFloat<A>,
-  ParseFloat<B>
-] extends [
-  infer SrcA extends { int: string; frac: string },
-  infer SrcB extends { int: string; frac: string }
-]
-  ? _AddInner<
-      { int: ExplodeDigit<SrcA["int"]>; frac: ExplodeDigit<SrcA["frac"]> },
-      { int: ExplodeDigit<SrcB["int"]>; frac: ExplodeDigit<SrcB["frac"]> }
-    > extends infer Result extends { int: number[]; frac: number[] }
-    ? StringifyFloat<{
-        int: JoinDigit<Result["int"]>
-        frac: JoinDigit<Result["frac"]>
-      }>
-    : never
+type AddSignFloatNumber<
+  A extends SignFloatNumber,
+  B extends SignFloatNumber
+> = {
+  "+": {
+    "+": SignFloatNumber<"+", AddFloatNumber<A["float"], B["float"]>>
+    "-": SubOperatorSwitch<A["float"], B["float"]>
+  }
+  "-": {
+    "+": SubOperatorSwitch<B["float"], A["float"]>
+    "-": SignFloatNumber<"-", AddFloatNumber<A["float"], B["float"]>>
+  }
+}[A["sign"]][B["sign"]]
+
+export type Add<Left extends NumberLike, Right extends NumberLike> = [
+  ParseSignFloatNumber<Left>,
+  ParseSignFloatNumber<Right>
+] extends [infer X extends SignFloatNumber, infer Y extends SignFloatNumber]
+  ? StringifySignFloat<AddSignFloatNumber<X, Y>>
   : never

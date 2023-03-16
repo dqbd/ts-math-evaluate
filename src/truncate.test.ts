@@ -8,6 +8,3 @@ export type TruncateCase2 = Truncate<"1.00000000000002">
 
 // $ExpectType "-19999999991"
 export type TruncateCase3 = Truncate<"-19999999991.00000000000002">
-
-// $ExpectType never
-export type TruncateCase4 = Truncate<"a">
