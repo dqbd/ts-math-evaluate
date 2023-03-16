@@ -12,7 +12,7 @@ type IsInt<S extends string> = S extends `${number}${infer Rest}`
     : IsInt<Rest>
   : false
 
-type _ParseFloat<S extends string> = S extends `${infer Int}.${infer Frac}`
+type ParseFloatInner<S extends string> = S extends `${infer Int}.${infer Frac}`
   ? And<IsInt<Int>, IsInt<Frac>> extends true
     ? { int: Int; frac: Frac }
     : NaN
@@ -22,24 +22,29 @@ type _ParseFloat<S extends string> = S extends `${infer Int}.${infer Frac}`
 
 export type ParseFloat<S extends NumberLike> =
   `${S}` extends `${infer Sign extends SignSymbol}${infer Rest}`
-    ? _ParseFloat<Rest> extends { int: infer Int; frac: infer Frac }
+    ? ParseFloatInner<Rest> extends { int: infer Int; frac: infer Frac }
       ? { sign: Sign; int: Int; frac: Frac }
       : NaN
-    : _ParseFloat<`${S}`> extends { int: infer Int; frac: infer Frac }
+    : ParseFloatInner<`${S}`> extends { int: infer Int; frac: infer Frac }
     ? { sign: "+"; int: Int; frac: Frac }
     : NaN
 
 export type UnsafeParseNumber<T extends NumberLike> =
   `${T}` extends `${infer N extends number}` ? N : never
 
-export type StringifyFloat<T> = T extends { int: string; frac: string }
+type StringifyWithSign<
+  Value extends string,
+  T extends { sign?: SignSymbol }
+> = T["sign"] extends "-" ? `-${Value}` : Value
+
+export type StringifyFloat<T> = T extends {
+  sign?: SignSymbol
+  int: string
+  frac: string
+}
   ? T["frac"] extends ""
-    ? `${T["int"]}`
-    : `${T["int"]}.${T["frac"]}`
-  : T extends string | number
-  ? `${T}` extends `${infer N extends number}`
-    ? `${N}`
-    : never
+    ? StringifyWithSign<`${T["int"]}`, T>
+    : StringifyWithSign<`${T["int"]}.${T["frac"]}`, T>
   : never
 
 export type ExplodeDigit<T extends string> =

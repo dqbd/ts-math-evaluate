@@ -1,4 +1,4 @@
-import { Abs } from "../src/abs"
+import { Abs } from "./abs"
 
 // $ExpectType "300"
 type IntCase1 = Abs<"-300">

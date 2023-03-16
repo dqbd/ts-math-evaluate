@@ -1,4 +1,4 @@
-import { Sub } from "../src/sub"
+import { Sub } from "./sub"
 
 // $ExpectType "2.123"
 type SubFloatCase1 = Sub<"3.123", "1">

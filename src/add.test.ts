@@ -1,4 +1,4 @@
-import { Add } from "../src/add"
+import { Add } from "./add"
 
 // $ExpectType "36"
 type IntCase1 = Add<"0", "36">

@@ -42,5 +42,5 @@ namespace Number {
   }
 }
 
+// $ExpectType "-445"
 type X = Pipe<"123", [Number.Add<"345">, Number.Sub<"23">, Number.Neg]>
-//   ^?

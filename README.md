@@ -27,7 +27,9 @@ Programovací jazyk TypeScript představil ve verzi 4.1 šablonové literálové
 **Introduction**
 
 - Motivation for thesis
-- What is a type system (importance of type safety)
+- What is a STATIC type system (importance of type safety)
+  - Rozdíl mezi static typing vs runtime 
+- Cool věci, co dělají lidi s TS (type-fest, ts-belt, )
 
 **Analysis**
 
@@ -37,25 +39,27 @@ Programovací jazyk TypeScript představil ve verzi 4.1 šablonové literálové
   - ClojureScript?
   - Flow
   - TypeScript
-    - Why it became so popular?
+    - Je velký rozdíl mezi Flow, TypeScript oproti Elm/ReScript/ClojureScript 
+    - Buď vytváříme nový jazyk nebo upravovat jazyk
 - Core Typescript Syntax
   - Types and their assignability
     - Primitive Types
     - Literal Types
     - Structures (nominal typing vs. structural typing)
+      - Relační / hiearchický strom 
     - Unions
     - Intersections
     - `unknown`, `never`, `any`
   - `Record`
   - `Array` and tuples
-- Type System of TypeScript
+- Type System of TypeScript (with examples / TypeChallenges)
 
   - Conditional Types and Inferrence
   - Loops via Recursive Types
   - Equality Checks
-  - Limitations
+  - Limitations (and how to bypass them)
 
-- TypeScript compiler internals
+- TypeScript compiler internals (currently avoid)
 
   > The idea behind explanation of compiler internals is to explain tracer returned by `—generateTrace` and `—extendedDiagnostics`
 
@@ -66,12 +70,15 @@ Programovací jazyk TypeScript představil ve verzi 4.1 šablonové literálové
 - Prior Art
   - `kawayiLinLin/typescript-lodash`
   - `arielhs/ts-arithmetic`
+  - ts-belt, type-fest 
 
 **Implementation**
 
 - Structure of the project
 - Explanation behind all of the methods
   - Representation of numbers in TS (`array`, destructured object)
+  - Explanation of the code, add alternative methods
+  - Okomentovat, proč to reprezentuji do objektů (a nikoliv do řetězců)
 
 **Testing**
 

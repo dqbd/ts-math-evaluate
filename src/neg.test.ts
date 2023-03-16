@@ -1,4 +1,4 @@
-import { Neg } from "../src/neg"
+import { Neg } from "./neg"
 
 // $ExpectType "300"
 type IntCase1 = Neg<"-300">

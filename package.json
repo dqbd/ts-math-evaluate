@@ -6,7 +6,7 @@
   "author": "Duong Tat Dat <david@duong.cz>",
   "license": "MIT",
   "scripts": {
-    "test": "eslint --ext .js,.ts test"
+    "test": "eslint --ext .js,.ts src"
   },
   "dependencies": {
     "@typescript-eslint/eslint-plugin": "^5.44.0",
