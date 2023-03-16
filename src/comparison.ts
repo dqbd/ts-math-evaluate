@@ -75,7 +75,7 @@ type CompareAbsNumbersCase4 = CompareAbsNumbers<
   ParseFloatNumber<"0.123">
 >
 
-type CompareSignNumbers<
+export type CompareSignNumbers<
   X extends SignFloatNumber,
   Y extends SignFloatNumber
 > = {

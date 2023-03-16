@@ -127,7 +127,7 @@ export type SubOperatorSwitch<A extends FloatNumber, B extends FloatNumber> = {
   [0]: SignFloatNumber<"+", FloatNumber<[0], []>>
 }[CompareAbsNumbers<A, B>]
 
-type SubSignFloatNumber<
+export type SubSignFloatNumber<
   A extends SignFloatNumber,
   B extends SignFloatNumber
 > = {

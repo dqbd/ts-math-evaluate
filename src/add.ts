@@ -153,7 +153,7 @@ export type AddFloatNumber<
     : never
   : never
 
-type AddSignFloatNumber<
+export type AddSignFloatNumber<
   A extends SignFloatNumber,
   B extends SignFloatNumber
 > = {
