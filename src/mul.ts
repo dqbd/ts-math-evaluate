@@ -41,7 +41,18 @@ type MultiplySingleInt<
   ? Tmp["result"]
   : [Tmp["carry"], ...Tmp["result"]]
 
-type MultiplyInt<
+export type MultiplySign<A extends "+" | "-", B extends "+" | "-"> = {
+  "+": {
+    "+": "+"
+    "-": "-"
+  }
+  "-": {
+    "+": "-"
+    "-": "+"
+  }
+}[A][B]
+
+export type MultiplyInt<
   X extends Digit[],
   Y extends Digit[],
   Tmp extends { result: Digit[]; offset: Digit[] } = { result: [0]; offset: [] }
@@ -57,15 +68,17 @@ type MultiplyInt<
   : Tmp["result"]
 
 // TODO: handle floating point numbers
-// TODO: handle sign
+export type MultiplySignFloat<
+  X extends SignFloatNumber,
+  Y extends SignFloatNumber
+> = SignFloatNumber<
+  MultiplySign<X["sign"], Y["sign"]>,
+  FloatNumber<MultiplyInt<X["float"]["int"], Y["float"]["int"]>, []>
+>
+
 export type Multiply<X extends NumberLike, Y extends NumberLike> = [
   ParseSignFloatNumber<X>,
   ParseSignFloatNumber<Y>
 ] extends [infer X extends SignFloatNumber, infer Y extends SignFloatNumber]
-  ? StringifySignFloat<
-      SignFloatNumber<
-        "+",
-        FloatNumber<MultiplyInt<X["float"]["int"], Y["float"]["int"]>, []>
-      >
-    >
+  ? StringifySignFloat<MultiplySignFloat<X, Y>>
   : never

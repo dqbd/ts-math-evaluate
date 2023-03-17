@@ -9,16 +9,17 @@ import {
   StringifySignFloat,
 } from "./utils/parse"
 
+export type FloorSignFloatNumber<Number extends SignFloatNumber> =
+  TruncateSignFloatNumber<Number> extends infer TrucateNumber extends SignFloatNumber
+    ? CompareSignNumbers<Number, TrucateNumber> extends -1
+      ? SubSignFloatNumber<
+          TrucateNumber,
+          SignFloatNumber<"+", FloatNumber<[1], []>>
+        >
+      : TrucateNumber
+    : never
+
 export type Floor<Value extends NumberLike> =
   ParseSignFloatNumber<Value> extends infer Number extends SignFloatNumber
-    ? TruncateSignFloatNumber<Number> extends infer TrucateNumber extends SignFloatNumber
-      ? CompareSignNumbers<Number, TrucateNumber> extends -1
-        ? StringifySignFloat<
-            SubSignFloatNumber<
-              TrucateNumber,
-              SignFloatNumber<"+", FloatNumber<[1], []>>
-            >
-          >
-        : StringifySignFloat<TrucateNumber>
-      : never
+    ? StringifySignFloat<FloorSignFloatNumber<Number>>
     : never

@@ -73,6 +73,20 @@ type SubArr<
     : never
   : Tmp
 
+export type SubDigit<A extends Digit[], B extends Digit[]> = PadStartEqually<
+  A,
+  B
+> extends [infer PA extends Digit[], infer PB extends Digit[]]
+  ? SubArr<PA, PB> extends [
+      infer Rest extends Digit[],
+      infer Carry extends boolean
+    ]
+    ? Carry extends true
+      ? never
+      : Rest
+    : never
+  : never
+
 type PadFloat<
   A extends { int: number[]; frac: number[] },
   B extends { int: number[]; frac: number[] }

@@ -22,5 +22,3 @@ export type Ceil<Value extends NumberLike> =
         : StringifySignFloat<TrucateNumber>
       : never
     : never
-
-

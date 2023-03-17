@@ -1,3 +1,4 @@
+import { PadStartEqually } from "./utils/array"
 import { CmpMap } from "./utils/map"
 import {
   Digit,
@@ -8,34 +9,41 @@ import {
   SignFloatNumber,
 } from "./utils/parse"
 
-export type CompareDigits<X extends Digit[], Y extends Digit[]> = [
-  X,
-  Y
-] extends [
+type CompareArr<X extends Digit[], Y extends Digit[]> = [X, Y] extends [
   [infer XHead extends Digit, ...infer XRest extends Digit[]],
   [infer YHead extends Digit, ...infer YRest extends Digit[]]
 ]
   ? CmpMap[XHead][YHead] extends infer Result extends number
     ? Result extends 0
-      ? CompareDigits<XRest, YRest>
+      ? CompareArr<XRest, YRest>
       : Result
     : never
   : 0
 
 // $ExpectType -1
-type CompareCase1 = CompareDigits<[1], [2]>
+type CompareCase1 = CompareArr<[1], [2]>
 
 // $ExpectType 1
-type CompareCase2 = CompareDigits<[2], [1]>
+type CompareCase2 = CompareArr<[2], [1]>
 
 // $ExpectType 0
-type CompareCase3 = CompareDigits<[2], [2]>
+type CompareCase3 = CompareArr<[2], [2]>
 
 // $ExpectType -1
-type CompareCase4 = CompareDigits<[2, 3, 9], [2, 4, 1]>
+type CompareCase4 = CompareArr<[2, 3, 9], [2, 4, 1]>
 
 // $ExpectType 1
-type CompareCase5 = CompareDigits<[2, 8, 9], [2, 4, 1]>
+type CompareCase5 = CompareArr<[2, 8, 9], [2, 4, 1]>
+
+export type CompareDigits<
+  X extends Digit[],
+  Y extends Digit[]
+> = PadStartEqually<X, Y> extends [
+  infer A extends Digit[],
+  infer B extends Digit[]
+]
+  ? CompareArr<A, B>
+  : never
 
 export type CompareAbsNumbers<
   X extends FloatNumber,
@@ -44,9 +52,9 @@ export type CompareAbsNumbers<
   infer X extends FloatNumber,
   infer Y extends FloatNumber
 ]
-  ? CompareDigits<X["int"], Y["int"]> extends infer IntCmp extends number
+  ? CompareArr<X["int"], Y["int"]> extends infer IntCmp extends number
     ? IntCmp extends 0
-      ? CompareDigits<X["frac"], Y["frac"]>
+      ? CompareArr<X["frac"], Y["frac"]>
       : IntCmp
     : never
   : never
