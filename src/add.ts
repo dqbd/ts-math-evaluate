@@ -11,6 +11,7 @@ import {
 } from "./utils/parse"
 import { Or } from "./utils/boolean"
 import { SubOperatorSwitch } from "./sub"
+import { PadStartEqually } from "./utils/array"
 
 type AsNumber<S extends string> = S extends `${infer N extends number}`
   ? N
@@ -120,6 +121,35 @@ type AddArrCase3 = AddArr<[9, 0], [0, 9]>
 
 // $ExpectType [[0, 1, 1], true]
 type AddArrCase4 = AddArr<[0, 1, 2], [9, 9, 9]>
+
+export type AddInt<A extends Digit[], B extends Digit[]> = PadStartEqually<
+  A,
+  B
+> extends [infer PA extends Digit[], infer PB extends Digit[]]
+  ? AddArr<PA, PB> extends [
+      infer Rest extends Digit[],
+      infer Carry extends boolean
+    ]
+    ? Carry extends true
+      ? [1, ...Rest]
+      : Rest
+    : never
+  : never
+
+// $ExpectType [1, 0]
+type AddIntCase1 = AddInt<[9], [1]>
+
+// $ExpectType [1, 0, 0, 0]
+type AddIntCase2 = AddInt<[9, 9, 9], [0, 0, 1]>
+
+// $ExpectType [9, 9]
+type AddIntCase3 = AddInt<[9, 0], [0, 9]>
+
+// $ExpectType [1, 0, 1, 1]
+type AddIntCase4 = AddInt<[0, 1, 2], [9, 9, 9]>
+
+// $ExpectType [9, 9, 9]
+type AddIntCase5 = AddInt<[0], [9, 9, 9]>
 
 export type AddFloatNumber<
   A extends FloatNumber,

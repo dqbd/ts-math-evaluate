@@ -15,7 +15,14 @@ const subMapCarry = digit.map((x) =>
 )
 
 const mulMapCarry = digit.map((x) =>
-  digit.map((y) => [(x * y) % 10, Math.floor((x * y) / 10)])
+  digit.map((y) => {
+    const [carry, value] = `${x * y}`
+      .padStart(2, "0")
+      .split("")
+      .map((i) => Number(i))
+
+    return [value, carry]
+  })
 )
 
 const cmpDigitMap = digit.map((x) => digit.map((y) => Math.sign(x - y)))
@@ -25,6 +32,7 @@ fs.writeFileSync(
   prettier.format(
     `export type AddMapCarry = ${JSON.stringify(addMapCarry)}
     export type SubMapCarry = ${JSON.stringify(subMapCarry)}
+    export type MulMapCarry = ${JSON.stringify(mulMapCarry)}
     export type CmpMap = ${JSON.stringify(cmpDigitMap)}`,
     { semi: false, parser: "babel-ts" }
   ),
