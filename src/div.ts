@@ -2,7 +2,7 @@ import { AddInt } from "./add"
 import { CompareDigits } from "./comparison"
 import { MultiplySign } from "./mul"
 import { SubDigit } from "./sub"
-import { TrimStart } from "./utils/array"
+import { PadEndEqually, TrimStart } from "./utils/array"
 import {
   Digit,
   FloatNumber,
@@ -79,27 +79,41 @@ type LongDivisionFrac<
       >
   : never
 
-type DivideFloatNumber<
+type PadFloatForDivide<
   X extends FloatNumber,
   Y extends FloatNumber
-> = LongDivisionDigit<X["int"], Y["int"]> extends infer IntDivision extends {
+> = PadEndEqually<X["frac"], Y["frac"]> extends [
+  infer XFrac extends Digit[],
+  infer YFrac extends Digit[]
+]
+  ? [[...X["int"], ...XFrac], [...Y["int"], ...YFrac]]
+  : never
+
+type DivideWithFloat<X extends Digit[], Y extends Digit[]> = LongDivisionDigit<
+  X,
+  Y
+> extends infer IntDivision extends {
   quotient: Digit[]
   remainder: Digit[]
 }
   ? FloatNumber<
       IntDivision["quotient"],
-      LongDivisionFrac<[...IntDivision["remainder"], 0], Y["int"]>
+      LongDivisionFrac<[...IntDivision["remainder"], 0], Y>
     >
   : never
 
-// TODO: handle rational numbers
 export type DivideSignFloatNumber<
   A extends SignFloatNumber,
   B extends SignFloatNumber
-> = SignFloatNumber<
-  MultiplySign<A["sign"], B["sign"]>,
-  DivideFloatNumber<A["float"], B["float"]>
->
+> = PadFloatForDivide<A["float"], B["float"]> extends [
+  infer AInt extends Digit[],
+  infer BInt extends Digit[]
+]
+  ? SignFloatNumber<
+      MultiplySign<A["sign"], B["sign"]>,
+      DivideWithFloat<AInt, BInt>
+    >
+  : never
 
 export type Divide<
   X extends NumberLike,

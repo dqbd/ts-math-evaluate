@@ -2,6 +2,7 @@ import { AddInt } from "./add"
 import { AddMapCarry, MulMapCarry } from "./utils/map"
 import {
   Digit,
+  ExpandNumberToArray,
   FloatNumber,
   NumberLike,
   ParseSignFloatNumber,
@@ -67,13 +68,56 @@ export type MultiplyInt<
     : never
   : Tmp["result"]
 
-// TODO: handle floating point numbers
+type IntFloat<
+  Mantissa extends Digit[] = Digit[],
+  DecimalPlaces extends Array<0> = Array<0>
+> = {
+  mantissa: Mantissa
+  decimalPlaces: DecimalPlaces
+}
+
+type ExpandIntFloat<X extends FloatNumber> = IntFloat<
+  [...X["int"], ...X["frac"]],
+  ExpandNumberToArray<X["frac"]["length"]>
+>
+
+type Compress<
+  Count extends Array<0>,
+  Left extends Digit[],
+  Right extends Digit[] = []
+> = Count extends [0, ...infer RestCount extends 0[]]
+  ? Left extends [...infer LeftRest extends Digit[], infer End extends Digit]
+    ? Compress<RestCount, LeftRest, [End, ...Right]>
+    : Compress<RestCount, Left, [0, ...Right]>
+  : [Left, Right]
+
+type CompressIntFloat<X extends IntFloat> = Compress<
+  X["decimalPlaces"],
+  X["mantissa"]
+> extends [infer Int extends Digit[], infer Frac extends Digit[]]
+  ? FloatNumber<Int, Frac>
+  : never
+
+type MultiplyFloat<
+  X extends FloatNumber,
+  Y extends FloatNumber
+> = ExpandIntFloat<X> extends infer A extends IntFloat
+  ? ExpandIntFloat<Y> extends infer B extends IntFloat
+    ? CompressIntFloat<
+        IntFloat<
+          MultiplyInt<A["mantissa"], B["mantissa"]>,
+          [...A["decimalPlaces"], ...B["decimalPlaces"]]
+        >
+      >
+    : never
+  : never
+
 export type MultiplySignFloat<
   X extends SignFloatNumber,
   Y extends SignFloatNumber
 > = SignFloatNumber<
   MultiplySign<X["sign"], Y["sign"]>,
-  FloatNumber<MultiplyInt<X["float"]["int"], Y["float"]["int"]>, []>
+  MultiplyFloat<X["float"], Y["float"]>
 >
 
 export type Multiply<X extends NumberLike, Y extends NumberLike> = [
