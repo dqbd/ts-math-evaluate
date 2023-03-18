@@ -4,6 +4,12 @@ export type TrimStart<List extends Array<any>> = List["length"] extends 1
   ? TrimStart<Rest>
   : List
 
+export type TrimEnd<List extends Array<any>> = List["length"] extends 1
+  ? List
+  : List extends [...infer Rest, 0]
+  ? TrimEnd<Rest>
+  : List
+
 export type PadStart<
   TL extends number,
   List extends Array<any> = []

@@ -132,3 +132,18 @@ type CompareSignNumbersCase6 = CompareSignNumbers<
   ParseSignFloatNumber<"-0">,
   ParseSignFloatNumber<"0">
 >
+
+export type IsEvenInt<X extends Digit[]> = X extends [
+  ...Digit[],
+  infer Tail extends Digit
+]
+  ? Tail extends 0 | 2 | 4 | 6 | 8
+    ? true
+    : false
+  : false
+
+// $ExpectType true
+type IsEvenCase1 = IsEvenInt<[1, 2, 0]>
+
+// $ExpectType false
+type IsEvenCase2 = IsEvenInt<[1]>
