@@ -1,7 +1,7 @@
-import { Add as AddImpl } from "./add"
-import { Sub as SubImpl } from "./sub"
-import { Neg as NegImpl } from "./neg"
-import { NumberLike } from "./utils/parse"
+import { Add as AddImpl } from "../add"
+import { Sub as SubImpl } from "../sub"
+import { Neg as NegImpl } from "../neg"
+import { NumberLike } from "../utils/parse"
 
 interface Fn {
   input: unknown
@@ -24,7 +24,7 @@ type Pipe<Acc, Funcs extends Fn[]> = Funcs extends [
   ? Pipe<Call<First, Acc>, Rest>
   : Acc
 
-namespace Number {
+namespace Math {
   export interface Add<Right extends NumberLike> extends Fn {
     output: this["input"] extends NumberLike
       ? AddImpl<this["input"], Right>
@@ -43,4 +43,4 @@ namespace Number {
 }
 
 // $ExpectType "-445"
-type X = Pipe<"123", [Number.Add<"345">, Number.Sub<"23">, Number.Neg]>
+type X = Pipe<"123", [Math.Add<"345">, Math.Sub<"23">, Math.Neg]>
