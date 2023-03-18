@@ -89,7 +89,7 @@ type PadFloatForDivide<
   ? [[...X["int"], ...XFrac], [...Y["int"], ...YFrac]]
   : never
 
-type DivideWithFloat<X extends Digit[], Y extends Digit[]> = LongDivisionDigit<
+export type DivideInt<X extends Digit[], Y extends Digit[]> = LongDivisionDigit<
   X,
   Y
 > extends infer IntDivision extends {
@@ -102,6 +102,16 @@ type DivideWithFloat<X extends Digit[], Y extends Digit[]> = LongDivisionDigit<
     >
   : never
 
+export type DivideFloatNumber<
+  A extends FloatNumber,
+  B extends FloatNumber
+> = PadFloatForDivide<A, B> extends [
+  infer AInt extends Digit[],
+  infer BInt extends Digit[]
+]
+  ? DivideInt<AInt, BInt>
+  : never
+
 export type DivideSignFloatNumber<
   A extends SignFloatNumber,
   B extends SignFloatNumber
@@ -109,10 +119,7 @@ export type DivideSignFloatNumber<
   infer AInt extends Digit[],
   infer BInt extends Digit[]
 ]
-  ? SignFloatNumber<
-      MultiplySign<A["sign"], B["sign"]>,
-      DivideWithFloat<AInt, BInt>
-    >
+  ? SignFloatNumber<MultiplySign<A["sign"], B["sign"]>, DivideInt<AInt, BInt>>
   : never
 
 export type Divide<

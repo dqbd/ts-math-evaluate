@@ -28,7 +28,7 @@ type PowInt<X extends SignFloatNumber, N extends Digit[]> = TrimEnd<N> extends [
   : never
 
 // TODO: handle fractional numbers / convert to never
-type PowSignFloatNumbers<
+export type PowSignFloatNumbers<
   X extends SignFloatNumber,
   N extends SignFloatNumber
 > = N["sign"] extends "-"
