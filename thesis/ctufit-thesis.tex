@@ -114,7 +114,7 @@
 %%%%%%%%%%%%%%%%%%%%%%
 
 \onehalfspacing
-\NewDocumentCommand{\codeword}{v}{%
+\NewDocumentCommand{\code}{v}{%
   \texttt{\textcolor{blue}{#1}}%
 }
 
@@ -228,7 +228,17 @@ W3C & World Wide Web Consortium
 % MODIFY ANYTHING BELOW THIS LINE
 %%%%%%%%%%%%%%%%%%%
 
-\include{text/text} % include `text.tex' from `text/' subdirectory
+\setcounter{page}{1}
+
+\include{text/introduction/introduction}
+
+\include{text/analysis/analysis}
+
+\include{text/implementation/implementation}
+
+\include{text/testing/testing}
+
+\include{text/conclusion/conclusion}
 
 \appendix\appendixinit % do not remove these two commands
 
