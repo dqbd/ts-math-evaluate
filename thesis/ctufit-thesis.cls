@@ -494,8 +494,8 @@
 	\@ifpackageloaded{minted}{%
 		\DeclareRobustCommand{\listingscaption}{\thectufitlistinglabel}%
 		\DeclareRobustCommand{\listoflistingscaption}{\thectufitlollabel}%
-		\usemintedstyle{bw}%
-		\setminted{bgcolor=backgroundgray}%
+		\usemintedstyle{vs}%
+		\setminted{bgcolor=backgroundgray,baselinestretch=1,xleftmargin=\fboxsep,xrightmargin=\fboxsep}%
 		\setmintedinline{bgcolor={}}
 	}{}%
 }

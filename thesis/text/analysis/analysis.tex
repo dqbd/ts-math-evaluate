@@ -44,6 +44,140 @@ TypeScript has become the de-facto standard for writing JavaScript code with sta
 
 \section{Typescript syntax}
 
+Types can be interpreted as sets.
+
+A primitive value is data, that is not an object and has no methods or properties. These primitives are immutable, thus they cannot be altered. Similar to JavaScript, TypeScript has these following types for primitive values:
+
+\begin{listing}[h]
+\caption{Primitive Types}
+\begin{minted}{TypeScript}
+type Primitive = 
+  | string | number | bigint
+  | boolean | undefined | symbol | null;
+\end{minted}
+\end{listing}
+
+
+Some primitive values represent a singular data value, such as \code{null} or \code{undefined}, but many of these primitives can represent an infinite number of values, like \code{number}, \code{bignumber} or \code{string}.
+
+Literal types are a subset of primitive values, which are used to describe an exact possible value.
+
+\begin{listing}[h]
+\caption{Literal Types}
+\begin{minted}{TypeScript}
+type Literal = "foo" | 42 | true | 100n;
+\end{minted}
+\end{listing}
+
+To represent data structures such as objects and arrays, we can use the following types: objects, records, tuples and arrays.
+
+\begin{listing}[h]
+\caption{Data structures}
+\begin{minted}{TypeScript}
+type Structures = 
+  | { foo: string, bar: number }     // object
+  | { [key in keyof Keys]: number }  // record
+  | [number, string]                 // tuple
+  | number[]                         // array
+\end{minted}
+\end{listing}
+
+TypeScript uses structured typing, which means that TypeScript only validates the shape of the data. Essentially, if the data has the same shape as the type, it is considered to be of that type. This is also known as duck typing, essentially if it walks like a duck and quacks like a duck, it is a duck.
+
+\begin{listing}[h]
+\caption{Duck typing}
+\begin{minted}{TypeScript}
+type DuckLike = { quack: () => void; type: string };
+
+const Duck: DuckLike = {
+  quack: () => console.log("duck!"),
+  type: "duck",
+};
+
+// this will be still valid
+const Goose: DuckLike = {
+  quack: () => console.log("goose!"),
+  type: "goose",
+};
+\end{minted}
+\end{listing}
+
+Structured typing does include some drawbacks unlike in nominal type system, where each type is unique and sama data cannot be assigned across types, but these can be easily mitigated using literal types to acts as brands.
+
+\begin{listing}[h]
+\caption{Nominal typing in TS}
+\begin{minted}{TypeScript}
+type DuckLike = { quack: () => void; type: "duck" };
+
+const Duck: DuckLike = {
+  quack: () => console.log("duck!"),
+  type: "duck",
+};
+
+// this will not be valid
+const Goose: DuckLike = {
+  quack: () => console.log("goose!"),
+  type: "goose",
+};
+\end{minted}
+\end{listing}
+
+Types can be generalised into sets, where each type can contain a set of values. A type can be a subset or a superset of an other type.
+
+\begin{figure}
+  \centering
+  \resizebox{\textwidth}{!}{
+    \includegraphics{text/analysis/2023-03-21-20-08-52.png}
+  }
+  \caption{~Types represented as sets}
+\end{figure}
+
+Similar to other sets in mathematics, types can be combined together using unions. With unions, we can broaden the scope of the type to represent multiple values.
+
+\begin{figure}
+  \centering
+  \resizebox{\textwidth}{!}{
+    \includegraphics{text/analysis/2023-03-21-20-00-30.png}
+  }
+  \caption{~Union of types}
+\end{figure}
+
+Types can also interect each other to create a more narrower type.
+
+
+Set theory behind types.
+
+\begin{itemize}
+  \item Union
+  \item Intersection
+  \item \code{never}
+  \item \code{unknown}
+  \item \code{any} - it doesn't fit anywhere, essentially acting as a way to opt-out of typechecking.
+\end{itemize}
+
+Enums
+\todo{Enums}
+
+Functions and \code{void}
+
+Void
+\todo{Enums}
+
+Arrays
+
+\code{any}, \code{never}, \code{unknown}
+
+Object
+
+Generics
+
+\begin{itemize}
+  \item Terminology - generics, type arguments, return type
+  \item Conditional types
+  \item Recursive types
+  \item Mapped types
+  \item Template Literal Types
+\end{itemize}
 
 \subsection{Types and their assignability}
 
@@ -55,6 +189,7 @@ TypeScript has become the de-facto standard for writing JavaScript code with sta
   \item Unions and Intersections
 \end{itemize}
 
+\subsection{Conditional Types}
 \subsection{Conditional Types}
 \subsection{Recursive Types}
 \subsection{Mapped Types}
