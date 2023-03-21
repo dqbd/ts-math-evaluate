@@ -492,6 +492,7 @@
 				frame=single,framerule=0pt,xleftmargin=\fboxsep,xrightmargin=\fboxsep}%
 	}{}%
 	\@ifpackageloaded{minted}{%
+    \captionsetup[listing]{skip=-1pt}
 		\DeclareRobustCommand{\listingscaption}{\thectufitlistinglabel}%
 		\DeclareRobustCommand{\listoflistingscaption}{\thectufitlollabel}%
 		\usemintedstyle{vs}%
