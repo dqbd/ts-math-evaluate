@@ -34,7 +34,7 @@ Both Flow and TypeScript are similar in regards to features at the time of writi
 
 \subsection{TypeScript}
 
-TypeScript is a staticly typed programming language developed and maintained by Microsoft \cite{TypeScriptJavaScriptSyntax}. It is a language that compiles to JavaScript and adds static type checking to JavaScript \cite{DocumentationTypeScriptJavaScript}. Unlike Elm or ReScript, TypeScript is a syntactical subset of JavaScript, which means that any valid JavaScript code can be a valid TypeScript code\footnote{With a lax compiler configuration}. Similar to Flow, type annotation provided by the developer are fully eraseable either by the TypeScript \code|tsc| compiler or by other community build tools, such as \code|babel|\cite{BabelCompilerNext}, \code|esbuild|\cite{EsbuildExtremelyFast} or \code|swc|\cite{SWCRustbasedPlatform}.
+TypeScript is a staticly typed programming language developed and maintained by Microsoft \cite{TypeScriptJavaScriptSyntax}. It is a language that compiles to JavaScript and adds static type checking to JavaScript \cite{DocumentationTypeScriptJavaScript}. Unlike Elm or ReScript, TypeScript is a syntactical superset of JavaScript, which means that any valid JavaScript code can be a valid TypeScript code\footnote{With a lax compiler configuration}. Similar to Flow, type annotation provided by the developer are fully eraseable either by the TypeScript \code|tsc| compiler or by other community build tools, such as \code|babel|\cite{BabelCompilerNext}, \code|esbuild|\cite{EsbuildExtremelyFast} or \code|swc|\cite{SWCRustbasedPlatform}.
 
 Type system in TypeScript is considered to be less sound and more forgiving, as soundness is stated as an explicit non-goal for the design team of TypeScript \cite{TypeScriptDesignGoals}, emphasis on striking a balance between productivity and correctness. By default, TypeScript compiler is not strict and the language itself includes an escape hatch for developers to opt-out of type checking by using the \code|any| type or using \code|@ts-ignore| comment annotations. Nevertheless, with proper compiler configuration, the type system of TypeScript can be as sound as in Flow.
 
@@ -43,6 +43,8 @@ Both Flow and TypeScript support advanced features such as generics and utility 
 TypeScript has become the de-facto standard for writing JavaScript code with static types. With deep integration with Visual Studio Code \cite{VisualStudioCode}, rich build ecosystem and high compatibility with existing JavaScript libraries and tools, TypeScript has become one of the fastest growing language according to 2022 Octoverse report by Github \cite{Octoverse2022State}.
 
 \section{Typescript syntax}
+
+TypeScript allows us to specify stypes for variables, function arguments and return values in JavaScript. 
 
 Types can be interpreted as sets.
 
@@ -124,7 +126,7 @@ const Goose: DuckLike = {
 
 Types can be generalised into sets, where each type can contain a set of values. A type can be a subset or a superset of an other type.
 
-\begin{figure}[h]
+\begin{figure}
   \centering
   \resizebox{\textwidth}{!}{
     \includegraphics{text/analysis/2023-03-21-20-08-52.png}

@@ -5,4 +5,26 @@
 
 \section{What is static type system}
 
+In statically typed languages, a data type of a variable is known at compile time. The compiler uses the additional information about data types to verify the source code during compilation. The data type itself can be deduced from the usage in the code (type inferrence) or a programmer explicitly specifies the data type of a variable before usage. Example of such languages using static typing are for instance Java, C\#, C++, etc.
+
+Whereas in dynamically typed languages, the type of a variable is determined at runtime based on the value being assigned. This flexibility allows developers to write code faster in exchange of raised likelihood of type relared errors in runtime. Example of such languages are Python, Ruby, PHP and most notably JavaScript.
+
+Static typing offers numerous compelling benefits, that can enhance the development process:
+\begin{itemize}
+  \item Reduced likelihood of errors
+  \item Self-documenting
+  \item Less code to capture intent
+  \item More confidence when refactoring
+  \item Better tooling
+\end{itemize}
+
+First, with static typing a large class of errors are caught much earlier in the development process, thereby reducing the likelihood of bugs and runtime issues, which are inherently harder to catch and debug.
+
+Even though developers might need to write more code to specify the types for the variable, if code is properly structured, the type system is able to determine the intent of the developer without writing additional code.
+
+
+
+Additionally, with writing types, developers are actively self-documenting the code, which in turn increases the readability of the code, making the codebase easier to maintain and understand. Refactoring is also significantly easier with static types, as potential errors are raised during compile time instead of runtime.
+
+
 \section{Cool stuff being done with TS}
