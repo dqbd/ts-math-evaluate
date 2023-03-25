@@ -3,28 +3,24 @@
 
 \section{Motivation}
 
+TypeScript is a hot topic in the web development ecosystem and type-safety is eating the world. As of 2023, majority of developers are using TypeScript most of the time, skipping JavaScript entirely. Over the years, TypeScript has transformed from a basic type annotation tool to a full fledged programming language within the type system itself. Libraries such as Prisma for database type-safety, Zod for combining schema validation and static type inference and tRPC for API end-to-end type-safety across boundaries utilise the power of advanced TypeScript types to provide a better experience for developers. With smart suggestions being available right in the editor of choice, TypeScript ensures high quality of code while avoiding any runtime costs due to the type system being evaluated during compilation. Since most of the editors use a language server to provide the developer with the smart suggestions, there is an incentive to utilise the type system instead of running a daemon alongside LSP or adding an additional build step.
+
+However, TypeScript is only as powerful as the types that you give to it. A great burden is laid to the maintainers of libraries to provide descriptive and useful types. The goal of this thesis is to laid out and highlight the capabilities of the TypeScript type system, discussing the constraints and limitations found in TypeScript. 
+
 \section{What is static type system}
+
+For years, type systems in programming languages have been a well-known and heavily discussed topic. The main goal of a type system is to provide a formal specification of the types of data that can be manipulated by a program.
 
 In statically typed languages, a data type of a variable is known at compile time. The compiler uses the additional information about data types to verify the source code during compilation. The data type itself can be deduced from the usage in the code (type inferrence) or a programmer explicitly specifies the data type of a variable before usage. Example of such languages using static typing are for instance Java, C\#, C++, etc.
 
-Whereas in dynamically typed languages, the type of a variable is determined at runtime based on the value being assigned. This flexibility allows developers to write code faster in exchange of raised likelihood of type relared errors in runtime. Example of such languages are Python, Ruby, PHP and most notably JavaScript.
+Whereas in dynamically typed languages, the type of a variable is determined at runtime based on the value being assigned. Developers do not need to explicitly declare the type of a variable. Some of the popular dynamically typed languages include Python, Ruby, PHP and most notably JavaScript, which is widely used to create interactive and dynamic user interfaces on the web platform. Dynamically typed languages tend to be more flexible and allow developers, notably beginner developers, to write code faster and iterate quicker.
 
-Static typing offers numerous compelling benefits, that can enhance the development process:
-\begin{itemize}
-  \item Reduced likelihood of errors
-  \item Self-documenting
-  \item Less code to capture intent
-  \item More confidence when refactoring
-  \item Better tooling
-\end{itemize}
+Static typing offers numerous compelling benefits, that can enhance the development process. First, a large class of errors are caught earlier in the development process. This reduces the likelihood of bugs and runtime issues that can be difficult to diagnose and debug. 
 
-First, with static typing a large class of errors are caught much earlier in the development process, thereby reducing the likelihood of bugs and runtime issues, which are inherently harder to catch and debug.
+With static typing, developers can rely on a compiler system to ensure that their code conforms to the expected data types. Developers can also refactor existing typed code with more confidence, as the system is giving developers direct feedback when refactoring. 
 
-Even though developers might need to write more code to specify the types for the variable, if code is properly structured, the type system is able to determine the intent of the developer without writing additional code.
+Furthermore, by writing types developers are actively self-documenting the code, making the code more readable and easier to understand, especially when dealing wih previously unseen code. And even though developers might need to write more code to specify the types for the variable, the type system is able to determine the intent of the developer without writing additional code. 
 
+\section{Strucute of the work}
 
-
-Additionally, with writing types, developers are actively self-documenting the code, which in turn increases the readability of the code, making the codebase easier to maintain and understand. Refactoring is also significantly easier with static types, as potential errors are raised during compile time instead of runtime.
-
-
-\section{Cool stuff being done with TS}
+This thesis will provide a compherensive analysis of relevant advanced constructs found in the TypeScript type system, and how they can be used to allow robust meta-programming within the types itself. To demonstrate the capabilities of the type system and the usage of the constructs itself, we provide an implementation of a generic math expression evaluator library that operates strictly on the type level. We discuss how the library can be tested and the output validated and we evaluate the performance of implemented operations against other existing type level math libraries and the impact on which the library has on type checking and developer experience in the editor.
