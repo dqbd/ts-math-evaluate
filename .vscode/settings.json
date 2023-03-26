@@ -108,5 +108,11 @@
       "args": ["--synctex", "--keep-logs", "%DOC%.tex"],
       "env": {}
     }
+  ],
+  "grammarly.selectors": [
+    {
+      "language": "latex",
+      "scheme": "file"
+    }
   ]
 }
