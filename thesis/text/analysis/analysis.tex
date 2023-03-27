@@ -22,11 +22,11 @@ Elm also includes a lot of quality-of-life improvements and benefits, for instan
 
 ReScript is a programming language built on top of the OCaml toolchain. Unlike Flow or TypeScript, ReScript is not a superset of JavaScript, instead, the language compiles to JavaScript. ReScript was created as a spin-off from the Reason programming language and accompanying BuckleScript compiler, aiming to vertically integrate and streamline the adoption barrier caused by the need to be familiar with multiple unrelated tools and toolchains \cite{BuckleScriptReasonRebranding}.
 
-The language aims to be more sound with more powerful type inference than TypeScript, borrowing the Hindler-Milner type system from OCaml implementation \cite{EfficientInsightfulGeneralization,HistoryReScript2022}, thus most of time the types can be inferred automatically without the need to annotate them explicitly, whereas TypeScript utilizes bidirectional type checking \cite{ReconstructingTypeScriptPart}.
+The language aims to be more sound with more powerful type inference than TypeScript, borrowing the Hindler-Milner type system from OCaml implementation \cite{EfficientInsightfulGeneralization, HistoryReScript2022}, thus most of the time the types can be inferred automatically without the need to annotate them explicitly, whereas TypeScript utilizes bidirectional type checking \cite{ReconstructingTypeScriptPart}.
 
 \subsection{Flow}
 
-Flow is a static type checker for JavaScript \cite{chaudhuriFastPreciseType2017,Flow2023}, which allows developers to annotate their code with static types. Flow is developed by Meta and is internally used in production by Facebook, Instagram and React Native. Type annotations in Flow are fully eraseable, which means that the type annotations can be fully removed from the Flow code to emit valid JavaScript code. The checking of these types is occurring at compile-time before removal in build-time. Flow is also a superset of JavaScript, which means any JavaScript code is a valid Flow code.
+Flow is a static type checker for JavaScript \cite{chaudhuriFastPreciseType2017, Flow2023}, which allows developers to annotate their code with static types. Flow is developed by Meta and is internally used in production by Facebook, Instagram and React Native. Type annotations in Flow are fully erasable, which means that the type annotations can be fully removed from the Flow code to emit valid JavaScript code. The checking of these types is occurring at compile-time before removal in build-time. Flow is also a superset of JavaScript, which means any JavaScript code is a valid Flow code.
 
 One of the primary goals of Flow is to provide type soundness; the ability to catch every error that might happen in runtime at compile-time, no matter how likely it is to happen. This means, that a valid Flow code can provide developers some guarantees about the type a value has in runtime, at the expense of catching errors, which are unlikely to happen in runtime.
 
@@ -34,24 +34,49 @@ Both Flow and TypeScript are similar regarding features at the time of writing. 
 
 \subsection{TypeScript}
 
-TypeScript is a statically typed programming language developed and maintained by Microsoft \cite{TypeScriptJavaScriptSyntax}. It is a language that compiles down to JavaScript and adds static type checking to JavaScript \cite{DocumentationTypeScriptJavaScript}. Unlike Elm or ReScript, TypeScript is a syntactical superset of JavaScript, which means that any valid JavaScript code can be a valid TypeScript code\footnote{With a lax compiler configuration}. Similar to Flow, type annotations provided by the developer are fully erasable either by the TypeScript \code|tsc| compiler or by other community build tools, such as \code|babel|\cite{BabelCompilerNext}, \code|esbuild|\cite{EsbuildExtremelyFast} or \code|swc|\cite{SWCRustbasedPlatform}.
+TypeScript is a statically typed programming language developed and maintained by Microsoft \cite{TypeScriptJavaScriptSyntax}. It is a language that generates down to JavaScript and adds static type checking to JavaScript \cite{DocumentationTypeScriptJavaScript}. Unlike Elm or ReScript, TypeScript is a syntactical superset of JavaScript, which means that any valid JavaScript code can be a valid TypeScript code\footnote{With a lax type checker configuration}. Similar to Flow, type annotations provided by the developer are fully erasable either by the TypeScript \code{tsc} type checker or by other community build tools, such as \code|babel|\cite{BabelCompilerNext}, \code|esbuild|\cite{EsbuildExtremelyFast} or \code|swc|\cite{SWCRustbasedPlatform}.
 
-Type system in TypeScript is considered to be less sound and more forgiving, as soundness is stated as an explicit non-goal for the design team of TypeScript \cite{TypeScriptDesignGoals}, with emphasis on striking a balance between productivity and correctness. By default, the TypeScript compiler is not strict and the language itself includes an escape hatch for developers to opt out of type checking by using the \code|any| type or using \code|@ts-ignore| comment annotations. Nevertheless, with proper compiler configuration, the type system of TypeScript can be as sound as in Flow.
+Type system in TypeScript is considered to be less sound and more forgiving, as soundness is stated as an explicit non-goal for the design team of TypeScript \cite{TypeScriptDesignGoals}, with emphasis on striking a balance between productivity and correctness. By default, the TypeScript type checker is not strict and the language itself includes an escape hatch for developers to opt out of type checking by using the \code|any| type or using \code|@ts-ignore| comment annotations. Nevertheless, with proper type checker configuration, the type system of TypeScript can be as sound as in Flow.
 
 Both Flow and TypeScript support advanced features such as generics and utility types, with the latter supporting template string literal types and better support for conditional types, unlocking the potential of writing more expressive types, which this master thesis will further explore in more detail.
 
 TypeScript has become the de-facto standard for writing JavaScript code with static types. With deep integration with Visual Studio Code \cite{VisualStudioCode}, the rich build ecosystem and high compatibility with existing JavaScript libraries and tools, TypeScript has become one of the fastest growing languages in terms of usage according to the 2022 Octoverse report by Github \cite{Octoverse2022State}.
 
+\section{Usage of TypeScript}
+
+The TypeScript project is made of two major parts available to developers:
+
+\begin{itemize}
+  \item \code{tsc}: the TypeScript Compiler, which is responsible for both type checking and outputting valid JavaScript files,
+  \item \code{tsserver}: the TypeScript Standalone Server, which encapsulates the TypeScript Compiler and language services for use in editors and IDEs \cite{StandaloneServerTsserver}.
+\end{itemize}
+
+Whereas a type-checker is most likely executed manually more often and is the entry point for developers when using TypeScript, the language server is equally as useful, as it communicates with the editor via Language Server Protocol (LSP) to provide important language services. These include code completion, auto-importing, symbol renaming etc.
+
+Unlike in the other languages, the compilation step itself is understood to only mean the type erasure itself. Even though the source code itself can have various type errors, \code{tsc} will still by default emit JavaScript files, as long as the input source file can be parsed by both the scanner and the parser. This allows developers to progressively update their code and iterate quickly on the functionality without having to deal with the type errors immediately, essentially acting more as a linter than a compiler. Regardless, in this thesis, \say{compiling} and \say{type-checking} will be used interchangeably.
+
 \section{Typescript syntax}
 
-Typescript adds optional static types to JavaScript, which can be applied to add constraints to code constructs such as functions, variables and properties, so that compilers, linters and other development tools can provide better and useful insights during software development \cite{hejlsbergTypeScriptLanguageSpecification}.
-
-Types in TypeScript can be categorized into primitive types, literal types, data structure types, union types, intersection types and type parameters. All of these types introduce static constraints on their values.
-
-A primitive value is data, that is not an object and has no methods or properties. These primitives are immutable, thus they cannot be altered. Similar to JavaScript, TypeScript has the following types of primitive values:
+In TypeScript, types are annotated using \code{:[type annotation]} syntax, adding annotations to any of the symbols found in JavaScript, such as variables, function parameters and function return values, to add constraints to values. Type annotations in TypeScript can be categorized into primitive types, literal types, data structure types, union types, intersection types and type parameters. In the following sections, we will explore each of these types in more detail. The following listing \ref{lst:basic-annotation} shows a basic example of TypeScript annotations:
 
 \begin{listing}[h]
-  \caption{Primitive Types}
+  \caption{Basic TypeScript annotation example}\label{lst:basic-annotation}
+  \begin{minted}{TypeScript}
+const item: string = "Hello world"
+function add(a: number, b: number): number {
+  return a + b
+}
+\end{minted}
+\end{listing}
+
+At runtime, every variable has a single concrete value, but in TypeScript, the variable has only a type. A useful mental model for understanding types is to think of the type as a set of permitted values \cite{vanderkamEffectiveTypeScript622019}, effectively describing the domain of the type.
+
+\subsection{Primitive Types}
+
+A primitive value is data, that is not an object and has no methods or properties. These primitives are immutable, thus they cannot be altered. The TypeScript type system provides a comprehensive representation of these primitives, as seen in listing \ref{lst:primitive-types}:
+
+\begin{listing}[h]
+  \caption{Primitive Types}\label{lst:primitive-types}
   \begin{minted}{TypeScript}
 type Primitive = 
   | string | number | bigint
@@ -59,15 +84,61 @@ type Primitive =
 \end{minted}
 \end{listing}
 
-Some primitive values represent a singular data value, such as \code{null} or \code{undefined}, but many of these primitives can represent an infinite number of values, like \code{number}, \code{bignumber} or \code{string}.
+Some primitive values represent a singular data value, such as \code{null} or \code{undefined}, but many of these primitives can represent multiple values (\code{boolean} can represent either \code{true} or \code{false}), or even an infinite amount of values, like \code{number}, \code{bignumber} or \code{string}.
 
-Literal types are a subset of primitive values, which are used to describe an exact possible value.
+\subsection{Literal Types}
+
+To describe an exact possible value, we can use literal types. From the point of view of the type system, a literal type is a subset of one of the following primitive types: \code{string}, \code{number}, \code{bignumber} or \code{boolean}\footnote{Both \texttt{\textcolor{blue}{null}} and \texttt{\textcolor{blue}{undefined}} are literal types as well}, as seen in Listing \ref{lst:literal-types}.
 
 \begin{listing}[h]
-  \caption{Literal Types}
+  \caption{Literal Types}\label{lst:literal-types}
   \begin{minted}{TypeScript}
 type Literal = "foo" | 42 | true | 100n;
+
+// Valid code
+const Valid: Literal = "foo"
+
+// Error: Type '"bar"' is not assignable to type 'Literal'
+const Invalid: Literal = "bar" 
 \end{minted}
+\end{listing}
+
+\subsection{Union and intersection types}
+
+Revisiting the notion of types as sets of values, as seen in Listing \ref{lst:literal-types}, when attempting to assign a value not permitted by the \code{Literal} type, a type error occurs. In the world of TypeScript, a type is \say{assignable}, if it is either a \say{member of} the set of permitted values defined by the type (when describing relationships between a value and a type) or it is a \say{subset of} the sets (when describing relationships between two types).
+
+Sometimes, we need to describe a type, which is a combination of multiple types, combining two sets of values into a single set. This is achievable by using the union operator represented by the \code{|} symbol to describe a type that represents a value, which may be any of one of the combined types, referred to as \say{union members} \cite{DocumentationEverydayTypes}. Because behind a union type may be a value of any of the union member types, TypeScript will allow only operations, which are valid for every union member.
+
+If we want to perform an operation which valid for some of the union members, we must perform type narrowing, which refines a broader type to a more specific narrow one, capturing a subset of values of the original broader type.
+
+An example can be seen in Listing \ref{lst:union-types}, where the function \code{printUserId} can accept both a \code{string} or a \code{number} as an argument. To invoke \code{toUpperCase()}, a method valid only for values of \code{string} type, we must perform a check, if the parameter is a \code{string}. Afterward, TypeScript is smart enough to infer that the type of the checked value must be necessary a \code{string} and permits the invocation of \code{toUpperCase()}.
+
+\begin{listing}[h]
+  \caption{Union types with simple narrowing}\label{lst:union-types}
+  \begin{minted}{TypeScript}
+function printUserId(id: string | number) {
+  if (typeof id === "string") {
+    return id.toUpperCase()
+  } else {
+    return id
+  }
+}
+  \end{minted}
+\end{listing}
+
+Whereas an intersection of types can be represented by the \code{&} operator. An intersection type is a type that represents a value, which has features and properties of all intersection member types.
+
+\begin{listing}[h]
+  \caption{Intersection types}\label{lst:union-types}
+  \begin{minted}{TypeScript}
+function printUserId(id: string | number) {
+  if (typeof id === "string") {
+    return id.toUpperCase()
+  } else {
+    return id
+  }
+}
+  \end{minted}
 \end{listing}
 
 To represent data structures such as objects and arrays, we can use the following types: objects, records, tuples and arrays.
@@ -160,7 +231,7 @@ TypeScript includes two top types, also known as universal types or supertypes: 
 
 \code{never} is a bottom type, acting as a subtype of all other types, representing a value that should never occur. In the context of the theory of mathematical logic, \code{never} acts as a logical contradiction, describing a value that may never exist, which is especially useful to model stop gaps within type-level functions. No other type can be assigned to \code{never} nor \code{never} cannot be assigned to any other type.
 
-\todo{Add unknown code example}
+\todo{Add never code example}
 
 \code{enum} type is a distinct subtype used to describe a set of named constants. Instead of using individual variables for each constant, an \code{enum} provides an organized way to express a collection of related values. \code{enum} is one of the few TypeScript features which introduce an additional code added to the compiler output and enums refer to real objects at runtime.
 
@@ -226,7 +297,6 @@ Generics
 \end{itemize}
 
 \subsection{Conditional Types}
-\subsection{Conditional Types}
 \subsection{Recursive Types}
 \subsection{Mapped Types}
 \subsection{Template Literal Types}
@@ -238,4 +308,5 @@ Generics
   \item \code{arielhs/ts-arithmetic}
   \item \code{ts-belt}
   \item \code{type-fest}
+  \item \code{hotscript}
 \end{itemize}
