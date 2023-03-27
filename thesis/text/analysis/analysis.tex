@@ -98,66 +98,36 @@ type Literal = "foo" | 42 | true | 100n;
 // Valid code
 const Valid: Literal = "foo"
 
-// Error: Type '"bar"' is not assignable to type 'Literal'
+// @ts-expect-error Type '"bar"' is not assignable to type 'Literal'
 const Invalid: Literal = "bar" 
 \end{minted}
 \end{listing}
 
-\subsection{Union and intersection types}
+\section{Types for data structures}
 
-Revisiting the notion of types as sets of values, as seen in Listing \ref{lst:literal-types}, when attempting to assign a value not permitted by the \code{Literal} type, a type error occurs. In the world of TypeScript, a type is \say{assignable}, if it is either a \say{member of} the set of permitted values defined by the type (when describing relationships between a value and a type) or it is a \say{subset of} the sets (when describing relationships between two types).
-
-Sometimes, we need to describe a type, which is a combination of multiple types, combining two sets of values into a single set. This is achievable by using the union operator represented by the \code{|} symbol to describe a type that represents a value, which may be any of one of the combined types, referred to as \say{union members} \cite{DocumentationEverydayTypes}. Because behind a union type may be a value of any of the union member types, TypeScript will allow only operations, which are valid for every union member.
-
-If we want to perform an operation which valid for some of the union members, we must perform type narrowing, which refines a broader type to a more specific narrow one, capturing a subset of values of the original broader type.
-
-An example can be seen in Listing \ref{lst:union-types}, where the function \code{printUserId} can accept both a \code{string} or a \code{number} as an argument. To invoke \code{toUpperCase()}, a method valid only for values of \code{string} type, we must perform a check, if the parameter is a \code{string}. Afterward, TypeScript is smart enough to infer that the type of the checked value must be necessary a \code{string} and permits the invocation of \code{toUpperCase()}.
+TypeScript also allows annotating data structures such as objects and arrays with dedicated type syntax, as seen in Listing \ref{lst:data-structures}. Object types are used to describe an object with an enumerable and finite set of keys with values of different types per key, whereas record types are used to describe an object with an unknown number of keys and the values are of the same type. Similarly, tuple types describe an array with a fixed number of elements, possibly with a different type for each element, whereas an array type is used to describe an array with an unknown length and the values are of the same type.
 
 \begin{listing}[h]
-  \caption{Union types with simple narrowing}\label{lst:union-types}
+  \caption{Data structures}\label{lst:data-structures}
   \begin{minted}{TypeScript}
-function printUserId(id: string | number) {
-  if (typeof id === "string") {
-    return id.toUpperCase()
-  } else {
-    return id
-  }
-}
-  \end{minted}
-\end{listing}
 
-Whereas an intersection of types can be represented by the \code{&} operator. An intersection type is a type that represents a value, which has features and properties of all intersection member types.
+type ObjectStructure =  
+  | { foo: string, bar: number }
 
-\begin{listing}[h]
-  \caption{Intersection types}\label{lst:union-types}
-  \begin{minted}{TypeScript}
-function printUserId(id: string | number) {
-  if (typeof id === "string") {
-    return id.toUpperCase()
-  } else {
-    return id
-  }
-}
-  \end{minted}
-\end{listing}
+type RecordStructure 
+  | { [key: string]: number }
+  | Record<string, number>
 
-To represent data structures such as objects and arrays, we can use the following types: objects, records, tuples and arrays.
+type TupleStructure = [number, string]
 
-\begin{listing}[h]
-  \caption{Data structures}
-  \begin{minted}{TypeScript}
-type Structures = 
-  | { foo: string, bar: number }     // object
-  | { [key in keyof Keys]: number }  // record
-  | [number, string]                 // tuple
-  | number[]                         // array
+type ArrayStructure = number[]
 \end{minted}
 \end{listing}
 
-TypeScript uses structured typing, which means that TypeScript only validates the shape of the data. Essentially, if the data has the same shape as the type, it is considered to be of that type. This is also known as duck typing, essentially if it walks like a duck and quacks like a duck, it is a duck.
+TypeScript uses structured typing, which means that TypeScript only validates the shape of the data. Essentially, if the data has the same shape as the type, it is considered to be of that type, as seen in Listing \ref{lst:structured-typing}. This is also known as duck typing, essentially: \say{If it walks like a duck and quacks like a duck, it is a duck.}
 
 \begin{listing}[h]
-  \caption{Duck typing}
+  \caption{Structured typing}\label{lst:structured-typing}
   \begin{minted}{TypeScript}
 type DuckLike = { quack: () => void; type: string };
 
@@ -174,10 +144,10 @@ const Goose: DuckLike = {
 \end{minted}
 \end{listing}
 
-Structured typing does include some drawbacks unlike in nominal type systems, where each type is unique and the same data cannot be assigned across types, but these can be easily mitigated using literal types to act as brands.
+Structured typing does include some drawbacks unlike in nominal type systems, where each type is unique and the same data cannot be assigned across types, but these can be easily mitigated using literal types to act as brands, as seen in Listing \ref{lst:nominal-types-emulation}.
 
 \begin{listing}[h]
-  \caption{Nominal typing in TS}
+  \caption{Nominal typing in TS}\label{lst:nominal-types-emulation}
   \begin{minted}{TypeScript}
 type DuckLike = { quack: () => void; type: "duck" };
 
@@ -194,51 +164,113 @@ const Goose: DuckLike = {
 \end{minted}
 \end{listing}
 
+\subsection{Union and intersection types}
 
-Types can be generalized into sets, where each type can contain a set of values. A type can be a subset or a superset of another type.
+Revisiting the notion of types as sets of values, as seen in Listing \ref{lst:literal-types}, when attempting to assign a value not permitted by the \code{Literal} type, a type error occurs. In the world of TypeScript, a type is \say{assignable}, if it is either a \say{member of} the set of permitted values defined by the type (when describing relationships between a value and a type) or it is a \say{subset of} the sets (when describing relationships between two types).
 
-\begin{figure}[h]
-  \centering
-  \resizebox{0.7\textwidth}{!}{
-    \includegraphics{text/analysis/2023-03-21-20-08-52.png}
+Sometimes, we need to describe a type, which is a combination of multiple types, combining two sets of values into a single set. This is achievable by using the union operator represented by the \code{|} symbol to describe a type that represents a value, which may be any of one of the combined types referred to as \say{union members} \cite{DocumentationEverydayTypes}. Essentially, \code{X | Y} can be read as a type for a value that can either be of type \code{X} or \code{Y}.
+
+Because behind a union type may be a value of any of the union member types, TypeScript will allow only operations, which are valid for every union member. If we want to perform an operation which valid for some of the union members, we must perform type narrowing, which refines a broader type to a more specific narrow one, capturing a subset of values of the original broader type.
+
+An example can be seen in Listing \ref{lst:union-types}, where the function \code{printUserId} can accept both a \code{string} or a \code{number} as an argument. To invoke \code{toUpperCase()}, a method valid only for values of \code{string} type, we must perform a check, if the parameter is a \code{string}. Afterward, TypeScript is smart enough to infer that the type of the checked value must be necessary a \code{string} and permits the invocation of \code{toUpperCase()}.
+
+\begin{listing}[h]
+  \caption{Union types with simple narrowing}\label{lst:union-types}
+  \begin{minted}{TypeScript}
+function printUserId(id: string | number) {
+  if (typeof id === "string") {
+    return id.toUpperCase()
+  } else {
+    return id
   }
-  \caption{~Types represented as sets}
-\end{figure}
+}
+  \end{minted}
+\end{listing}
 
-Similar to other sets in mathematics, types can be combined using unions. With unions, we can broaden the scope of the type to represent multiple values.
+Whereas an intersection of types can be represented by the \code{&} operator. Similarly to the union type, \code{X & Y} can be read as a type for a value that can simultaneously belong to type \code{X} and \code{Y}. These intersection types are of particular interest when working with object types, as an intersection of two object types has all properties of both object types, as an object with both of the properties can be assigned to both of the intersection member types. For this particular reason, intersection types are commonly used to merge two object types together.
 
-\begin{figure}[h]
-  \centering
-  \resizebox{\textwidth}{!}{
-    \includegraphics{text/analysis/2023-03-21-20-00-30.png}
+\begin{listing}[h]
+  \caption{Intersection types}\label{lst:intersection-types}
+  \begin{minted}{TypeScript}
+function printUserId(id: string | number) {
+  if (typeof id === "string") {
+    return id.toUpperCase()
+  } else {
+    return id
   }
-  \caption{~Union of types}
-\end{figure}
+}
+  \end{minted}
+\end{listing}
 
-Types can also intersect each other to create a narrower type.
+\subsection{Special data types}
 
-\todo{type intersection}
+When working with unions and intersections, we need to be able to describe a type, which can describe a union of all possible types or a type, which is created by intersecting two types with no related properties. We refer to these types as universal supertypes and universal subtypes respectively. Universal supertypes, also known as top types, are types that are a superset of all other types and are used to represent any possible value. Whereas universal subtypes, also known as bottom types, are types that are a subset of all other types and are often used to describe a type that has no permitted values.
 
-TypeScript includes two top types, also known as universal types or supertypes: \code{any} and \code{unknown}. These types are used to represent any possible value.
+TypeScript includes two top universal supertypes: \code{any} and \code{unknown}. In the case of \code{any}, every type is assignable to type \code{any} and type \code{any} is assignable to every type \cite{TopTypesAny}. \code{any} is acting as an escape hatch to opt out of type checking. This does have unintended consequences, as \code{any} is assignable to every type, it can be assigned to a different type without any warnings. This is especially problematic when dealing with external data as the return type of \code{JSON.parse()} is \code{any}. An example of assignability can be seen at Listing \ref{lst:any-assignability}.
 
-\code{any} is a top type, where every type is assignable to type \code{any} and type \code{any} is assignable to every type \cite{TopTypesAny}. \code{any} is acting as an escape hatch to opt out of type checking. This does have unintended consequences, especially when dealing with external data, most notably when the return type of \code{JSON.parse()} and \code{Response.json()} is \code{any}. As \code{any} is assignable to every type, it can be assigned to a different type without any warnings.
+\begin{listing}[h]
+  \caption{Assignability of any}\label{lst:any-assignability}
+  \begin{minted}{TypeScript}
+let data: any = JSON.parse("...") 
 
-\todo{Add any code example}
+// all of these are valid TypeScript code
+data = null
+data = true
+data = {}
 
-\code{unknown} acts as a more restrictive version of \code{any}. Every type is assignable to type \code{unknown}, but \code{unknown} is not assignable to any other type. To assign \code{unknown} to a different type, we must narrow the types using either type guards, type assertions, equality checks or other assertion functions.
+// still valid code, opting out of type checking
+const a: null = data
+const b: boolean = data
+const c: object = data
+  \end{minted}
+\end{listing}
 
-\todo{Add unknown code example}
+\code{unknown} acts as a more restrictive version of \code{any}. Every type is assignable to type \code{unknown}, but \code{unknown} is not assignable to any other type, which can be seen at Listing \ref{lst:unknown-assignability}. To assign \code{unknown} to a different type, we must narrow the types using either type guards, type assertions, equality checks or other assertion functions.
 
-\code{never} is a bottom type, acting as a subtype of all other types, representing a value that should never occur. In the context of the theory of mathematical logic, \code{never} acts as a logical contradiction, describing a value that may never exist, which is especially useful to model stop gaps within type-level functions. No other type can be assigned to \code{never} nor \code{never} cannot be assigned to any other type.
+\begin{listing}[h]
+  \caption{Assignability of unknown}\label{lst:unknown-assignability}
+  \begin{minted}{TypeScript}
+let data: unknown = JSON.parse("...") 
 
-\todo{Add never code example}
+// all of these are valid TypeScript code
+data = null
+data = true
+data = {}
+
+// not valid, as unknown is not assignable to any other type
+const a: null = data
+const b: boolean = data
+const c: object = data
+  \end{minted}
+\end{listing}
+
+Finally, \code{never} is a bottom type, acting as a subtype of all other types, representing a value that should never occur. In the context of the theory of mathematical logic, \code{never} acts as a logical contradiction, describing a value that may never exist. No other type can be assigned to \code{never} nor \code{never} cannot be assigned to any other type. \code{never} can be found when attempting to intersect two types that have no properties in common, such as \code{string & number}.
+
+\code{void} is a specific type used to signify a function, which does not return a value. There is a notable difference between the usage of \code{void} when used in context, describing a type for a function with \code{void} return type, and when used in the function declaration, as seen in Listing \ref{lst:void-return-type}. The former is used to describe a situation when an implementation of a \say{void function} does return a value but should be ignored. The latter does enforce that a function should not return a value at all.
+
+\begin{listing}[h]
+  \caption{Return type void}\label{lst:void-return-type}
+  \begin{minted}{TypeScript}
+type voidFn = () => void
+
+// Valid code
+const fn1: voidFn = () => true
+
+function fn2(): void {
+  // @ts-expect-error Not valid, as void functions cannot return a value
+  return true
+}
+\end{minted}
+\end{listing}
+
+\subsection{Enumerations}
 
 \code{enum} type is a distinct subtype used to describe a set of named constants. Instead of using individual variables for each constant, an \code{enum} provides an organized way to express a collection of related values. \code{enum} is one of the few TypeScript features which introduce an additional code added to the compiler output and enums refer to real objects at runtime.
 
-An \code{enum} type consists of members and their corresponding initializers for the runtime value of the member. There are two types of enums in TypeScript: numeric enums and string-based enums:
+An \code{enum} type consists of members and their corresponding initializers for the runtime value of the member. There are two types of enums in TypeScript: numeric enums and string-based enums. In numeric enums, each member is assigned a numeric literal value, as seen in Listing \ref{lst:numeric-enums}. Each member can have an optional initializer to specify an exact number corresponding to a member. If omitted, the value of the member will be generated by auto-incrementing from previous members.
 
 \begin{listing}[h]
-  \caption{Numeric enums}
+  \caption{Numeric enums}\label{lst:numeric-enums}
   \begin{minted}{TypeScript}
 enum Direction {
   Up = 1,
@@ -249,12 +281,10 @@ enum Direction {
 \end{minted}
 \end{listing}
 
-In numeric enums, each member is assigned a numeric literal value. Each member can have an optional initializer to specify an exact number corresponding to a member. If omitted, the value of the member will be generated by auto-incrementing from previous members.
-
-String-based enums are similar in nature, where each member is assigned a string literal value instead. Each member thus must have an initializer with a string literal. The key benefit of string-based enums is that they tend to keep their semantic value well when serializing, which is especially helpful when debugging, as the values of numeric enums tend to be opaque.
+String-based enums are similar in nature, where each member is assigned a string literal value instead. Each member thus must have an initializer with a string literal, as seen in Listing \ref{lst:string-based-enums}. The key benefit of string-based enums is that they tend to keep their semantic value well when serializing, which is especially helpful when debugging, as the values of numeric enums tend to be opaque.
 
 \begin{listing}[h]
-  \caption{Numeric enums}
+  \caption{String-based enums}\label{lst:string-based-enums}
   \begin{minted}{TypeScript}
 enum Direction {
   Up = "UP",
@@ -265,18 +295,7 @@ enum Direction {
 \end{minted}
 \end{listing}
 
-Functions and \code{void}
-
-Void
-\todo{Enums}
-
-Arrays
-
-\code{any}, \code{never}, \code{unknown}
-
-Object
-
-Generics
+\section{Generics}
 
 \begin{itemize}
   \item Terminology - generics, type arguments, return type
@@ -286,15 +305,7 @@ Generics
   \item Template Literal Types
 \end{itemize}
 
-\subsection{Types and their assignability}
-
-\begin{itemize}
-  \item Primitive Types
-  \item Literal Types
-  \item \code{unknown}, \code{never}, \code{any}
-  \item Structures (nominal vs structural typing)
-  \item Unions and Intersections
-\end{itemize}
+\section{Advanced type-level patterns}
 
 \subsection{Conditional Types}
 \subsection{Recursive Types}
