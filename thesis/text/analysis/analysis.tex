@@ -295,10 +295,41 @@ enum Direction {
 \end{minted}
 \end{listing}
 
-\section{Generics}
+\section{Generic Types}
+
+Sometimes we need to write code, which needs to work and accept types we don't know in advance. Generic types allow the development of such reusable components that can work over a variety of types rather than a single one. Generic types are created by defining a type parameter that can be used as a placeholder for a specific type. The consumers will be then able to replace the placeholder with their own desired types when using the component. In TypeScript, generic types can be defined on interfaces, functions and classes.
+
+To illustrate the point, consider the implementation of the built-in \code{Array} type found in the \code{lib.*.d.ts} files (a subset can be seen at Listing \ref{lst:array-type}). The \code{Array<T>} is a generic type, which accepts a single type argument \code{T} and is used to describe the type of the elements in the array. The type argument \code{T} is later used both in arguments and return types of the methods of the \code{Array<T>} type: \code{push()} accepts only elements of the same type as the array while \code{pop()} will return an element of the same type.
+
+\begin{listing}[h]
+  \caption{Array type}\label{lst:array-type}
+  \begin{minted}{TypeScript}
+interface Array<T> {
+  push(...items: T[]): number;
+
+  pop(): T | undedfined;
+}
+
+const strArr: Array<string> = []
+const numArr: Array<number> = []
+
+strArr.push("one", "two")
+numArr.push(1, 2)
+
+const a = strArr.pop()
+//    ^? string
+
+const b = numArr.pop()
+//    ^? number
+\end{minted}
+\end{listing}
+
+Generic types can be interpreted as functions in a meta-programming language found inside the TypeScript type system itself. The meta-programming language implements some of the key concepts found in the functional programming paradigm. Generic types are considered first-class citizens in the language, being able to be passed as arguments into other generic types, similar to functions in a functional programming language. Generic types are pure and cannot have any side effects during type checking. And we use recursion to break down complex problems into smaller ones and solve them independently.
+
+\todo{Explain inference}
 
 \begin{itemize}
-  \item Terminology - generics, type arguments, return type
+  \item Terminology - generics, type arguments
   \item Conditional types
   \item Recursive types
   \item Mapped types
