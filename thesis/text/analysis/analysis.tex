@@ -105,7 +105,27 @@ const Invalid: Literal = "bar"
 
 \section{Types for data structures}
 
-TypeScript also allows annotating data structures such as objects and arrays with dedicated type syntax, as seen in Listing \ref{lst:data-structures}. Object types are used to describe an object with an enumerable and finite set of keys with values of different types per key, whereas record types are used to describe an object with an unknown number of keys and the values are of the same type. Similarly, tuple types describe an array with a fixed number of elements, possibly with a different type for each element, whereas an array type is used to describe an array with an unknown length and the values are of the same type.
+TypeScript also allows annotating data structures such as objects and arrays with dedicated type syntax.
+
+\todo{Arrays}
+
+An array type is used to describe an array with an unknown length and the values are of the same type.
+
+\todo{Objects, Interfaces}
+
+Object types are used to describe an object with an enumerable and finite set of keys with values of different types per key.
+
+\todo{keyof}
+
+\todo{indexed access type}
+
+\todo{Records}
+
+Record types are used to describe an object with an unknown number of keys and the values are of the same type.
+
+\todo{Tuples}
+
+Similarly, tuple types describe an array with a fixed number of elements, possibly with a different type for each element.
 
 \begin{listing}[h]
   \caption{Data structures}\label{lst:data-structures}
@@ -123,6 +143,8 @@ type TupleStructure = [number, string]
 type ArrayStructure = number[]
 \end{minted}
 \end{listing}
+
+\subsection{Structured Typing}
 
 TypeScript uses structured typing, which means that TypeScript only validates the shape of the data. Essentially, if the data has the same shape as the type, it is considered to be of that type, as seen in Listing \ref{lst:structured-typing}. This is also known as duck typing, essentially: \say{If it walks like a duck and quacks like a duck, it is a duck.}
 
@@ -187,18 +209,13 @@ function printUserId(id: string | number) {
   \end{minted}
 \end{listing}
 
-Whereas an intersection of types can be represented by the \code{&} operator. Similarly to the union type, \code{X & Y} can be read as a type for a value that can simultaneously belong to type \code{X} and \code{Y}. These intersection types are of particular interest when working with object types, as an intersection of two object types has all properties of both object types, as an object with both of the properties can be assigned to both of the intersection member types. For this particular reason, intersection types are commonly used to merge two object types together.
+Whereas an intersection of types can be represented by the \code{&} operator. Similarly to the union type, \code{X & Y} can be read as a type for a value that can simultaneously belong to type \code{X} and \code{Y}. These intersection types are of particular interest when working with object types, as an intersection of two object types has all properties of both object types, as an object with both of the properties can be assigned to both of the intersection member types. For this particular reason, intersection types are commonly used to merge two object types, as seen in \ref{lst:intersection-types}\footnote{We can also use \texttt{\textcolor{blue}{extends}} keyword to merge two interfaces}.
 
 \begin{listing}[h]
   \caption{Intersection types}\label{lst:intersection-types}
   \begin{minted}{TypeScript}
-function printUserId(id: string | number) {
-  if (typeof id === "string") {
-    return id.toUpperCase()
-  } else {
-    return id
-  }
-}
+type Intersection = { a: string } & { b: number }
+const item: Intersection = { a: "a", b: 1 }
   \end{minted}
 \end{listing}
 
@@ -295,7 +312,7 @@ enum Direction {
 \end{minted}
 \end{listing}
 
-\section{Generic Types}
+\subsection{Generic Types}
 
 Sometimes we need to write code, which needs to work and accept types we don't know in advance. Generic types allow the development of such reusable components that can work over a variety of types rather than a single one. Generic types are created by defining a type parameter that can be used as a placeholder for a specific type. The consumers will be then able to replace the placeholder with their own desired types when using the component. In TypeScript, generic types can be defined on interfaces, functions and classes.
 
@@ -324,23 +341,125 @@ const b = numArr.pop()
 \end{minted}
 \end{listing}
 
-Generic types can be interpreted as functions in a meta-programming language found inside the TypeScript type system itself. The meta-programming language implements some of the key concepts found in the functional programming paradigm. Generic types are considered first-class citizens in the language, being able to be passed as arguments into other generic types, similar to functions in a functional programming language. Generic types are pure and cannot have any side effects during type checking. And we use recursion to break down complex problems into smaller ones and solve them independently.
+Generic types can be interpreted as functions in a meta-programming language found inside the TypeScript type system itself. The meta-programming language implements some of the key concepts found in the functional programming paradigm.
 
-\todo{Explain inference}
+Generic types are considered first-class citizens in the language, being able to be passed as arguments into other generic types, similar to functions in a functional programming language. Generic types are also pure and cannot have any side effects during type checking. We also use recursion in the meta-programming language to break down complex problems into smaller ones and solve them independently.
 
-\begin{itemize}
-  \item Terminology - generics, type arguments
-  \item Conditional types
-  \item Recursive types
-  \item Mapped types
-  \item Template Literal Types
-\end{itemize}
+There is a notable omission, however: generic types cannot receive other generic types as type arguments \cite{TypeInferenceHigherorder}. Thus, higher-order functions are not permitted \footnote{There is a way to create such type using HOTScript, more on that later}.
 
-\section{Advanced type-level patterns}
+\subsection{Type constraints with \texttt{\textcolor{blue}{extends}}}
 
-\subsection{Conditional Types}
+When writing generic types, sometimes we need to be able to describe some expectations that a type argument must satisfy. For example, we might want to accept types, which do have a certain property, such as \code{length} as seen in Listing \ref{lst:extends}. To achieve this, we use the \code{extends} keyword to describe our constraints to the type.
+
+\begin{listing}[h]
+  \caption{Type constraints with \texttt{\textcolor{blue}{extends}}}\label{lst:extends}
+  \begin{minted}{TypeScript}
+
+function getLength<T extends HasLength>(obj: T): number {
+  return obj.length
+}
+
+const a = getLength("hello")
+const b = getLength([1, 2, 3])
+const c = getLength({ length: 10 })
+
+// @ts-expect-error 
+// Argument of type '{ foo: string; }' is not 
+// assignable to parameter of type 'HasLength'.
+const d = getLength({ foo: "bar" })
+\end{minted}
+\end{listing}
+
+The generic function will not be able to accept any types anymore, as desired and we must only pass types, which satisfy the constraints instead.
+
+\subsection{Conditional types}
+
+Within the TypeScript meta-language, developers can write conditions and branching logic using conditional types. Conditional types follow a syntax similar to the conditional ternary operators with another case of overloading the \code{extends} keyword: \code{Input extends Expect ? A : B}. This can be read as \say{If type Input is assignable to type Exepct, then the type resolves to type A, otherwise to type B.} An example can be seen in Listing \ref{lst:conditional-types}, where the \code{IsString<T>} type will resolve to \code{true} if the type argument \code{T} is assignable to \code{string} and to \code{false} otherwise.
+
+\begin{listing}[h]
+  \caption{Conditional types}\label{lst:conditional-types}
+  \begin{minted}{TypeScript}
+type IsString<T> = T extends string ? true : false
+\end{minted}
+\end{listing}
+
+We can use the \code{infer} keyword to deduce or extract a specific type within the scope of conditional types, essentially acting as a way to perform pattern matching. With \code{infer} we introduce a new generic type variable, which can be later used within the true branch of the conditional type, as seen in the implementation of the \code{ReturnType<T>} utility type in Listing \ref{lst:infer}. The \code{ReturnType<T>} type will resolve to the return type of the type argument \code{T}.
+
+\begin{listing}[h]
+  \caption{Infer in conditional types}\label{lst:infer}
+  \begin{minted}{TypeScript}
+type ReturnType<T> = T extends (...args: any) => infer R ? R : never;
+\end{minted}
+\end{listing}
+
+Since TypeScript version 4.7 \cite{rosenwasserAnnouncingTypeScript2022}, we can also add an additional type constraint for the inferred type, which will be checked before the conditional type is resolved. This is useful when we want to avoid an additional nested conditional type, as seen in Listing \ref{lst:infer-constraint}, where we want to return the first element of the tuple type only if it is a string.
+
+\begin{listing}[h]
+  \caption{Type constraints within infer}\label{lst:infer-constraint}
+  \begin{minted}{TypeScript}
+type FirstIfString<T> =
+  T extends [infer S extends string, ...unknown[]]
+    ? S
+    : never;
+
+// is equivalent to 
+type FirstIfString<T> =
+  T extends [infer S, ...unknown[]]
+    ? S extends string ? S : never
+    : never;
+\end{minted}
+\end{listing}
+
+When given a union type within the conditional type, the conditional type will be resolved for each member type in the union separately, essentially distributing the union type. To prevent such behavior, we can wrap the type argument in a tuple or any other structure type.
+
+\begin{listing}[h]
+  \caption{Distributing union types}\label{lst:distribute}
+  \begin{minted}{TypeScript}
+type ToArray<Type> = Type extends any ? Type[] : never;
+
+// $ExpectType string[] | number[]
+type A = ToArray<string | number> 
+
+type ToArrayNonDist<Type> = [Type] extends [any] ? Type[] : never;
+
+// $ExpectType (string | number)[]
+type B = ToArrayNonDist<string | number> 
+
+\end{minted}
+\end{listing}
+
+\subsection{Mapped types}
+
+Sometimes we need to transform a type into another type. For example, we might want to create a new type, which is a copy of the original type, but with all properties being optional. This can be achieved using mapped types. Mapped types are types, which are created using the syntax for index signatures, commonly used in JavaScript for properties not declared ahead of time. An example is shown in Listing \ref{lst:mapped-types}, where the generic type \code{ToBoolean<T>} will create a new type which will take all properties from \code{T} and change their values to \code{boolean}.
+
+We can also specify mapping modifiers to affect the mutability or optionality of a property: \code{readonly} and \code{?} respectively. Prefixing the modifier with either \code{+} or \code{-} will either add or remove the modifier to the property\footnote{+ is assumed by default if omitted}. This can be seen in the \code{Optional<T>} type in Listing \ref{lst:mapped-types}, which will create a new type, which is a copy of the original type, but with all properties being optional.
+
+\begin{listing}[h]
+  \caption{Mapped types}\label{lst:mapped-types}
+  \begin{minted}{TypeScript}
+type ToBoolean<T> = {
+  [K in keyof T]: boolean
+}
+
+type Optional<T> = {
+  [K in keyof T]+?: T[K]
+}
+\end{minted}
+\end{listing}
+
+Introduced in TypeScript 4.1 \cite{rosenwasserAnnouncingTypeScript2020}, we can also use the \code{as} keyword to re-map keys in mapped types. This can allow us to create, transform or filter out keys when creating a new type. An example is shown in Listing \ref{lst:mapped-as}, where the \code{Omit<T, Key>} creates a new object type based on type \code{T} with omitted properties which are assignable to \code{Key}.
+
+\begin{listing}[h]
+  \caption{Using as in mapped types}\label{lst:mapped-as}
+  \begin{minted}{TypeScript}
+type Omit<T, Key> = {
+  [K in keyof T as Exclude<K, Key>]: T[K]
+}
+\end{minted}
+\end{listing}
+
 \subsection{Recursive Types}
-\subsection{Mapped Types}
+
 \subsection{Template Literal Types}
 
 \section{Prior Art}
