@@ -88,6 +88,7 @@
 \usepackage{dirtree}
 \usepackage{lipsum,tikz}
 \usepackage{csquotes}
+\usepackage{inconsolata}
 \usepackage{dirtytalk}
 \usepackage[style=iso-numeric]{biblatex}
 \addbibresource{sources.bib}
@@ -116,11 +117,14 @@
 %%%%%%%%%%%%%%%%%%%%%%
 
 \onehalfspacing
-\NewDocumentCommand{\code}{v}{%
+\newcommand\todo[1]{\textcolor{red}{TODO: #1}}
+\NewDocumentCommand{\code}{m}{%
   \texttt{\textcolor{blue}{#1}}%
 }
 
-\newcommand\todo[1]{\textcolor{red}{TODO: #1}}
+\NewDocumentCommand{\vcode}{v}{%
+  \texttt{\textcolor{blue}{#1}}%
+}
 
 \begin{document} 
 \frontmatter\frontmatterinit % do not remove these two commands

@@ -14,9 +14,9 @@ Regardless, many languages aim to introduce static typing to JavaScript, such as
 
 \subsection{Elm}
 
-Elm is a functional programming language designed specifically for building web applications \cite{ElmDelightfulLanguage}. The language compiles to JavaScript and has a strong static Hindley-Milner-based type system, which allows inferring types more often and reliably. Elm does not provide any escape hatches such as \code|any| in TypeScript, thus it is harder to write unsafe code, as the types must be valid for the code to be compiled.
+Elm is a functional programming language designed specifically for building web applications \cite{ElmDelightfulLanguage}. The language compiles to JavaScript and has a strong static Hindley-Milner-based type system, which allows inferring types more often and reliably. Elm does not provide any escape hatches such as \code{any} in TypeScript, thus it is harder to write unsafe code, as the types must be valid for the code to be compiled.
 
-Elm also includes a lot of quality-of-life improvements and benefits, for instance: enforced purity of functions, out-of-the-box immutability, \code|case| pattern matching, JSON decoders and encoders for strict parsing, \code|Maybe| and \code|Result| monads for avoiding \code|null| and \code|undefined| references or its own virtual DOM implementation for efficient rendering of interactive user interfaces. Notably, the Elm Architecture, where the application code is organized into three parts: model, update and view \cite{ElmArchitectureIntroduction}, has greatly inspired other libraries and frameworks like Redux \cite{PriorArtRedux2022}.
+Elm also includes a lot of quality-of-life improvements and benefits, for instance: enforced purity of functions, out-of-the-box immutability, \code{case} pattern matching, JSON decoders and encoders for strict parsing, \code{Maybe} and \code{Result} monads for avoiding \code{null} and \code{undefined} references or its own virtual DOM implementation for efficient rendering of interactive user interfaces. Notably, the Elm Architecture, where the application code is organized into three parts: model, update and view \cite{ElmArchitectureIntroduction}, has greatly inspired other libraries and frameworks like Redux \cite{PriorArtRedux2022}.
 
 \subsection{ReScript}
 
@@ -30,13 +30,13 @@ Flow is a static type checker for JavaScript \cite{chaudhuriFastPreciseType2017,
 
 One of the primary goals of Flow is to provide type soundness; the ability to catch every error that might happen in runtime at compile-time, no matter how likely it is to happen. This means, that a valid Flow code can provide developers some guarantees about the type a value has in runtime, at the expense of catching errors, which are unlikely to happen in runtime.
 
-Both Flow and TypeScript are similar regarding features at the time of writing. Most of the soundness differences between Flow and TypeScript have been addressed with the newer versions of TypeScript, even though soundness is a specific non-goal by the TypeScript team \cite{TypeScriptDesignGoals}. However, developers must opt-in to these features by setting \code|"strict"| to \code|"true"| in \code|tsconfig.json|, whereas in Flow these features are enabled by default.
+Both Flow and TypeScript are similar regarding features at the time of writing. Most of the soundness differences between Flow and TypeScript have been addressed with the newer versions of TypeScript, even though soundness is a specific non-goal by the TypeScript team \cite{TypeScriptDesignGoals}. However, developers must opt-in to these features by setting \code{"strict"} to \code{"true"} in \code{tsconfig.json}, whereas in Flow these features are enabled by default.
 
 \subsection{TypeScript}
 
-TypeScript is a statically typed programming language developed and maintained by Microsoft \cite{TypeScriptJavaScriptSyntax}. It is a language that generates down to JavaScript and adds static type checking to JavaScript \cite{DocumentationTypeScriptJavaScript}. Unlike Elm or ReScript, TypeScript is a syntactical superset of JavaScript, which means that any valid JavaScript code can be a valid TypeScript code\footnote{With a lax type checker configuration}. Similar to Flow, type annotations provided by the developer are fully erasable either by the TypeScript \code{tsc} type checker or by other community build tools, such as \code|babel|\cite{BabelCompilerNext}, \code|esbuild|\cite{EsbuildExtremelyFast} or \code|swc|\cite{SWCRustbasedPlatform}.
+TypeScript is a statically typed programming language developed and maintained by Microsoft \cite{TypeScriptJavaScriptSyntax}. It is a language that generates down to JavaScript and adds static type checking to JavaScript \cite{DocumentationTypeScriptJavaScript}. Unlike Elm or ReScript, TypeScript is a syntactical superset of JavaScript, which means that any valid JavaScript code can be a valid TypeScript code\footnote{With a lax type checker configuration}. Similar to Flow, type annotations provided by the developer are fully erasable either by the TypeScript \code{tsc} type checker or by other community build tools, such as \code{babel}\cite{BabelCompilerNext}, \code{esbuild}\cite{EsbuildExtremelyFast} or \code{swc}\cite{SWCRustbasedPlatform}.
 
-Type system in TypeScript is considered to be less sound and more forgiving, as soundness is stated as an explicit non-goal for the design team of TypeScript \cite{TypeScriptDesignGoals}, with emphasis on striking a balance between productivity and correctness. By default, the TypeScript type checker is not strict and the language itself includes an escape hatch for developers to opt out of type checking by using the \code|any| type or using \code|@ts-ignore| comment annotations. Nevertheless, with proper type checker configuration, the type system of TypeScript can be as sound as in Flow.
+Type system in TypeScript is considered to be less sound and more forgiving, as soundness is stated as an explicit non-goal for the design team of TypeScript \cite{TypeScriptDesignGoals}, with emphasis on striking a balance between productivity and correctness. By default, the TypeScript type checker is not strict and the language itself includes an escape hatch for developers to opt out of type checking by using the \code{any} type or using \code{@ts-ignore} comment annotations. Nevertheless, with proper type checker configuration, the type system of TypeScript can be as sound as in Flow.
 
 Both Flow and TypeScript support advanced features such as generics and utility types, with the latter supporting template string literal types and better support for conditional types, unlocking the potential of writing more expressive types, which this master thesis will further explore in more detail.
 
@@ -59,7 +59,7 @@ Unlike in the other languages, the compilation step itself is understood to only
 
 In TypeScript, types are annotated using \code{:[type annotation]} syntax, adding annotations to any of the symbols found in JavaScript, such as variables, function parameters and function return values, to add constraints to values. Type annotations in TypeScript can be categorized into primitive types, literal types, data structure types, union types, intersection types and type parameters. In the following sections, we will explore each of these types in more detail. The following listing \ref{lst:basic-annotation} shows a basic example of TypeScript annotations:
 
-\begin{listing}[h]
+\begin{listing}[ht]
   \caption{Basic TypeScript annotation example}\label{lst:basic-annotation}
   \begin{minted}{TypeScript}
 const item: string = "Hello world"
@@ -75,7 +75,7 @@ At runtime, every variable has a single concrete value, but in TypeScript, the v
 
 A primitive value is data, that is not an object and has no methods or properties. These primitives are immutable, thus they cannot be altered. The TypeScript type system provides a comprehensive representation of these primitives, as seen in listing \ref{lst:primitive-types}:
 
-\begin{listing}[h]
+\begin{listing}[ht]
   \caption{Primitive Types}\label{lst:primitive-types}
   \begin{minted}{TypeScript}
 type Primitive = 
@@ -88,9 +88,9 @@ Some primitive values represent a singular data value, such as \code{null} or \c
 
 \subsection{Literal Types}
 
-To describe an exact possible value, we can use literal types. From the point of view of the type system, a literal type is a subset of one of the following primitive types: \code{string}, \code{number}, \code{bignumber} or \code{boolean}\footnote{Both \texttt{\textcolor{blue}{null}} and \texttt{\textcolor{blue}{undefined}} are literal types as well}, as seen in Listing \ref{lst:literal-types}.
+To describe an exact possible value, we can use literal types. From the point of view of the type system, a literal type is a subset of one of the following primitive types: \code{string}, \code{number}, \code{bignumber} or \code{boolean}\footnote{Both \code{null} and \code{undefined} are literal types as well}, as seen in Listing \ref{lst:literal-types}.
 
-\begin{listing}[h]
+\begin{listing}[ht]
   \caption{Literal Types}\label{lst:literal-types}
   \begin{minted}{TypeScript}
 type Literal = "foo" | 42 | true | 100n;
@@ -115,7 +115,7 @@ An array type is used to describe an array with an unknown length and the values
 
 Object types are used to describe an object with an enumerable and finite set of keys with values of different types per key.
 
-\todo{keyof}
+\todo{\code{keyof}}
 
 \todo{indexed access type}
 
@@ -127,7 +127,7 @@ Record types are used to describe an object with an unknown number of keys and t
 
 Similarly, tuple types describe an array with a fixed number of elements, possibly with a different type for each element.
 
-\begin{listing}[h]
+\begin{listing}[ht]
   \caption{Data structures}\label{lst:data-structures}
   \begin{minted}{TypeScript}
 
@@ -148,7 +148,7 @@ type ArrayStructure = number[]
 
 TypeScript uses structured typing, which means that TypeScript only validates the shape of the data. Essentially, if the data has the same shape as the type, it is considered to be of that type, as seen in Listing \ref{lst:structured-typing}. This is also known as duck typing, essentially: \say{If it walks like a duck and quacks like a duck, it is a duck.}
 
-\begin{listing}[h]
+\begin{listing}[ht]
   \caption{Structured typing}\label{lst:structured-typing}
   \begin{minted}{TypeScript}
 type DuckLike = { quack: () => void; type: string };
@@ -168,7 +168,7 @@ const Goose: DuckLike = {
 
 Structured typing does include some drawbacks unlike in nominal type systems, where each type is unique and the same data cannot be assigned across types, but these can be easily mitigated using literal types to act as brands, as seen in Listing \ref{lst:nominal-types-emulation}.
 
-\begin{listing}[h]
+\begin{listing}[ht]
   \caption{Nominal typing in TS}\label{lst:nominal-types-emulation}
   \begin{minted}{TypeScript}
 type DuckLike = { quack: () => void; type: "duck" };
@@ -196,7 +196,7 @@ Because behind a union type may be a value of any of the union member types, Typ
 
 An example can be seen in Listing \ref{lst:union-types}, where the function \code{printUserId} can accept both a \code{string} or a \code{number} as an argument. To invoke \code{toUpperCase()}, a method valid only for values of \code{string} type, we must perform a check, if the parameter is a \code{string}. Afterward, TypeScript is smart enough to infer that the type of the checked value must be necessary a \code{string} and permits the invocation of \code{toUpperCase()}.
 
-\begin{listing}[h]
+\begin{listing}[ht]
   \caption{Union types with simple narrowing}\label{lst:union-types}
   \begin{minted}{TypeScript}
 function printUserId(id: string | number) {
@@ -209,9 +209,9 @@ function printUserId(id: string | number) {
   \end{minted}
 \end{listing}
 
-Whereas an intersection of types can be represented by the \code{&} operator. Similarly to the union type, \code{X & Y} can be read as a type for a value that can simultaneously belong to type \code{X} and \code{Y}. These intersection types are of particular interest when working with object types, as an intersection of two object types has all properties of both object types, as an object with both of the properties can be assigned to both of the intersection member types. For this particular reason, intersection types are commonly used to merge two object types, as seen in \ref{lst:intersection-types}\footnote{We can also use \texttt{\textcolor{blue}{extends}} keyword to merge two interfaces}.
+Whereas an intersection of types can be represented by the \code{\&} operator. Similarly to the union type, \code{X \& Y} can be read as a type for a value that can simultaneously belong to type \code{X} and \code{Y}. These intersection types are of particular interest when working with object types, as an intersection of two object types has all properties of both object types, as an object with both of the properties can be assigned to both of the intersection member types. For this particular reason, intersection types are commonly used to merge two object types, as seen in \ref{lst:intersection-types}\footnote{We can also use \code{extends} keyword to merge two interfaces}.
 
-\begin{listing}[h]
+\begin{listing}[ht]
   \caption{Intersection types}\label{lst:intersection-types}
   \begin{minted}{TypeScript}
 type Intersection = { a: string } & { b: number }
@@ -225,7 +225,7 @@ When working with unions and intersections, we need to be able to describe a typ
 
 TypeScript includes two top universal supertypes: \code{any} and \code{unknown}. In the case of \code{any}, every type is assignable to type \code{any} and type \code{any} is assignable to every type \cite{TopTypesAny}. \code{any} is acting as an escape hatch to opt out of type checking. This does have unintended consequences, as \code{any} is assignable to every type, it can be assigned to a different type without any warnings. This is especially problematic when dealing with external data as the return type of \code{JSON.parse()} is \code{any}. An example of assignability can be seen at Listing \ref{lst:any-assignability}.
 
-\begin{listing}[h]
+\begin{listing}[ht]
   \caption{Assignability of any}\label{lst:any-assignability}
   \begin{minted}{TypeScript}
 let data: any = JSON.parse("...") 
@@ -244,7 +244,7 @@ const c: object = data
 
 \code{unknown} acts as a more restrictive version of \code{any}. Every type is assignable to type \code{unknown}, but \code{unknown} is not assignable to any other type, which can be seen at Listing \ref{lst:unknown-assignability}. To assign \code{unknown} to a different type, we must narrow the types using either type guards, type assertions, equality checks or other assertion functions.
 
-\begin{listing}[h]
+\begin{listing}[ht]
   \caption{Assignability of unknown}\label{lst:unknown-assignability}
   \begin{minted}{TypeScript}
 let data: unknown = JSON.parse("...") 
@@ -261,11 +261,11 @@ const c: object = data
   \end{minted}
 \end{listing}
 
-Finally, \code{never} is a bottom type, acting as a subtype of all other types, representing a value that should never occur. In the context of the theory of mathematical logic, \code{never} acts as a logical contradiction, describing a value that may never exist. No other type can be assigned to \code{never} nor \code{never} cannot be assigned to any other type. \code{never} can be found when attempting to intersect two types that have no properties in common, such as \code{string & number}.
+Finally, \code{never} is a bottom type, acting as a subtype of all other types, representing a value that should never occur. In the context of the theory of mathematical logic, \code{never} acts as a logical contradiction, describing a value that may never exist. No other type can be assigned to \code{never} nor \code{never} cannot be assigned to any other type. \code{never} can be found when attempting to intersect two types that have no properties in common, such as \code{string \& number}.
 
 \code{void} is a specific type used to signify a function, which does not return a value. There is a notable difference between the usage of \code{void} when used in context, describing a type for a function with \code{void} return type, and when used in the function declaration, as seen in Listing \ref{lst:void-return-type}. The former is used to describe a situation when an implementation of a \say{void function} does return a value but should be ignored. The latter does enforce that a function should not return a value at all.
 
-\begin{listing}[h]
+\begin{listing}[ht]
   \caption{Return type void}\label{lst:void-return-type}
   \begin{minted}{TypeScript}
 type voidFn = () => void
@@ -286,7 +286,7 @@ function fn2(): void {
 
 An \code{enum} type consists of members and their corresponding initializers for the runtime value of the member. There are two types of enums in TypeScript: numeric enums and string-based enums. In numeric enums, each member is assigned a numeric literal value, as seen in Listing \ref{lst:numeric-enums}. Each member can have an optional initializer to specify an exact number corresponding to a member. If omitted, the value of the member will be generated by auto-incrementing from previous members.
 
-\begin{listing}[h]
+\begin{listing}[ht]
   \caption{Numeric enums}\label{lst:numeric-enums}
   \begin{minted}{TypeScript}
 enum Direction {
@@ -300,7 +300,7 @@ enum Direction {
 
 String-based enums are similar in nature, where each member is assigned a string literal value instead. Each member thus must have an initializer with a string literal, as seen in Listing \ref{lst:string-based-enums}. The key benefit of string-based enums is that they tend to keep their semantic value well when serializing, which is especially helpful when debugging, as the values of numeric enums tend to be opaque.
 
-\begin{listing}[h]
+\begin{listing}[ht]
   \caption{String-based enums}\label{lst:string-based-enums}
   \begin{minted}{TypeScript}
 enum Direction {
@@ -318,7 +318,7 @@ Sometimes we need to write code, which needs to work and accept types we don't k
 
 To illustrate the point, consider the implementation of the built-in \code{Array} type found in the \code{lib.*.d.ts} files (a subset can be seen at Listing \ref{lst:array-type}). The \code{Array<T>} is a generic type, which accepts a single type argument \code{T} and is used to describe the type of the elements in the array. The type argument \code{T} is later used both in arguments and return types of the methods of the \code{Array<T>} type: \code{push()} accepts only elements of the same type as the array while \code{pop()} will return an element of the same type.
 
-\begin{listing}[h]
+\begin{listing}[ht]
   \caption{Array type}\label{lst:array-type}
   \begin{minted}{TypeScript}
 interface Array<T> {
@@ -347,12 +347,12 @@ Generic types are considered first-class citizens in the language, being able to
 
 There is a notable omission, however: generic types cannot receive other generic types as type arguments \cite{TypeInferenceHigherorder}. Thus, higher-order functions are not permitted \footnote{There is a way to create such type using HOTScript, more on that later}.
 
-\subsection{Type constraints with \texttt{\textcolor{blue}{extends}}}
+\subsection{Type constraints with \code{extends}}
 
 When writing generic types, sometimes we need to be able to describe some expectations that a type argument must satisfy. For example, we might want to accept types, which do have a certain property, such as \code{length} as seen in Listing \ref{lst:extends}. To achieve this, we use the \code{extends} keyword to describe our constraints to the type.
 
-\begin{listing}[h]
-  \caption{Type constraints with \texttt{\textcolor{blue}{extends}}}\label{lst:extends}
+\begin{listing}[ht]
+  \caption{Type constraints with \code{extends}}\label{lst:extends}
   \begin{minted}{TypeScript}
 
 function getLength<T extends HasLength>(obj: T): number {
@@ -376,7 +376,7 @@ The generic function will not be able to accept any types anymore, as desired an
 
 Within the TypeScript meta-language, developers can write conditions and branching logic using conditional types. Conditional types follow a syntax similar to the conditional ternary operators with another case of overloading the \code{extends} keyword: \code{Input extends Expect ? A : B}. This can be read as \say{If type Input is assignable to type Exepct, then the type resolves to type A, otherwise to type B.} An example can be seen in Listing \ref{lst:conditional-types}, where the \code{IsString<T>} type will resolve to \code{true} if the type argument \code{T} is assignable to \code{string} and to \code{false} otherwise.
 
-\begin{listing}[h]
+\begin{listing}[ht]
   \caption{Conditional types}\label{lst:conditional-types}
   \begin{minted}{TypeScript}
 type IsString<T> = T extends string ? true : false
@@ -385,7 +385,7 @@ type IsString<T> = T extends string ? true : false
 
 We can use the \code{infer} keyword to deduce or extract a specific type within the scope of conditional types, essentially acting as a way to perform pattern matching. With \code{infer} we introduce a new generic type variable, which can be later used within the true branch of the conditional type, as seen in the implementation of the \code{ReturnType<T>} utility type in Listing \ref{lst:infer}. The \code{ReturnType<T>} type will resolve to the return type of the type argument \code{T}.
 
-\begin{listing}[h]
+\begin{listing}[ht]
   \caption{Infer in conditional types}\label{lst:infer}
   \begin{minted}{TypeScript}
 type ReturnType<T> = T extends (...args: any) => infer R ? R : never;
@@ -394,7 +394,7 @@ type ReturnType<T> = T extends (...args: any) => infer R ? R : never;
 
 Since TypeScript version 4.7 \cite{rosenwasserAnnouncingTypeScript2022}, we can also add an additional type constraint for the inferred type, which will be checked before the conditional type is resolved. This is useful when we want to avoid an additional nested conditional type, as seen in Listing \ref{lst:infer-constraint}, where we want to return the first element of the tuple type only if it is a string.
 
-\begin{listing}[h]
+\begin{listing}[ht]
   \caption{Type constraints within infer}\label{lst:infer-constraint}
   \begin{minted}{TypeScript}
 type FirstIfString<T> =
@@ -412,7 +412,7 @@ type FirstIfString<T> =
 
 When given a union type within the conditional type, the conditional type will be resolved for each member type in the union separately, essentially distributing the union type. To prevent such behavior, we can wrap the type argument in a tuple or any other structure type.
 
-\begin{listing}[h]
+\begin{listing}[ht]
   \caption{Distributing union types}\label{lst:distribute}
   \begin{minted}{TypeScript}
 type ToArray<Type> = Type extends any ? Type[] : never;
@@ -424,7 +424,6 @@ type ToArrayNonDist<Type> = [Type] extends [any] ? Type[] : never;
 
 // $ExpectType (string | number)[]
 type B = ToArrayNonDist<string | number> 
-
 \end{minted}
 \end{listing}
 
@@ -434,7 +433,7 @@ Sometimes we need to transform a type into another type. For example, we might w
 
 We can also specify mapping modifiers to affect the mutability or optionality of a property: \code{readonly} and \code{?} respectively. Prefixing the modifier with either \code{+} or \code{-} will either add or remove the modifier to the property\footnote{+ is assumed by default if omitted}. This can be seen in the \code{Optional<T>} type in Listing \ref{lst:mapped-types}, which will create a new type, which is a copy of the original type, but with all properties being optional.
 
-\begin{listing}[h]
+\begin{listing}[ht]
   \caption{Mapped types}\label{lst:mapped-types}
   \begin{minted}{TypeScript}
 type ToBoolean<T> = {
@@ -449,7 +448,7 @@ type Optional<T> = {
 
 Introduced in TypeScript 4.1 \cite{rosenwasserAnnouncingTypeScript2020}, we can also use the \code{as} keyword to re-map keys in mapped types. This can allow us to create, transform or filter out keys when creating a new type. An example is shown in Listing \ref{lst:mapped-as}, where the \code{Omit<T, Key>} creates a new object type based on type \code{T} with omitted properties which are assignable to \code{Key}.
 
-\begin{listing}[h]
+\begin{listing}[ht]
   \caption{Using as in mapped types}\label{lst:mapped-as}
   \begin{minted}{TypeScript}
 type Omit<T, Key> = {
@@ -460,7 +459,67 @@ type Omit<T, Key> = {
 
 \subsection{Recursive Types}
 
+A recursive data type is a data type that includes a reference to itself within the type definition. Recursive types are useful for modeling complex or hierarchical data structures, such as linked lists or trees.
+
+An example can be seen in Listing \ref{lst:recursive-types}, where the \code{Tree<Value>} generic type represents an object with a value of type \code{Value} and optional left and right subtrees of the same type.
+
+\begin{listing}[ht]
+  \caption{Modeling a binary tree with recursive types}\label{lst:recursive-types}
+  \begin{minted}{TypeScript}
+type Tree<Value> = {
+  value: Value,
+  left?: Tree<Value>,
+  right?: Tree<Value>
+}
+\end{minted}
+\end{listing}
+
+Using recursive types combined with generic types, we can implement typical recursive algorithms useful for this thesis. One such example can be seen at Listing \ref{lst:reduce-type}, where we implement a \code{FromEntries<Entries>} generic type, converting a list of \code{[Key, Value]} tuples into a single object type.
+
+First, we define an additional optional generic type parameter \code{Accumulator} with an initial type value of \code{{}}. For every tuple in a list, we create an object type containing the current key-value pair with \vcode{{ [K in Key]: Value }} and merge it with the accumulator using the \vcode{&} operator. The merged object type is then passed as the accumulator to the next iteration. Finally, when the list is empty, we return the accumulator, which will be the final object type.
+
+\begin{listing}[ht]
+  \caption{Reduce example}\label{lst:reduce-type}
+  \begin{minted}{TypeScript}
+type FromEntries<Entries, Accumulator = {}> =
+  Entries extends [infer Entry, ...infer Rest]
+    ? FromEntries<
+        Rest,
+        Entry extends [infer Key, infer Value]
+          ? { [K in Key]: Value } & Accumulator
+          : Accumulator
+      >
+    : Accumulator;
+\end{minted}
+\end{listing}
+
+There are some limitations regarding recursive types. To prevent infinite recursion, TypeScript limits the instantiation depth to ensure a consistent and performant developer experience. As of writing, the limit is set to 100 levels for type aliases and 5 million type instantiations \cite{ImplementationCheckerTs2023}. Thanks to the tail-recursion elimination optimization, the limit is set to 1000 levels for tail-optimized recursion types. Thus, it is desired to use tail recursion whenever possible.
+
+Another key limitation related to recursive generic types is that the variables declared with \code{infer} do not inherit the constraints of the parent type, as seen in Listing \ref{lst:recursive-constraints}. As the \code{Tail} type lost the type constraint of \code{Haystack}, we cannot pass the tail as the new haystack of the \code{FilterWrong} type. To remedy this issue, we need to add an additional type constraint to the inferred type.
+
+\begin{listing}[ht]
+  \caption{Recursive types and type constraints}\label{lst:recursive-constraints}
+  \begin{minted}{TypeScript}
+type FilterWrong<Haystack extends string[], Needle extends string> =
+  Haystack extends [infer Head, ...infer Tail]
+    ? Head extends Needle
+      // $ExpectError Type 'Tail' does not satisfy the constraint 'string[]'.
+      ? [Head, ...FilterWrong<Tail, Needle>]
+      : FilterWrong<Tail, Needle>
+    : [];
+
+type FilterFixed<Haystack extends string[], Needle extends string> =
+  Haystack extends [infer Head, ...infer Tail extends string[]]
+    ? Head extends Needle
+      ? [Head, ...FilterFixed<Tail, Needle>]
+      : FilterFixed<Tail, Needle>
+    : [];
+\end{minted}
+\end{listing}
+
 \subsection{Template Literal Types}
+
+Finally, template literal types are based on the string literal types and allow complex string manipulation within the TypeScript type system.
 
 \section{Prior Art}
 
