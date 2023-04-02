@@ -62,14 +62,49 @@ In TypeScript, types are annotated using \code{:[type annotation]} syntax, addin
 \begin{listing}[ht]
   \caption{Basic TypeScript annotation example}\label{lst:basic-annotation}
   \begin{minted}{TypeScript}
-const item: string = "Hello world"
-function add(a: number, b: number): number {
-  return a + b
+const prefix: string = "Hello world"
+const user: {
+  name: string;
+  age: number
 }
+
+function formatUserGreeting(
+  user: {
+    name: string;
+    age: number;
+  }, 
+  message: string
+): string {
+  return [message, user.name].join(" ");
+}
+
+const greeting: string = formatUserGreeting(user, prefix); 
 \end{minted}
 \end{listing}
 
 At runtime, every variable has a single concrete value, but in TypeScript, the variable has only a type. A useful mental model for understanding types is to think of the type as a set of permitted values \cite{vanderkamEffectiveTypeScript622019}, effectively describing the domain of the type.
+
+Developers can declare types directly in type annotations, but sometimes developers need to reuse the same type in multiple annotations. To avoid repeating the same declaration, we can use type aliases to refer to a type by a name. These type variables act as an alias, which can be used in place of the type itself. The listing \ref{lst:type-aliases} shows a refactored \code{formatUserGreeting} function of the previous listing \ref{lst:basic-annotation} using type aliases.
+
+\begin{listing}[ht]
+  \caption{Type aliases}\label{lst:type-aliases}
+  \begin{minted}{TypeScript}
+type User = {
+  name: string;
+  age: number
+}
+
+const prefix: string = "Hello world"
+const user: User
+
+function formatUserGreeting(
+  user: User, 
+  message: string
+): string {
+  return [message, user.name].join(" ");
+}
+\end{minted}
+\end{listing}
 
 \subsection{Primitive Types}
 
@@ -103,29 +138,16 @@ const Invalid: Literal = "bar"
 \end{minted}
 \end{listing}
 
-\section{Types for data structures}
+\subsection{Types for data structures}
 
-TypeScript also allows annotating data structures such as objects and arrays with dedicated type syntax.
+TypeScript also allows annotating data structures such as objects and arrays with four possible types, depending on the enumerability of items and their types. The syntax overview can be seen here in Listing \ref{lst:data-structures}.
 
-\todo{Arrays}
-
-An array type is used to describe an array with an unknown length and the values are of the same type.
-
-\todo{Objects, Interfaces}
-
-Object types are used to describe an object with an enumerable and finite set of keys with values of different types per key.
-
-\todo{\code{keyof}}
-
-\todo{indexed access type}
-
-\todo{Records}
-
-Record types are used to describe an object with an unknown number of keys and the values are of the same type.
-
-\todo{Tuples}
-
-Similarly, tuple types describe an array with a fixed number of elements, possibly with a different type for each element.
+\begin{itemize}
+  \item \code{tuple} type for describing an array with a fixed number of elements, possibly with a different type for each element,
+  \item \code{array} type for describing an array with an unknown length and the values are of the same type,
+  \item \code{record} type for describing an object with an unknown number of keys and the values are of the same type,
+  \item \code{object} type or an \code{interface} for describing an object with a finite set of keys with values of different types per key.
+\end{itemize}
 
 \begin{listing}[ht]
   \caption{Data structures}\label{lst:data-structures}
@@ -144,7 +166,14 @@ type ArrayStructure = number[]
 \end{minted}
 \end{listing}
 
-\subsection{Structured Typing}
+As we can see, two type syntaxes can be used for describing objects with a finite set of key-value pairs in TypeScript: \code{object} and \code{interface}. There are some key differences between the two syntaxes:
+
+\begin{enumerate}
+  \item The \code{object} type uses the type alias syntax, whereas an interface is defined using a special \code{interface} keyword.
+  \item TypeScript allows multiple declarations of \code{interface}, which are later merged during type-checking. This can be especially useful when working with third-party libraries.
+  \item Even though both support object merging, \code{interface} can be implemented by classes, ensuring that the class adheres to the structure defined by the interface. \code{object} types cannot be directly implemented by a class.
+  \item Merging \code{interface} declarations is more performant when merging multiple declarations than an intersection of \code{object} types \cite{Performance}.
+\end{enumerate}
 
 TypeScript uses structured typing, which means that TypeScript only validates the shape of the data. Essentially, if the data has the same shape as the type, it is considered to be of that type, as seen in Listing \ref{lst:structured-typing}. This is also known as duck typing, essentially: \say{If it walks like a duck and quacks like a duck, it is a duck.}
 
@@ -169,7 +198,7 @@ const Goose: DuckLike = {
 Structured typing does include some drawbacks unlike in nominal type systems, where each type is unique and the same data cannot be assigned across types, but these can be easily mitigated using literal types to act as brands, as seen in Listing \ref{lst:nominal-types-emulation}.
 
 \begin{listing}[ht]
-  \caption{Nominal typing in TS}\label{lst:nominal-types-emulation}
+  \caption{Nominal typing in TypeScript}\label{lst:nominal-types-emulation}
   \begin{minted}{TypeScript}
 type DuckLike = { quack: () => void; type: "duck" };
 
@@ -218,6 +247,34 @@ type Intersection = { a: string } & { b: number }
 const item: Intersection = { a: "a", b: 1 }
   \end{minted}
 \end{listing}
+
+\subsection{\code{keyof} type and indexed access types}
+
+To access a specific property of a record or a tuple, we use the indexed access type. The syntax of indexed access types mirrors the syntax for accessing an object in JavaScript, as seen in Listing \ref{lst:indexed-access-types}. We can also use unions as keys to get types of multiple properties of an object type. 
+
+\begin{listing}[ht]
+\caption{Indexed access types}\label{lst:indexed-access-types}
+\begin{minted}{TypeScript}
+type User = { firstName: string; lastName: string; age: number }
+
+type Age = User["age"] 
+type Names = User["firstName" | "lastName"]
+\end{minted}
+\end{listing}
+
+What if we need to get all possible keys of an object type? For that, we can use the \code{keyof} keyword operator. This will return an union of all keys of the provided data structure type. These are especially useful when working with mapped types later on. An example can be seen in Listing \ref{lst:keyof}.
+
+\begin{listing}[ht]
+\caption{Usage of \code{keyof}}\label{lst:keyof}
+\begin{minted}{TypeScript}
+type User = { firstName: string; lastName: string; age: number }
+type Keys = keyof User
+//   ^? "firstName" | "lastName" | "age"
+\end{minted}
+\end{listing}
+
+\todo{indexed access type}
+
 
 \subsection{Special data types}
 
@@ -508,25 +565,58 @@ type FilterWrong<Haystack extends string[], Needle extends string> =
       : FilterWrong<Tail, Needle>
     : [];
 
-type FilterFixed<Haystack extends string[], Needle extends string> =
+type FilterCorrect<Haystack extends string[], Needle extends string> =
   Haystack extends [infer Head, ...infer Tail extends string[]]
     ? Head extends Needle
-      ? [Head, ...FilterFixed<Tail, Needle>]
-      : FilterFixed<Tail, Needle>
+      ? [Head, ...FilterCorrect<Tail, Needle>]
+      : FilterCorrect<Tail, Needle>
     : [];
 \end{minted}
 \end{listing}
 
 \subsection{Template Literal Types}
 
-Finally, template literal types are based on the string literal types and allow complex string manipulation within the TypeScript type system.
+Finally, template literal types are based on the string literal types and allow string interpolation and manipulation within the TypeScript type system. For this thesis, we use template literal types to create a parser of mathematical expressions, but template literal types can be used to create fully typed string-based Domain Specific Languages (DSLs).
+
+Similar to the syntax of JavaScript template literal strings, we use backticks to create a new template literal type. When used with a string literal type, a template literal will create a new string literal type by concatenation \cite{DocumentationTemplateLiteral}. For example, the type \code{\`{}Hello \$\{"World"\}\`{}} will create a new string literal type \code{"Hello World"}.
+
+Template literal types can be used with primitive types as well, the only limitation being that the primitive type must be stringifiable. That includes all of the primitive types except the \code{symbol} type. When created, these types are as a subset of their primitive type and can be used to work as a validation mechanism matching a string of an expected format. For instance, the type \code{\`{}localhost:\$\{number\}\`{}} will create a new string literal type that will match a string of the format \code{localhost:PORT}, where \code{PORT} is a number.
+
+The distributive nature of union types applies to template literal strings as well: the type will be applied for every member type of the union to the template literal, as seen in the Listing \ref{lst:union-template-literal}, where we create a new \code{Style} type with all of the possible combinations of the \code{Variants} and \code{Weights} types. Generally, it is preferable to avoid combinations of big union types, as it can lead to worse type-checking performance or an error if a union type reaches 1\,000\,000 member types.
+
+\begin{listing}[ht]
+  \caption{Distributive nature of unions in template literal types}\label{lst:union-template-literal}
+  \begin{minted}{TypeScript}
+type Variants = "primary" | "secondary"
+type Weights = 100 | 200 | 300
+
+type Style = `${Variants}-${Weights}`
+//   ^? | "primary-100" | "primary-200" | "primary-300" 
+//      | "secondary-100" | "secondary-200" | "secondary-300"
+\end{minted}
+\end{listing}
+
+Finally, we can use inference in template literal types to perform pattern matching within string literals with the combination of conditional types and the \code{infer} keyword. In Listing \ref{lst:pattern-matching-template-literal}, we create a generic type \code{SplitString}, which splits a string literal type into a tuple of substrings with a space as the delimiter. We attempt to pattern match a string with \code{Head}, containing the left side of the split, and \code{Rest}, including the rest of the split string, as the two inferred types as the result. We also apply type constraints for the inferred types to ensure the types are assignable to \code{string}\footnote{Albeit unnecessarily, as TypeScript automatically applies the \code{string} type constraint in this instance}. Both of the inferred types are used to create a new tuple type, with \code{Head} being the first element of the tuple and \code{Rest} used in a recursive call to split the rest of the string.
+
+\begin{listing}[ht]
+  \caption{Pattern matching with template literal types}\label{lst:pattern-matching-template-literal}
+  \begin{minted}{TypeScript}
+type SplitString<Input extends string> = 
+  Input extends `${infer Head extends string} ${infer Rest extends string}`
+    ? [Head, ...SplitString<Rest>]
+    : [Input];
+\end{minted}
+\end{listing}
 
 \section{Prior Art}
 
-\begin{itemize}
-  \item \code{kawayiLinLin/typescript-lodash}
-  \item \code{arielhs/ts-arithmetic}
-  \item \code{ts-belt}
-  \item \code{type-fest}
-  \item \code{hotscript}
-\end{itemize}
+There are multiple basic implementations of math operations in TypeScript. Tasks regarding basic math operations are even part of the TypeChallenges collection\cite{TypechallengesTypechallenges2023}. However, most of the do work only on integers, as they work on tuple expansion, which will be further discussed in the implementation part of this thesis. 
+
+Nevertheless, multiple libraries in the NPM registry do provide basic math calculations within the TypeScript type system, but none of them provide a fully typed parser of mathematical expressions. Some of the libraries we have found do provide type utilities that operate on floating-point numbers instead of integers, such as \code{type-fest} \cite{sorhusSindresorhusTypefest2023} or \code{typescript-lodash}\cite{kawayilinlinKawayiLinLinTypescriptlodash2023}. The most comprehensive implementation of math operations can be found in the \code{ts-arithmetic} library \cite{arielTypeLevelArithmetic2023}, which provides a fully typed implementation of division.
+
+% \begin{itemize}
+%   \item \code{kawayiLinLin/typescript-lodash} - floating point numbers, addition, subtraction, division by two
+%   \item \code{arielhs/ts-arithmetic} - floating point numbers, addition, subtraction, multiplication, division, mod, negate, abs, compare, max, min, sign
+%   \item \code{type-fest} - parsing float, sign modification
+%   \item \code{hotscript} - integers, addition, subtraction, multiplication, division, mod, negate, abs, compare, max, min, sign
+% \end{itemize}
