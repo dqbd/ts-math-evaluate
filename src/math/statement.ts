@@ -7,6 +7,155 @@ import { Neg } from "../neg"
 import { Sub } from "../sub"
 import { NumberLike } from "../utils/parse"
 
+/**
+ * Lexer
+ */
+type Token =
+  | { type: "Number"; value: string }
+  | { type: "Identifier"; value: string }
+  | { type: "Plus" }
+  | { type: "Minus" }
+  | { type: "Multiply" }
+  | { type: "Divide" }
+  | { type: "LeftParenthesis" }
+  | { type: "RightParenthesis" }
+  | { type: "Factorial" }
+  | { type: "Modulo" }
+  | { type: "Power" }
+
+type Fail = { type: "Fail" }
+
+type HandleResult<Rest extends string, Result extends Token> = {
+  result: Result
+  rest: Rest
+}
+
+type Digits = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"
+
+type Letters =
+  | "a"
+  | "b"
+  | "c"
+  | "d"
+  | "e"
+  | "f"
+  | "g"
+  | "h"
+  | "i"
+  | "j"
+  | "k"
+  | "l"
+  | "m"
+  | "n"
+  | "o"
+  | "p"
+  | "q"
+  | "r"
+  | "s"
+  | "t"
+  | "u"
+  | "v"
+  | "w"
+  | "x"
+  | "y"
+  | "z"
+
+type HandleDigitsResult<Rest extends string, Result extends string> = {
+  result: Result
+  rest: Rest
+}
+
+type HandleDigits<
+  T extends string,
+  NumAcc extends string = ""
+> = T extends `${infer Head extends Digits}${infer Rest}`
+  ? HandleDigits<Rest, `${NumAcc}${Head}`>
+  : NumAcc extends ""
+  ? Fail
+  : HandleDigitsResult<T, NumAcc>
+
+type HandleNumberFinish<
+  T extends string,
+  SignAcc extends string = "",
+  IntAcc extends string = "",
+  FloatAcc extends string | null = null
+> = FloatAcc extends null | ""
+  ? IntAcc extends ""
+    ? Fail
+    : HandleResult<T, { type: "Number"; value: `${SignAcc}${IntAcc}` }>
+  : HandleResult<
+      T,
+      { type: "Number"; value: `${SignAcc}${IntAcc}.${FloatAcc}` }
+    >
+
+// TODO: add tests
+type HandleNumber<
+  T extends string,
+  SignAcc extends string = "",
+  IntAcc extends string = "",
+  FloatAcc extends string | null = null
+> = T extends `${infer Head extends "+" | "-"}${infer Rest}`
+  ? SignAcc extends ""
+    ? HandleNumber<Rest, Head, IntAcc, FloatAcc>
+    : HandleNumberFinish<T, SignAcc, IntAcc, FloatAcc>
+  : T extends `${"."}${infer Rest}`
+  ? FloatAcc extends null
+    ? HandleNumber<Rest, SignAcc, IntAcc, "">
+    : HandleNumberFinish<T, SignAcc, IntAcc, FloatAcc>
+  : HandleDigits<T> extends HandleDigitsResult<infer Rest, infer Num>
+  ? FloatAcc extends ""
+    ? HandleNumber<Rest, SignAcc, IntAcc, Num>
+    : HandleNumber<Rest, SignAcc, Num, FloatAcc>
+  : HandleNumberFinish<T, SignAcc, IntAcc, FloatAcc>
+
+type HandleIdentifier<
+  T extends string,
+  StrAcc extends string = ""
+> = T extends `${infer Head extends Letters}${infer Rest}`
+  ? HandleIdentifier<Rest, `${StrAcc}${Head}`>
+  : StrAcc extends ""
+  ? Fail
+  : HandleResult<T, { type: "Identifier"; value: StrAcc }>
+
+type HandleToken<T extends string> = T extends `${infer Head}${infer Rest}`
+  ? Head extends "+"
+    ? HandleResult<Rest, { type: "Plus" }>
+    : Head extends "-"
+    ? HandleResult<Rest, { type: "Minus" }>
+    : Head extends "*"
+    ? HandleResult<Rest, { type: "Multiply" }>
+    : Head extends "/"
+    ? HandleResult<Rest, { type: "Divide" }>
+    : Head extends "("
+    ? HandleResult<Rest, { type: "LeftParenthesis" }>
+    : Head extends ")"
+    ? HandleResult<Rest, { type: "RightParenthesis" }>
+    : Head extends "!"
+    ? HandleResult<Rest, { type: "Factorial" }>
+    : Head extends "%"
+    ? HandleResult<Rest, { type: "Modulo" }>
+    : Head extends "^"
+    ? HandleResult<Rest, { type: "Power" }>
+    : Fail
+  : Fail
+
+export type Lexer<
+  T extends string,
+  Result extends Token[] = []
+> = T extends `${infer S}${infer Rest}`
+  ? S extends " "
+    ? Lexer<Rest, Result>
+    : HandleNumber<T> extends HandleResult<infer Rest, infer NewToken>
+    ? Lexer<Rest, [...Result, NewToken]>
+    : HandleIdentifier<T> extends HandleResult<infer Rest, infer NewToken>
+    ? Lexer<Rest, [...Result, NewToken]>
+    : HandleToken<T> extends HandleResult<infer Rest, infer NewToken>
+    ? Lexer<Rest, [...Result, NewToken]>
+    : never
+  : Result
+
+type LexerCase1 = Lexer<"aaaa(323) + sgn(24)">
+
 type BinaryItem<Left, Op extends string, Right> = {
   type: "binary"
   left: Left
@@ -93,71 +242,6 @@ type ParseExpression<T extends Token[]> = ParseTerm<T>
 type ParserCase1 = Parser<Lexer<"3.1 + 2.5 * (1 - 5.6) / 4.2">>
 
 /**
- * Lexer
- */
-type Token =
-  | { type: "Number"; value: string }
-  | { type: "Plus" }
-  | { type: "Minus" }
-  | { type: "Multiply" }
-  | { type: "Divide" }
-  | { type: "LeftParenthesis" }
-  | { type: "RightParenthesis" }
-
-type Fail = { type: "Fail" }
-
-type HandleResult<Rest extends string, Result extends Token> = {
-  result: Result
-  rest: Rest
-}
-
-// TODO: stricter handling of decimal places
-// TODO: support signed/negative numbers
-type HandleNumber<
-  T extends string,
-  NumAcc extends string = ""
-> = T extends `${infer R}${infer S}`
-  ? R extends "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" | "."
-    ? HandleNumber<S, `${NumAcc}${R}`>
-    : NumAcc extends ""
-    ? Fail
-    : HandleResult<T, { type: "Number"; value: NumAcc }>
-  : NumAcc extends ""
-  ? Fail
-  : HandleResult<T, { type: "Number"; value: NumAcc }>
-
-type HandleToken<T extends string> = T extends `${infer R}${infer S}`
-  ? R extends "+"
-    ? HandleResult<S, { type: "Plus" }>
-    : R extends "-"
-    ? HandleResult<S, { type: "Minus" }>
-    : R extends "*"
-    ? HandleResult<S, { type: "Multiply" }>
-    : R extends "/"
-    ? HandleResult<S, { type: "Divide" }>
-    : R extends "("
-    ? HandleResult<S, { type: "LeftParenthesis" }>
-    : R extends ")"
-    ? HandleResult<S, { type: "RightParenthesis" }>
-    : Fail
-  : Fail
-
-type Lexer<
-  T extends string,
-  Result extends Token[] = []
-> = T extends `${infer S}${infer Rest}`
-  ? S extends " "
-    ? Lexer<Rest, Result>
-    : HandleToken<T> extends HandleResult<infer Rest, infer NewToken>
-    ? Lexer<Rest, [...Result, NewToken]>
-    : HandleNumber<T> extends HandleResult<infer Rest, infer NewToken>
-    ? Lexer<Rest, [...Result, NewToken]>
-    : never
-  : Result
-
-type LexerCase1 = Lexer<"323 + 24">
-
-/**
  * AST + evaluator
  */
 
@@ -210,3 +294,6 @@ type Evaluate<T> = T extends BinaryItem<infer Left, infer Op, infer Right>
 
 // $ExpectType "0.36190476200"
 type EvaluateCase1 = Evaluate<Parser<Lexer<"3.1 + 2.5 * (1 - 5.6) / 4.2">>>
+
+// $ExpectType "-32"
+type EvaluateCase2 = Evaluate<Parser<Lexer<"-64 + 10 * 0 + 32">>>
