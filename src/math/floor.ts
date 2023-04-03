@@ -7,7 +7,7 @@ import {
   ParseSignFloatNumber,
   SignFloatNumber,
   StringifySignFloat,
-} from "./utils/parse"
+} from "../utils/parse"
 
 export type FloorSignFloatNumber<Number extends SignFloatNumber> =
   TruncateSignFloatNumber<Number> extends infer TrucateNumber extends SignFloatNumber

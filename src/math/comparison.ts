@@ -1,5 +1,5 @@
-import { PadStartEqually } from "./utils/array"
-import { CmpMap } from "./utils/map"
+import { PadStartEqually } from "../utils/array"
+import { CmpMap } from "../utils/map"
 import {
   Digit,
   FloatNumber,
@@ -7,7 +7,7 @@ import {
   ParseFloatNumber,
   ParseSignFloatNumber,
   SignFloatNumber,
-} from "./utils/parse"
+} from "../utils/parse"
 
 type CompareArr<X extends Digit[], Y extends Digit[]> = [X, Y] extends [
   [infer XHead extends Digit, ...infer XRest extends Digit[]],

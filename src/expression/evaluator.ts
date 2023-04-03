@@ -1,10 +1,4 @@
-import { Add } from "../add"
-import { Divide } from "../div"
-import { Factorial } from "../factorial"
-import { Mod } from "../mod"
-import { Multiply } from "../mul"
-import { Neg } from "../neg"
-import { Sub } from "../sub"
+import { Add, Divide, Factorial, Mod, Multiply, Neg, Sub } from "../math"
 import { NumberLike } from "../utils/parse"
 import { BinaryItem, UnaryItem, NumberItem } from "./parser"
 

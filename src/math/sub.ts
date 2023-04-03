@@ -1,5 +1,5 @@
-import { SubMapCarry } from "./utils/map"
-import { PadEndEqually, PadStartEqually } from "./utils/array"
+import { SubMapCarry } from "../utils/map"
+import { PadEndEqually, PadStartEqually } from "../utils/array"
 import {
   NumberLike,
   FloatNumber,
@@ -7,8 +7,8 @@ import {
   SignFloatNumber,
   Digit,
   StringifySignFloat,
-} from "./utils/parse"
-import { Or } from "./utils/boolean"
+} from "../utils/parse"
+import { Or } from "../utils/boolean"
 import { CompareAbsNumbers } from "./comparison"
 import { AddFloatNumber } from "./add"
 

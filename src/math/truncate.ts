@@ -4,7 +4,7 @@ import {
   ParseSignFloatNumber,
   SignFloatNumber,
   StringifySignFloat,
-} from "./utils/parse"
+} from "../utils/parse"
 
 export type TruncateSignFloatNumber<Number extends SignFloatNumber> =
   SignFloatNumber<Number["sign"], FloatNumber<Number["float"]["int"], []>>

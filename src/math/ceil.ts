@@ -7,7 +7,7 @@ import {
   ParseSignFloatNumber,
   SignFloatNumber,
   StringifySignFloat,
-} from "./utils/parse"
+} from "../utils/parse"
 
 export type Ceil<Value extends NumberLike> =
   ParseSignFloatNumber<Value> extends infer Number extends SignFloatNumber

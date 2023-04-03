@@ -2,7 +2,7 @@ import { IsEvenInt } from "./comparison"
 import { DivideSignFloatNumber, LongDivisionDigit } from "./div"
 import { MultiplySignFloat } from "./mul"
 import { SubDigit } from "./sub"
-import { TrimEnd } from "./utils/array"
+import { TrimEnd } from "../utils/array"
 import {
   Digit,
   FloatNumber,
@@ -10,7 +10,7 @@ import {
   ParseSignFloatNumber,
   SignFloatNumber,
   StringifySignFloat,
-} from "./utils/parse"
+} from "../utils/parse"
 
 type OneSignFloatNumber = SignFloatNumber<"+", FloatNumber<[1], []>>
 

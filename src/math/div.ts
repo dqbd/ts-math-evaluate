@@ -2,7 +2,7 @@ import { AddInt } from "./add"
 import { CompareDigits } from "./comparison"
 import { MultiplySign } from "./mul"
 import { SubDigit } from "./sub"
-import { PadEndEqually, TrimStart } from "./utils/array"
+import { PadEndEqually, TrimStart } from "../utils/array"
 import {
   Digit,
   FloatNumber,
@@ -10,7 +10,7 @@ import {
   ParseSignFloatNumber,
   SignFloatNumber,
   StringifySignFloat,
-} from "./utils/parse"
+} from "../utils/parse"
 
 interface DivisionResult<
   Quotient extends Digit[] = Digit[],

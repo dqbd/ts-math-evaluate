@@ -10,7 +10,7 @@ import {
   ParseSignFloatNumber,
   SignFloatNumber,
   StringifySignFloat,
-} from "./utils/parse"
+} from "../utils/parse"
 
 type RootNSubOne<N extends Digit[]> = SignFloatNumber<
   "+",

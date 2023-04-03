@@ -1,4 +1,4 @@
-import { AddMapCarry } from "./utils/map"
+import { AddMapCarry } from "../utils/map"
 import {
   NumberLike,
   ParseSignFloatNumber,
@@ -8,10 +8,10 @@ import {
   SignFloatNumber,
   Digit,
   StringifySignFloat,
-} from "./utils/parse"
-import { Or } from "./utils/boolean"
+} from "../utils/parse"
+import { Or } from "../utils/boolean"
 import { SubOperatorSwitch } from "./sub"
-import { PadStartEqually } from "./utils/array"
+import { PadStartEqually } from "../utils/array"
 
 type AsNumber<S extends string> = S extends `${infer N extends number}`
   ? N

@@ -7,18 +7,20 @@ import {
   ParseSignFloatNumber,
   SignFloatNumber,
   StringifySignFloat,
-} from "./utils/parse"
+} from "../utils/parse"
 
 export type ModSignFloatNumber<
   XNumber extends SignFloatNumber,
   YNumber extends SignFloatNumber
-> = SubSignFloatNumber<
+> = DivideSignFloatNumber<
   XNumber,
-  MultiplySignFloat<
-    YNumber,
-    FloorSignFloatNumber<DivideSignFloatNumber<XNumber, YNumber>>
-  >
->
+  YNumber
+> extends infer Divided extends SignFloatNumber
+  ? SubSignFloatNumber<
+      XNumber,
+      MultiplySignFloat<YNumber, FloorSignFloatNumber<Divided>>
+    >
+  : never
 
 export type Mod<
   X extends NumberLike,

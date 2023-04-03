@@ -1,6 +1,6 @@
 import { MultiplyInt } from "./mul"
 import { SubDigit } from "./sub"
-import { TrimStart } from "./utils/array"
+import { TrimStart } from "../utils/array"
 import {
   Digit,
   FloatNumber,
@@ -8,7 +8,7 @@ import {
   ParseSignFloatNumber,
   SignFloatNumber,
   StringifySignFloat,
-} from "./utils/parse"
+} from "../utils/parse"
 
 type FactorialInt<
   X extends Digit[],

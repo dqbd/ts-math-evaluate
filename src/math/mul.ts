@@ -1,5 +1,5 @@
 import { AddInt } from "./add"
-import { AddMapCarry, MulMapCarry } from "./utils/map"
+import { AddMapCarry, MulMapCarry } from "../utils/map"
 import {
   Digit,
   ExpandNumberToArray,
@@ -8,7 +8,7 @@ import {
   ParseSignFloatNumber,
   SignFloatNumber,
   StringifySignFloat,
-} from "./utils/parse"
+} from "../utils/parse"
 
 type NextMultiplyCarry<
   NextMulCarry extends Digit,

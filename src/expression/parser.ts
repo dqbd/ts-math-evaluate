@@ -27,12 +27,7 @@ type ParseResult<T extends Token[] = [], Result = unknown> = {
   ast: Result
 }
 
-// TODO: implement mod, functions, unary minus and factor
-export type Parser<T extends Token[]> =
-  ParseExpression<T> extends infer Result extends ParseResult
-    ? Result["ast"]
-    : never
-type ParsePrimary<T extends Token[]> = T extends [
+type ParseTerm<T extends Token[]> = T extends [
   { type: "Number"; value: string },
   ...infer Rest extends Token[]
 ]
@@ -47,13 +42,14 @@ type ParsePrimary<T extends Token[]> = T extends [
       : never
     : never
   : Fail
-type ParseFactor<T extends Token[]> = T extends Token[]
-  ? ParsePrimary<T> extends ParseResult<infer PrimaryTokens, infer PrimaryAst>
+
+type ParseMul<T extends Token[]> = T extends Token[]
+  ? ParseTerm<T> extends ParseResult<infer PrimaryTokens, infer PrimaryAst>
     ? PrimaryTokens extends [
         { type: "Multiply" | "Divide" },
         ...infer NewRest extends Token[]
       ]
-      ? ParseFactor<NewRest> extends ParseResult<
+      ? ParseMul<NewRest> extends ParseResult<
           infer FactorTokens,
           infer FactorAst
         >
@@ -65,13 +61,17 @@ type ParseFactor<T extends Token[]> = T extends Token[]
       : ParseResult<PrimaryTokens, PrimaryAst>
     : Fail
   : Fail
-type ParseTerm<T extends Token[]> = T extends Token[]
-  ? ParseFactor<T> extends ParseResult<infer FactorTokens, infer FactorAst>
+
+type ParseAdd<T extends Token[]> = T extends Token[]
+  ? ParseMul<T> extends ParseResult<infer FactorTokens, infer FactorAst>
     ? FactorTokens extends [
         { type: "Plus" | "Minus" },
         ...infer NewRest extends Token[]
       ]
-      ? ParseTerm<NewRest> extends ParseResult<infer TermTokens, infer TermAst>
+      ? ParseAdd<NewRest> extends ParseResult<
+          infer TermTokens,
+          infer TermAst
+        >
         ? ParseResult<
             TermTokens,
             BinaryItem<FactorAst, FactorTokens[0]["type"], TermAst>
@@ -80,4 +80,24 @@ type ParseTerm<T extends Token[]> = T extends Token[]
       : ParseResult<FactorTokens, FactorAst>
     : Fail
   : Fail
-type ParseExpression<T extends Token[]> = ParseTerm<T>
+
+type ParseExpression<T extends Token[]> = ParseAdd<T>
+
+// TODO: implement mod, functions, unary minus and factor
+export type Parser<T extends Token[]> =
+  ParseExpression<T> extends infer Result extends ParseResult
+    ? Result["ast"]
+    : never
+
+/*
+ add -> mul add'
+ add' -> + mul add'
+ add' -> - mul add'
+ add' -> ε
+ mul -> term mul'
+ mul' -> * term mul'
+ mul' -> / term mul'
+ mul' -> ε
+ term -> ( add )
+ term -> num
+*/
