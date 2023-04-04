@@ -1,4 +1,4 @@
-import { Multiply } from "./mul"
+import { Multiply } from "./multiply"
 
 // $ExpectType "123"
 type MultiplyCase1 = Multiply<"123", "1">

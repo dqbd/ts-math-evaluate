@@ -1,6 +1,6 @@
 export { Add } from "./math/add"
 export { Subtract } from "./math/subtract"
-export { Multiply } from "./math/mul"
+export { Multiply } from "./math/multiply"
 export { Divide } from "./math/divide"
 export { Power } from "./math/power"
 export { Modulo } from "./math/modulo"

@@ -1,6 +1,6 @@
 import { DivideSignFloatNumber } from "./divide"
 import { FloorSignFloatNumber } from "./floor"
-import { MultiplySignFloat } from "./mul"
+import { MultiplySignFloat } from "./multiply"
 import { SubSignFloatNumber } from "./subtract"
 import {
   NumberLike,

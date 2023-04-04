@@ -1,4 +1,4 @@
-import { MultiplyInt } from "./mul"
+import { MultiplyInt } from "./multiply"
 import { SubDigit } from "./subtract"
 import { TrimStart } from "../utils/array"
 import {

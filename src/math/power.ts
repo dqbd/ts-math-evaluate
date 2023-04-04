@@ -1,6 +1,6 @@
 import { IsEvenInt } from "./comparison"
 import { DivideSignFloatNumber, LongDivisionDigit } from "./divide"
-import { MultiplySignFloat } from "./mul"
+import { MultiplySignFloat } from "./multiply"
 import { SubDigit } from "./subtract"
 import { TrimEnd } from "../utils/array"
 import {

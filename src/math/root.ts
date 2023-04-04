@@ -1,6 +1,6 @@
 import { AddSignFloatNumber } from "./add"
 import { DivideInt, DivideSignFloatNumber } from "./divide"
-import { MultiplySignFloat } from "./mul"
+import { MultiplySignFloat } from "./multiply"
 import { PowerSignFloatNumbers } from "./power"
 import { SubDigit } from "./subtract"
 import {
