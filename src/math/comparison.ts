@@ -3,10 +3,12 @@ import { CmpMap } from "../utils/map"
 import {
   Digit,
   FloatNumber,
+  NumberLike,
   PadFloat,
   ParseFloatNumber,
   ParseSignFloatNumber,
   SignFloatNumber,
+  StringifySignFloat,
 } from "../utils/parse"
 
 type CompareArr<X extends Digit[], Y extends Digit[]> = [X, Y] extends [

@@ -1,7 +1,7 @@
 import { IsEvenInt } from "./comparison"
-import { DivideSignFloatNumber, LongDivisionDigit } from "./div"
+import { DivideSignFloatNumber, LongDivisionDigit } from "./divide"
 import { MultiplySignFloat } from "./mul"
-import { SubDigit } from "./sub"
+import { SubDigit } from "./subtract"
 import { TrimEnd } from "../utils/array"
 import {
   Digit,
@@ -14,13 +14,14 @@ import {
 
 type OneSignFloatNumber = SignFloatNumber<"+", FloatNumber<[1], []>>
 
-type PowInt<X extends SignFloatNumber, N extends Digit[]> = TrimEnd<N> extends [
-  0
-]
+type PowerInt<
+  X extends SignFloatNumber,
+  N extends Digit[]
+> = TrimEnd<N> extends [0]
   ? SignFloatNumber<"+", FloatNumber<[1], []>>
   : IsEvenInt<N> extends true
-  ? PowInt<MultiplySignFloat<X, X>, LongDivisionDigit<N, [2]>["quotient"]>
-  : PowInt<
+  ? PowerInt<MultiplySignFloat<X, X>, LongDivisionDigit<N, [2]>["quotient"]>
+  : PowerInt<
       MultiplySignFloat<X, X>,
       LongDivisionDigit<SubDigit<N, [1]>, [2]>["quotient"]
     > extends infer OddCase extends SignFloatNumber
@@ -28,7 +29,7 @@ type PowInt<X extends SignFloatNumber, N extends Digit[]> = TrimEnd<N> extends [
   : never
 
 // TODO: handle fractional numbers / convert to never
-export type PowSignFloatNumbers<
+export type PowerSignFloatNumbers<
   X extends SignFloatNumber,
   N extends SignFloatNumber
 > = N["sign"] extends "-"
@@ -36,16 +37,16 @@ export type PowSignFloatNumbers<
       OneSignFloatNumber,
       X
     > extends infer Xinv extends SignFloatNumber
-    ? PowInt<Xinv, N["float"]["int"]>
+    ? PowerInt<Xinv, N["float"]["int"]>
     : never
-  : PowInt<X, N["float"]["int"]>
+  : PowerInt<X, N["float"]["int"]>
 
-export type Pow<
+export type Power<
   X extends NumberLike,
   Y extends NumberLike
 > = ParseSignFloatNumber<X> extends infer X extends SignFloatNumber
   ? ParseSignFloatNumber<Y> extends infer Y extends SignFloatNumber
-    ? PowSignFloatNumbers<X, Y> extends infer Result extends SignFloatNumber
+    ? PowerSignFloatNumbers<X, Y> extends infer Result extends SignFloatNumber
       ? StringifySignFloat<Result>
       : never
     : never

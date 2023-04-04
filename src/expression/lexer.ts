@@ -11,8 +11,8 @@ export type Token =
   | { type: "LeftParenthesis" }
   | { type: "RightParenthesis" }
   | { type: "Factorial" }
-  | { type: "Modulo" }
   | { type: "Power" }
+  | { type: "Modulo" }
 
 type Fail = "LexerFail"
 

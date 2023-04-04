@@ -1,8 +1,8 @@
 import { AddSignFloatNumber } from "./add"
-import { DivideInt, DivideSignFloatNumber } from "./div"
+import { DivideInt, DivideSignFloatNumber } from "./divide"
 import { MultiplySignFloat } from "./mul"
-import { PowSignFloatNumbers } from "./pow"
-import { SubDigit } from "./sub"
+import { PowerSignFloatNumbers } from "./power"
+import { SubDigit } from "./subtract"
 import {
   Digit,
   FloatNumber,
@@ -25,7 +25,7 @@ type RootStepNext<
   NInverse extends SignFloatNumber,
   NSubOne extends SignFloatNumber,
   Step extends SignFloatNumber
-> = PowSignFloatNumbers<
+> = PowerSignFloatNumbers<
   Step,
   NSubOne
 > extends infer StepPowNSubOne extends SignFloatNumber

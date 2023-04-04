@@ -155,7 +155,7 @@ export type SubSignFloatNumber<
   }
 }[A["sign"]][B["sign"]]
 
-export type Sub<A extends NumberLike, B extends NumberLike> = [
+export type Subtract<A extends NumberLike, B extends NumberLike> = [
   ParseSignFloatNumber<A>,
   ParseSignFloatNumber<B>
 ] extends [infer X extends SignFloatNumber, infer Y extends SignFloatNumber]

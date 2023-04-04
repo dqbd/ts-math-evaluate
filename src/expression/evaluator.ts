@@ -1,23 +1,42 @@
-import { Add, Divide, Factorial, Mod, Multiply, Neg, Sub } from "../math"
+import {
+  Abs,
+  Add,
+  Ceil,
+  Divide,
+  Factorial,
+  Floor,
+  Modulo,
+  Multiply,
+  Negate,
+  Root,
+  Round,
+  Subtract,
+  Truncate,
+} from "../math"
 import { NumberLike } from "../utils/parse"
 import { BinaryItem, UnaryItem, NumberItem } from "./parser"
 
-// TODO: functions (abs, ceil, floor, round, truncate)
 export type Evaluate<T> = T extends BinaryItem<
   infer Left,
   infer Op,
   infer Right
 >
-  ? Op extends "Multiply"
-    ? Evaluate<Left> extends infer LeftStr extends NumberLike
-      ? Evaluate<Right> extends infer RightStr extends NumberLike
-        ? Multiply<LeftStr, RightStr>
-        : never
-      : never
-    : Op extends "Plus"
+  ? Op extends "Plus"
     ? Evaluate<Left> extends infer LeftStr extends NumberLike
       ? Evaluate<Right> extends infer RightStr extends NumberLike
         ? Add<LeftStr, RightStr>
+        : never
+      : never
+    : Op extends "Minus"
+    ? Evaluate<Left> extends infer LeftStr extends NumberLike
+      ? Evaluate<Right> extends infer RightStr extends NumberLike
+        ? Subtract<LeftStr, RightStr>
+        : never
+      : never
+    : Op extends "Multiply"
+    ? Evaluate<Left> extends infer LeftStr extends NumberLike
+      ? Evaluate<Right> extends infer RightStr extends NumberLike
+        ? Multiply<LeftStr, RightStr>
         : never
       : never
     : Op extends "Divide"
@@ -26,25 +45,51 @@ export type Evaluate<T> = T extends BinaryItem<
         ? Divide<LeftStr, RightStr>
         : never
       : never
-    : Op extends "Minus"
+    : Op extends "Power"
     ? Evaluate<Left> extends infer LeftStr extends NumberLike
       ? Evaluate<Right> extends infer RightStr extends NumberLike
-        ? Sub<LeftStr, RightStr>
+        ? Modulo<LeftStr, RightStr>
         : never
       : never
-    : Op extends "Mod"
+    : Op extends "Modulo"
     ? Evaluate<Left> extends infer LeftStr extends NumberLike
       ? Evaluate<Right> extends infer RightStr extends NumberLike
-        ? Mod<LeftStr, RightStr>
+        ? Modulo<LeftStr, RightStr>
+        : never
+      : never
+    : Op extends "root"
+    ? Evaluate<Left> extends infer LeftStr extends NumberLike
+      ? Evaluate<Right> extends infer RightStr extends NumberLike
+        ? Root<LeftStr, RightStr>
         : never
       : never
     : never
   : T extends UnaryItem<infer Value, infer Op>
-  ? Op extends "Minus"
+  ? Op extends "abs"
     ? Evaluate<Value> extends infer ValueStr extends NumberLike
-      ? Neg<ValueStr>
+      ? Abs<ValueStr>
       : never
-    : Op extends "Factor"
+    : Op extends "Minus"
+    ? Evaluate<Value> extends infer ValueStr extends NumberLike
+      ? Negate<ValueStr>
+      : never
+    : Op extends "ceil"
+    ? Evaluate<Value> extends infer ValueStr extends NumberLike
+      ? Ceil<ValueStr>
+      : never
+    : Op extends "floor"
+    ? Evaluate<Value> extends infer ValueStr extends NumberLike
+      ? Floor<ValueStr>
+      : never
+    : Op extends "round"
+    ? Evaluate<Value> extends infer ValueStr extends NumberLike
+      ? Round<ValueStr>
+      : never
+    : Op extends "truncate"
+    ? Evaluate<Value> extends infer ValueStr extends NumberLike
+      ? Truncate<ValueStr>
+      : never
+    : Op extends "Factorial"
     ? Evaluate<Value> extends infer ValueStr extends NumberLike
       ? Factorial<ValueStr>
       : never

@@ -1,4 +1,4 @@
-import { Add as AddImpl, Sub as SubImpl, Neg as NegImpl } from "../math"
+import { Add as AddImpl, Subtract as SubImpl, Negate as NegImpl } from "../math"
 import { NumberLike } from "../utils/parse"
 
 interface Fn {

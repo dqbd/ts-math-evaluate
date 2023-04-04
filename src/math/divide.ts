@@ -1,7 +1,7 @@
 import { AddInt } from "./add"
 import { CompareDigits } from "./comparison"
 import { MultiplySign } from "./mul"
-import { SubDigit } from "./sub"
+import { SubDigit } from "./subtract"
 import { PadEndEqually, TrimStart } from "../utils/array"
 import {
   Digit,

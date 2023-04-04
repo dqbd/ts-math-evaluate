@@ -1,4 +1,4 @@
-import { Divide } from "./div"
+import { Divide } from "./divide"
 
 // $ExpectType "-132.0"
 type DivideCase1 = Divide<"-264", "2">

@@ -1,7 +1,7 @@
-import { DivideSignFloatNumber } from "./div"
+import { DivideSignFloatNumber } from "./divide"
 import { FloorSignFloatNumber } from "./floor"
 import { MultiplySignFloat } from "./mul"
-import { SubSignFloatNumber } from "./sub"
+import { SubSignFloatNumber } from "./subtract"
 import {
   NumberLike,
   ParseSignFloatNumber,
@@ -22,7 +22,7 @@ export type ModSignFloatNumber<
     >
   : never
 
-export type Mod<
+export type Modulo<
   X extends NumberLike,
   Y extends NumberLike
 > = ParseSignFloatNumber<X> extends infer XNumber extends SignFloatNumber

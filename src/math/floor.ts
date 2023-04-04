@@ -1,5 +1,5 @@
 import { CompareSignNumbers } from "./comparison"
-import { SubSignFloatNumber } from "./sub"
+import { SubSignFloatNumber } from "./subtract"
 import { TruncateSignFloatNumber } from "./truncate"
 import {
   FloatNumber,

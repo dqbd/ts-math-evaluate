@@ -10,7 +10,7 @@ import {
   StringifySignFloat,
 } from "../utils/parse"
 import { Or } from "../utils/boolean"
-import { SubOperatorSwitch } from "./sub"
+import { SubOperatorSwitch } from "./subtract"
 import { PadStartEqually } from "../utils/array"
 
 type AsNumber<S extends string> = S extends `${infer N extends number}`
