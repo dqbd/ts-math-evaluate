@@ -14,44 +14,44 @@ import {
   Truncate,
 } from "../math"
 import { NumberLike } from "../utils/parse"
-import { BinaryItem, UnaryItem, NumberItem } from "./parser"
+import { AST } from "./parser"
 
-export type Evaluate<T> = T extends BinaryItem<
+export type Evaluate<T> = T extends AST.BinaryType<
   infer Left,
   infer Op,
   infer Right
 >
-  ? Op extends "Plus"
+  ? Op extends "+"
     ? Evaluate<Left> extends infer LeftStr extends NumberLike
       ? Evaluate<Right> extends infer RightStr extends NumberLike
         ? Add<LeftStr, RightStr>
         : never
       : never
-    : Op extends "Minus"
+    : Op extends "-"
     ? Evaluate<Left> extends infer LeftStr extends NumberLike
       ? Evaluate<Right> extends infer RightStr extends NumberLike
         ? Subtract<LeftStr, RightStr>
         : never
       : never
-    : Op extends "Multiply"
+    : Op extends "*"
     ? Evaluate<Left> extends infer LeftStr extends NumberLike
       ? Evaluate<Right> extends infer RightStr extends NumberLike
         ? Multiply<LeftStr, RightStr>
         : never
       : never
-    : Op extends "Divide"
+    : Op extends "/"
     ? Evaluate<Left> extends infer LeftStr extends NumberLike
       ? Evaluate<Right> extends infer RightStr extends NumberLike
         ? Divide<LeftStr, RightStr>
         : never
       : never
-    : Op extends "Power"
+    : Op extends "^"
     ? Evaluate<Left> extends infer LeftStr extends NumberLike
       ? Evaluate<Right> extends infer RightStr extends NumberLike
         ? Modulo<LeftStr, RightStr>
         : never
       : never
-    : Op extends "Modulo"
+    : Op extends "%"
     ? Evaluate<Left> extends infer LeftStr extends NumberLike
       ? Evaluate<Right> extends infer RightStr extends NumberLike
         ? Modulo<LeftStr, RightStr>
@@ -64,14 +64,18 @@ export type Evaluate<T> = T extends BinaryItem<
         : never
       : never
     : never
-  : T extends UnaryItem<infer Value, infer Op>
+  : T extends AST.UnaryType<infer Value, infer Op>
   ? Op extends "abs"
     ? Evaluate<Value> extends infer ValueStr extends NumberLike
       ? Abs<ValueStr>
       : never
-    : Op extends "Minus"
+    : Op extends "-"
     ? Evaluate<Value> extends infer ValueStr extends NumberLike
       ? Negate<ValueStr>
+      : never
+    : Op extends "+"
+    ? Evaluate<Value> extends infer ValueStr extends NumberLike
+      ? ValueStr
       : never
     : Op extends "ceil"
     ? Evaluate<Value> extends infer ValueStr extends NumberLike
@@ -89,11 +93,11 @@ export type Evaluate<T> = T extends BinaryItem<
     ? Evaluate<Value> extends infer ValueStr extends NumberLike
       ? Truncate<ValueStr>
       : never
-    : Op extends "Factorial"
+    : Op extends "!"
     ? Evaluate<Value> extends infer ValueStr extends NumberLike
       ? Factorial<ValueStr>
       : never
     : never
-  : T extends NumberItem<infer Value extends string>
+  : T extends AST.NumberType<infer Value extends string>
   ? Value
   : never

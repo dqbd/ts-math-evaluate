@@ -1,22 +1,62 @@
 /**
  * Lexer
  */
-export type Token =
-  | { type: "Number"; value: string }
-  | { type: "Identifier"; value: string }
-  | { type: "Plus" }
-  | { type: "Minus" }
-  | { type: "Multiply" }
-  | { type: "Divide" }
-  | { type: "LeftParenthesis" }
-  | { type: "RightParenthesis" }
-  | { type: "Factorial" }
-  | { type: "Power" }
-  | { type: "Modulo" }
+
+// We can encapsulate the token type in a namespace
+// to avoid name collisions and make it easier to read
+// within the type hints
+export namespace Token {
+  export type Number<Value extends string = string> = {
+    type: "Number"
+    value: Value
+  }
+  export type Identifier<Value extends string = string> = {
+    type: "Identifier"
+    value: Value
+  }
+  export type Plus = { type: "Plus" }
+  export type Minus = { type: "Minus" }
+  export type Multiply = { type: "Multiply" }
+  export type Divide = { type: "Divide" }
+  export type LeftBracket = { type: "LeftBracket" }
+  export type RightBracket = { type: "RightBracket" }
+  export type Factorial = { type: "Factorial" }
+  export type Power = { type: "Power" }
+  export type Modulo = { type: "Modulo" }
+  export type Comma = { type: "Comma" }
+
+  export type UnaryFunction<Value extends string = string> = {
+    type: "UnaryFunction"
+    value: Value
+  }
+
+  export type BinaryFunction<Value extends string = string> = {
+    type: "BinaryFunction"
+    value: Value
+  }
+
+  export type EOF = { type: "EOF" }
+
+  export type _ =
+    | Number
+    | UnaryFunction
+    | BinaryFunction
+    | Plus
+    | Minus
+    | Multiply
+    | Divide
+    | LeftBracket
+    | RightBracket
+    | Factorial
+    | Power
+    | Modulo
+    | Comma
+    | EOF
+}
 
 type Fail = "LexerFail"
 
-type LexResult<Rest extends string, Result extends Token> = {
+type LexResult<Rest extends string, Result extends Token._> = {
   result: Result
   rest: Rest
 }
@@ -48,6 +88,7 @@ type Letters =
   | "x"
   | "y"
   | "z"
+
 type LexDigits<
   T extends string,
   NumAcc extends string = ""
@@ -55,7 +96,8 @@ type LexDigits<
   ? LexDigits<Rest, `${NumAcc}${Head}`>
   : NumAcc extends ""
   ? Fail
-  : LexResult<T, { type: "Number"; value: NumAcc }>
+  : LexResult<T, Token.Number<NumAcc>>
+
 type LexNumberReturn<
   T extends string,
   SignAcc extends string = "",
@@ -64,10 +106,11 @@ type LexNumberReturn<
 > = FloatAcc extends null | ""
   ? IntAcc extends ""
     ? Fail
-    : LexResult<T, { type: "Number"; value: `${SignAcc}${IntAcc}` }>
+    : LexResult<T, Token.Number<`${SignAcc}${IntAcc}`>>
   : IntAcc extends ""
-  ? LexResult<T, { type: "Number"; value: `${SignAcc}0.${FloatAcc}` }>
-  : LexResult<T, { type: "Number"; value: `${SignAcc}${IntAcc}.${FloatAcc}` }>
+  ? LexResult<T, Token.Number<`${SignAcc}0.${FloatAcc}`>>
+  : LexResult<T, Token.Number<`${SignAcc}${IntAcc}.${FloatAcc}`>>
+
 type LexNumber<
   T extends string,
   SignAcc extends string = "",
@@ -81,14 +124,12 @@ type LexNumber<
   ? FloatAcc extends null
     ? LexNumber<Rest, SignAcc, IntAcc, "">
     : LexNumberReturn<T, SignAcc, IntAcc, FloatAcc>
-  : LexDigits<T> extends LexResult<
-      infer Rest,
-      infer Token extends { type: "Number"; value: string }
-    >
+  : LexDigits<T> extends LexResult<infer Rest, infer Token extends Token.Number>
   ? FloatAcc extends ""
     ? LexNumber<Rest, SignAcc, IntAcc, Token["value"]>
     : LexNumber<Rest, SignAcc, Token["value"], FloatAcc>
   : LexNumberReturn<T, SignAcc, IntAcc, FloatAcc>
+
 type HandleIdentifier<
   T extends string,
   StrAcc extends string = ""
@@ -96,32 +137,39 @@ type HandleIdentifier<
   ? HandleIdentifier<Rest, `${StrAcc}${Head}`>
   : StrAcc extends ""
   ? Fail
-  : LexResult<T, { type: "Identifier"; value: StrAcc }>
+  : StrAcc extends "abs" | "ceil" | "floor" | "round" | "truncate"
+  ? LexResult<T, Token.UnaryFunction<StrAcc>>
+  : StrAcc extends "root"
+  ? LexResult<T, Token.BinaryFunction<StrAcc>>
+  : Fail
+
 type HandleToken<T extends string> = T extends `${infer Head}${infer Rest}`
   ? Head extends "+"
-    ? LexResult<Rest, { type: "Plus" }>
+    ? LexResult<Rest, Token.Plus>
     : Head extends "-"
-    ? LexResult<Rest, { type: "Minus" }>
+    ? LexResult<Rest, Token.Minus>
     : Head extends "*"
-    ? LexResult<Rest, { type: "Multiply" }>
+    ? LexResult<Rest, Token.Multiply>
     : Head extends "/"
-    ? LexResult<Rest, { type: "Divide" }>
+    ? LexResult<Rest, Token.Divide>
     : Head extends "("
-    ? LexResult<Rest, { type: "LeftParenthesis" }>
+    ? LexResult<Rest, Token.LeftBracket>
     : Head extends ")"
-    ? LexResult<Rest, { type: "RightParenthesis" }>
+    ? LexResult<Rest, Token.RightBracket>
     : Head extends "!"
-    ? LexResult<Rest, { type: "Factorial" }>
+    ? LexResult<Rest, Token.Factorial>
     : Head extends "%"
-    ? LexResult<Rest, { type: "Modulo" }>
+    ? LexResult<Rest, Token.Modulo>
     : Head extends "^"
-    ? LexResult<Rest, { type: "Power" }>
+    ? LexResult<Rest, Token.Power>
+    : Head extends ","
+    ? LexResult<Rest, Token.Comma>
     : Fail
   : Fail
 
 export type Lexer<
   T extends string,
-  Result extends Token[] = []
+  Result extends Token._[] = []
 > = T extends `${infer S}${infer Rest}`
   ? S extends " "
     ? Lexer<Rest, Result>
