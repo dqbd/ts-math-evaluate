@@ -1,5 +1,5 @@
-import { outdent } from "../node_modules/outdent/lib/index"
-
+import { outdent } from "outdent"
+import { format } from "prettier"
 const EOF = "$"
 
 function constructGrammar(rules: string[]) {
@@ -51,18 +51,23 @@ const sourceGrammar = outdent`
 
 const grammar = constructGrammar(sourceGrammar)
 
-console.log(grammar)
-
 const NonTerminal = grammar.map((i) => i.left)
 type NonTerminal = (typeof NonTerminal)[number]
 
 type Terminal = string
-
 type ParseSymbol = NonTerminal | Terminal
 
 interface Production {
   left: string
   right: string[]
+}
+
+function isTerminal(symbol: ParseSymbol): symbol is Terminal {
+  return !isNonTerminal(symbol)
+}
+
+function isNonTerminal(symbol: ParseSymbol): symbol is NonTerminal {
+  return (NonTerminal as unknown as string[]).includes(symbol)
 }
 
 function first(
@@ -157,6 +162,92 @@ for (const production of grammar) {
   }
 }
 
+const parseTableNumber: Map<NonTerminal, Map<Terminal, number>> = new Map()
+
+for (let i = 0; i < grammar.length; ++i) {
+  const production = grammar[i]
+
+  const nonTerminal = production.left
+  const firstSet = first(production.right[0])
+
+  for (const terminal of firstSet) {
+    if (!parseTableNumber.has(nonTerminal)) {
+      parseTableNumber.set(nonTerminal, new Map())
+    }
+    parseTableNumber.get(nonTerminal)?.set(terminal, i)
+  }
+
+  const followSet = follow(nonTerminal)
+  if (firstSet.has(EOF)) {
+    for (const terminal of followSet) {
+      if (!parseTableNumber.has(nonTerminal)) {
+        parseTableNumber.set(nonTerminal, new Map())
+      }
+      parseTableNumber.get(nonTerminal)?.set(terminal, i)
+    }
+  }
+}
+
+for (const nonTerminal of parseTableNumber.keys()) {
+  // group terminals by rules
+
+  const terminalRules = parseTableNumber.get(nonTerminal)!
+  const rulesForTerminals = new Map<number, Set<Terminal>>()
+
+  for (const [terminal, production] of terminalRules.entries()) {
+    if (!rulesForTerminals.has(production)) {
+      rulesForTerminals.set(production, new Set())
+    }
+
+    rulesForTerminals.get(production)?.add(terminal)
+  }
+
+  let data = `type ${nonTerminal}<T extends Parser> = `
+
+  for (const [productionIdx, terminals] of rulesForTerminals.entries()) {
+    const production = grammar[productionIdx]
+
+    const condition = `T["head"] extends ${[...terminals]
+      .map((terminal) => `"${terminal}"`)
+      .join(" | ")}`
+
+    const rule = production.right
+      .map((smb) => {
+        if (isTerminal(smb)) {
+          return `ConsumeParser<"${smb}", T> extends infer T extends Parser`
+        }
+
+        return `${smb}<T> extends infer T extends Parser`
+      })
+      .reverse()
+      .reduce<string>((memo, cond, idx, arr) => {
+        if (idx === 0) {
+          return outdent`
+            ${cond} 
+              ? T 
+              : ParseError
+          `
+        }
+
+        return outdent`
+          ${cond}
+            ? ${memo}
+            : ParseError
+        `
+      }, "")
+
+    data += outdent`
+      ${condition}
+        ? ${rule}
+        : 
+    `
+  }
+
+  data += "ParseError"
+
+  console.log(format(data, { parser: "typescript" }))
+}
+
 function parse(input: string): void {
   const stack: ParseSymbol[] = ["S"]
   let index = 0
@@ -193,12 +284,4 @@ function parse(input: string): void {
       }
     }
   }
-}
-
-function isTerminal(symbol: ParseSymbol): symbol is Terminal {
-  return !isNonTerminal(symbol)
-}
-
-function isNonTerminal(symbol: ParseSymbol): symbol is NonTerminal {
-  return (NonTerminal as unknown as string[]).includes(symbol)
 }
