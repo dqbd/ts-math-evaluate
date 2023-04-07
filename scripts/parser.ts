@@ -1,54 +1,57 @@
 import { outdent } from "../node_modules/outdent/lib/index"
 
+const EOF = "$"
+
 function constructGrammar(rules: string[]) {
   return rules.map((rule) => {
-    const [left, right] = rule.split("->").map((i) => i.trim())
-    return { left, right: right.split(" ").map((i) => i.trim()) } as Production
+    const [left, rules] = rule.split("->").map((i) => i.trim())
+    const right = rules
+      .split(" ")
+      .map((i) => i.trim())
+      .filter((i) => !!i)
+    if (right.length === 0) right.push(EOF)
+
+    return { left, right } as Production
   })
 }
 
 const sourceGrammar = outdent`
   S -> ADD
-  ADD -> MUL ADDp
-  ADDp -> + MUL ADDp
-  ADDp -> - MUL ADDp
-  ADDp -> $
-  MUL -> POW MULp
-  MULp -> * POW MULp
-  MULp -> / POW MULp
-  MULp -> % POW MULp
-  MULp -> $
-  POW -> FN POWp
-  POWp -> ^ FN POWp
-  POWp -> $
-  FN -> abs ( FACT )
-  FN -> ceil ( FACT )
-  FN -> floor ( FACT )
-  FN -> round ( FACT )
-  FN -> truncate ( FACT )
-  FN -> root ( FACT , FACT )
-  FN -> FACT
-  FACT -> NEG FACTp
-  FACTp -> ! FACTp
-  FACTp -> $
-  NEG -> - NEG
-  NEG -> + NEG
-  NEG -> TERM
+
+  ADD -> MUL ADDx
+  ADDx -> + MUL ADDx
+  ADDx -> - MUL ADDx
+  ADDx ->
+
+  MUL -> FACT MULx
+  MULx -> * FACT MULx
+  MULx -> / FACT MULx
+  MULx -> % FACT MULx
+  MULx ->
+
+  FACT -> UNARY FACTx
+  FACTx -> ! FACTx
+  FACTx ->
+
+  UNARY -> - UNARY
+  UNARY -> + UNARY
+  UNARY -> POW
+
+  POW -> TERM POWx
+  POWx -> ^ POW
+  POWx ->
+
+  TERM -> unary ( ADD )
+  TERM -> binary ( ADD , ADD )
   TERM -> ( ADD )
-  TERM -> NUMBER
-  NUMBER -> 0
-  NUMBER -> 1
-  NUMBER -> 2
-  NUMBER -> 3
-  NUMBER -> 4
-  NUMBER -> 5
-  NUMBER -> 6
-  NUMBER -> 7
-  NUMBER -> 8
-  NUMBER -> 9
-`.split("\n")
+  TERM -> number
+`
+  .split("\n")
+  .filter((i) => i.includes("->"))
 
 const grammar = constructGrammar(sourceGrammar)
+
+console.log(grammar)
 
 const NonTerminal = grammar.map((i) => i.left)
 type NonTerminal = (typeof NonTerminal)[number]
@@ -103,7 +106,7 @@ function follow(
 
   const followSet = new Set<Terminal>()
   if (symbol === "S") {
-    followSet.add("$")
+    followSet.add(EOF)
   }
 
   for (const production of grammar) {
@@ -112,14 +115,14 @@ function follow(
       for (let i = index + 1; i < production.right.length; i++) {
         const firstI = first(production.right[i])
         for (const t of firstI) followSet.add(t)
-        if (!firstI.has("$")) {
+        if (!firstI.has(EOF)) {
           break
         }
       }
 
       if (
         index === production.right.length - 1 ||
-        production.right.slice(index + 1).every((s) => first(s).has("$"))
+        production.right.slice(index + 1).every((s) => first(s).has(EOF))
       ) {
         const x = follow(production.left, visited)
         for (const t of x) followSet.add(t)
@@ -143,9 +146,8 @@ for (const production of grammar) {
     parseTable.get(nonTerminal)?.set(terminal, production)
   }
 
-  if (firstSet.has("$")) {
-    const followSet = follow(nonTerminal)
-
+  const followSet = follow(nonTerminal)
+  if (firstSet.has(EOF)) {
     for (const terminal of followSet) {
       if (!parseTable.has(nonTerminal)) {
         parseTable.set(nonTerminal, new Map())
@@ -159,8 +161,8 @@ function parse(input: string): void {
   const stack: ParseSymbol[] = ["S"]
   let index = 0
 
-  if (!input.endsWith("$")) {
-    input += "$"
+  if (!input.endsWith(EOF)) {
+    input += EOF
   }
 
   while (stack.length > 0) {
@@ -200,7 +202,3 @@ function isTerminal(symbol: ParseSymbol): symbol is Terminal {
 function isNonTerminal(symbol: ParseSymbol): symbol is NonTerminal {
   return (NonTerminal as unknown as string[]).includes(symbol)
 }
-
-const input = parse("2!!!!")
-
-console.log(parseTable)
