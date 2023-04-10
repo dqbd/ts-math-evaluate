@@ -56,9 +56,13 @@ A primitive value is data that is not an object and has no methods or properties
 \begin{listing}[ht]
   \caption{Primitive Types}\label{lst:primitive-types}
   \begin{minted}{TypeScript}
-type Primitive = 
-  | string | number | bigint
-  | boolean | undefined | symbol | null;
+type StringPrimitive = string
+type NumberPrimitive = number
+type BigintPrimitive = bigint
+type BooleanPrimitive = boolean
+type UndefinedPrimitive = undefined
+type NullPrimitive = null
+type SymbolPrimitive = symbol
 \end{minted}
 \end{listing}
 
@@ -95,6 +99,10 @@ TypeScript also allows annotating data structures such as objects and arrays wit
 \begin{listing}[ht]
   \caption{Data structures}\label{lst:data-structures}
   \begin{minted}{TypeScript}
+interface ObjectStructure {
+  foo: string;
+  bar: number;
+}
 
 type ObjectStructure =  
   | { foo: string, bar: number }
