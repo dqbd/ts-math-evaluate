@@ -8,6 +8,7 @@ import {
   Modulo,
   Multiply,
   Negate,
+  Power,
   Root,
   Round,
   Subtract,
@@ -48,7 +49,7 @@ export type Evaluate<T> = T extends AST.BinaryType<
     : Op extends "^"
     ? Evaluate<Left> extends infer LeftStr extends NumberLike
       ? Evaluate<Right> extends infer RightStr extends NumberLike
-        ? Modulo<LeftStr, RightStr>
+        ? Power<LeftStr, RightStr>
         : never
       : never
     : Op extends "%"
@@ -64,7 +65,7 @@ export type Evaluate<T> = T extends AST.BinaryType<
         : never
       : never
     : never
-  : T extends AST.UnaryType<infer Value, infer Op>
+  : T extends AST.UnaryType<infer Op, infer Value>
   ? Op extends "abs"
     ? Evaluate<Value> extends infer ValueStr extends NumberLike
       ? Abs<ValueStr>

@@ -44,3 +44,6 @@ type LexerCase14 = Lexer<"-123.">
 
 // $ExpectType [Number<"+0.123">]
 type LexerCase15 = Lexer<"+.123">
+
+// $ExpectType [UnaryFunction<"abs">, LeftBracket, BinaryFunction<"root">, LeftBracket, Number<"2">, Comma, Number<"4">, RightBracket, RightBracket]
+type LexerCase16 = Lexer<"abs(root(2, 4))">
