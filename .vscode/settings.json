@@ -139,5 +139,7 @@
     "**/*.synctex.gz": true,
     "**/*.toc": true,
     "**/_minted-ctufit-thesis/": true
-  }
+  },
+  "grammarly.config.documentDomain": "academic",
+  "grammarly.config.documentDialect": "british"
 }
