@@ -18,6 +18,7 @@
   },
   "devDependencies": {
     "@types/prettier": "^2.7.2",
+    "@typescript/analyze-trace": "^0.10.0",
     "prettier": "^2.8.7"
   }
 }
