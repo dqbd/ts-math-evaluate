@@ -1,10 +1,19 @@
-import { Fn } from "hotscript"
+import { Fn, PartialApply } from "hotscript"
 import { NumberLike } from "./utils/parse"
 import * as Impl from "./math"
 
 export namespace Math {
-  export interface Add<Right extends NumberLike> extends Fn {
-    return: this["args"] extends [infer Left extends NumberLike]
+  type unset = "@hotscript/unset"
+
+  export type Add<
+    Left extends NumberLike | unset = unset,
+    Right extends NumberLike | unset = unset
+  > = PartialApply<AddFn, [Left, Right]>
+  interface AddFn extends Fn {
+    return: this["args"] extends [
+      infer Left extends NumberLike,
+      infer Right extends NumberLike
+    ]
       ? Impl.Add<Left, Right>
       : never
   }
