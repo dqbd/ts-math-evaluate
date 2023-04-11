@@ -1,6 +1,4 @@
-/**
- * Lexer
- */
+import { Error } from "./enum"
 
 // We can encapsulate the token type in a namespace
 // to avoid name collisions and make it easier to read
@@ -54,8 +52,6 @@ export namespace Token {
     | EOF
 }
 
-type Fail = "LexerFail"
-
 type LexResult<Rest extends string, Result extends Token._> = {
   result: Result
   rest: Rest
@@ -95,7 +91,7 @@ type LexDigits<
 > = T extends `${infer Head extends Digits}${infer Rest}`
   ? LexDigits<Rest, `${NumAcc}${Head}`>
   : NumAcc extends ""
-  ? Fail
+  ? Error.Lexer
   : LexResult<T, Token.Number<NumAcc>>
 
 type LexNumberReturn<
@@ -105,7 +101,7 @@ type LexNumberReturn<
   FloatAcc extends string | null = null
 > = FloatAcc extends null | ""
   ? IntAcc extends ""
-    ? Fail
+    ? Error.Lexer
     : LexResult<T, Token.Number<`${SignAcc}${IntAcc}`>>
   : IntAcc extends ""
   ? LexResult<T, Token.Number<`${SignAcc}0.${FloatAcc}`>>
@@ -136,12 +132,12 @@ type HandleIdentifier<
 > = T extends `${infer Head extends Letters}${infer Rest}`
   ? HandleIdentifier<Rest, `${StrAcc}${Head}`>
   : StrAcc extends ""
-  ? Fail
+  ? Error.Lexer
   : StrAcc extends "abs" | "ceil" | "floor" | "round" | "truncate"
   ? LexResult<T, Token.UnaryFunction<StrAcc>>
   : StrAcc extends "root"
   ? LexResult<T, Token.BinaryFunction<StrAcc>>
-  : Fail
+  : Error.Lexer
 
 type HandleToken<T extends string> = T extends `${infer Head}${infer Rest}`
   ? Head extends "+"
@@ -164,8 +160,8 @@ type HandleToken<T extends string> = T extends `${infer Head}${infer Rest}`
     ? LexResult<Rest, Token.Power>
     : Head extends ","
     ? LexResult<Rest, Token.Comma>
-    : Fail
-  : Fail
+    : Error.Lexer
+  : Error.Lexer
 
 export type Lexer<
   T extends string,

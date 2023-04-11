@@ -13,6 +13,7 @@
     "@typescript-eslint/parser": "^5.44.0",
     "eslint": "^8.28.0",
     "eslint-plugin-expect-type": "^0.2.1",
+    "hotscript": "^1.0.11",
     "outdent": "^0.8.0",
     "typescript": "^4.9.3"
   },
