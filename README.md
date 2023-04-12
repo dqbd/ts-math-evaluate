@@ -1,4 +1,4 @@
-![TS-Math-Evaluate](assets/cover.svg)
+![TS-Math-Evaluate](https://raw.githubusercontent.com/dqbd/ts-math-evaluate/main/assets/cover.svg)
 
 # TS-Math-Evaluate
 
