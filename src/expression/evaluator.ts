@@ -13,7 +13,7 @@ import {
   Round,
   Subtract,
   Truncate,
-} from "../math"
+} from ".."
 import { NumberLike } from "../utils/parse"
 import { AST } from "./parser"
 

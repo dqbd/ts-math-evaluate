@@ -13,3 +13,5 @@ export { Floor } from "./math/floor"
 export { Round } from "./math/round"
 export { Truncate } from "./math/truncate"
 export { Factorial } from "./math/factorial"
+
+export default {}

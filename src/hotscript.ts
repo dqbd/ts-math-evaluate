@@ -1,6 +1,6 @@
 import { Fn, PartialApply } from "hotscript"
 import { NumberLike } from "./utils/parse"
-import * as Impl from "./math"
+import * as Impl from "."
 
 export namespace Math {
   type unset = "@hotscript/unset"

@@ -1,25 +1,48 @@
 {
   "name": "ts-math-evaluate",
   "version": "0.0.1",
-  "main": "index.js",
   "repository": "git@github.com:dqbd/ts-math-evaluate.git",
   "author": "Duong Tat Dat <david@duong.cz>",
   "license": "MIT",
   "scripts": {
-    "test": "eslint --ext .js,.ts src"
+    "test": "eslint --ext .js,.ts src",
+    "build": "tsup --entry src/index.ts --entry src/hotscript.ts --format cjs,esm --dts"
   },
-  "dependencies": {
-    "@typescript-eslint/eslint-plugin": "^5.44.0",
-    "@typescript-eslint/parser": "^5.44.0",
-    "eslint": "^8.28.0",
-    "eslint-plugin-expect-type": "^0.2.1",
-    "hotscript": "^1.0.11",
-    "outdent": "^0.8.0",
-    "typescript": "^4.9.3"
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "default": "./dist/index.js"
+    },
+    "./hotscript": {
+      "types": "./dist/hotscript.d.ts",
+      "import": "./dist/hotscript.mjs",
+      "default": "./dist/hotscript.js"
+    }
+  },
+  "peerDependencies": {
+    "hotscript": "^1.0.11"
+  },
+  "peerDependenciesMeta": {
+    "hotscript": {
+      "optional": true
+    }
   },
   "devDependencies": {
+    "hotscript": "^1.0.11",
+    "@changesets/cli": "^2.26.1",
     "@types/prettier": "^2.7.2",
+    "@typescript-eslint/eslint-plugin": "^5.44.0",
+    "@typescript-eslint/parser": "^5.44.0",
     "@typescript/analyze-trace": "^0.10.0",
-    "prettier": "^2.8.7"
+    "eslint": "^8.28.0",
+    "eslint-plugin-expect-type": "^0.2.1",
+    "outdent": "^0.8.0",
+    "prettier": "^2.8.7",
+    "tsup": "^6.7.0",
+    "typescript": "^4.9.3"
   }
 }
