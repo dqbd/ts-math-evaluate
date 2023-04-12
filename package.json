@@ -1,8 +1,8 @@
 {
-  "name": "ts-math-evaluator",
-  "version": "1.0.0",
+  "name": "ts-math-evaluate",
+  "version": "0.0.1",
   "main": "index.js",
-  "repository": "git@github.com:dqbd/ts-math-evaluator.git",
+  "repository": "git@github.com:dqbd/ts-math-evaluate.git",
   "author": "Duong Tat Dat <david@duong.cz>",
   "license": "MIT",
   "scripts": {
