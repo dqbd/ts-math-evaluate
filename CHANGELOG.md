@@ -1,5 +1,11 @@
 # ts-math-evaluate
 
+## 0.0.3
+
+### Patch Changes
+
+- 33b9a14: Test release
+
 ## 0.0.2
 
 ### Patch Changes
