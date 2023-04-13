@@ -1,0 +1,3 @@
+modifyLineBreaks:
+  consecutive: true
+  lineLength: 80

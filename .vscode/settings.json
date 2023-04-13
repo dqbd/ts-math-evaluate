@@ -141,5 +141,15 @@
     "**/_minted-ctufit-thesis/": true
   },
   "grammarly.config.documentDomain": "academic",
-  "grammarly.config.documentDialect": "british"
+  "grammarly.config.documentDialect": "british",
+  "latex-workshop.latexindent.args": [
+    "-c",
+    "%DIR%/",
+    "%TMPFILE%",
+    "-y=defaultIndent:'%INDENT%'"
+  ],
+  "[latex]": {
+    "editor.wordWrap": "wordWrapColumn",
+    "editor.wordWrapColumn": 120
+  }
 }

@@ -1,12 +1,69 @@
 \chapter{Implementation}
 
-\section{Structure of the project}
+\begin{itemize}
+  \item There are number literal types, but we cannot add them or subtract them
+  \item We need to use a different construct for representing numbers
+  \item Caching of operations to reduce the number of recursions
+\end{itemize}
+
 \section{Type representation of numbers}
+
+\begin{itemize}
+  \item Tuple representation
+  \item Object representation
+  \item Parsing and formatting numbers 
+\end{itemize}
+
 \section{Addition and Subtraction}
+
+\begin{itemize}
+  \item Schoolbook addition and subtraction with carry (complexity $\Theta(n)$)
+  \item Lookup table for addition and subtraction generated as a build step in a JavaScript
+  \item Use objects to implement \say{switch} statements
+\end{itemize}
+
 \section{Multiplication}
+
+\begin{itemize}
+  \item Long multiplication (complexity $\Theta(n^2)$)
+  \item For each digit, we use a lookup table to create new numbers, which we add together
+  \item Reduction of prefix numbers
+\end{itemize}
+
 \section{Division}
-\section{Exponentiation}
-\section{Other mathematical operations}
+
+\begin{itemize}
+  \item Eucledian division for each digit
+  \item Long division
+  \item Bypass infinite recursion checks by creating a new type instance via \code{infer}
+\end{itemize}
+
+\section{Other operations}
+
+\begin{itemize}
+  \item Exponentiation - Exponentiation by squaring (Complexity $O(n^2)\log(n)$)
+  \item Comparison operators - Lookup table, compare by digit
+  \item Round, Floor, Ceil, Truncate - use object representations
+  \item Root - Newton's method
+\end{itemize}
+
 \section{Statement parser \& evaluator}
+
+\begin{itemize}
+  \item Architecture of parser: lexer, parser, evaluator
+  \item Decision why we are not evaluating directly in the parser - reduce the number of type instantiations
+  \item Mention alternative algorithms (Shunting-yard algorithm, Pratt parser) and the decision why parser is a better solution - create a more generic parser implementation which is easier to extend
+  \item Description of the math grammar, how we ensure operator precedence and left/right-associativity
+  \item Mention creating a custom code generator for detecting valid strings of a LL(1) grammar
+  \item Namespaces and default types instead of enums 
+  \item Behavior of never type and the need to create a custom error type (duck typing)
+\end{itemize}
+
 \section{Higher kinded types}
-\section{Optimization and bypasses}
+
+\begin{itemize}
+  \item TypeScript does not support Higher Kinded Types (essentially passing a generic type as a type parameter of an another generic type)
+  \item There is a workaround to simulate HKTs using an intersection of interfaces and inheritance
+  \item Adapter for HOTScript 
+\end{itemize}
+

@@ -1,10 +1,16 @@
-\chapter{Testing}
+\chapter{Testing and release management}
 
 \section{Developer experience}
 
 By using \code{tsserver}, we can see and verify the types representing a symbol during development, by hovering on top of a symbol. This does provide some useful feedback during development but does require significant context switching with the mouse pointer, especially when switching back and forth from implementation to testing. There are various plugins for editors, that are able to display the inferred types in a different manner. One such key plugin used thoroughly during development is \code{vscode-twoslash-plugins} \cite{theroxVscodetwoslashqueries2023}, which allows inserting a \vcode{// ^?} comment to display the inferred type of an expression right in the editor.
 
 \todo {Add a screenshot of the vscode-twoslash-plugins in action}
+
+\begin{itemize}
+  \item Testing with eslint
+  \item \$ExpectType and twoslash operator 
+  \item Testing with vitest and \code{ExpectType}
+\end{itemize}
 
 \section{Testing with eslint}
 
@@ -16,6 +22,6 @@ To remedy the issue, we are using \code{eslint} together with \code{@typescript-
   \item Developer experience
   \item Unit tests, integration tests (\code{eslint}, \code{eslint-plugin-expect-type})
   \item Github Actions
-  \item Performance Testing (performance tracing, extended diagnostics)
+  \item Changesets - automatic release management
   \item Comparison between existing TS math libraries
 \end{itemize}
