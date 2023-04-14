@@ -1,17 +1,75 @@
 \chapter{Implementation}
 
-\begin{itemize}
-  \item There are number literal types, but we cannot add them or subtract them
-  \item We need to use a different construct for representing numbers
-  \item Caching of operations to reduce the number of recursions
-\end{itemize}
+This chapter delves into the implementation of the math expression evaluator using the TypeScript type system. The work being done in this thesis is realised into two major parts: the realisation of mathematical operations and parsing and evaluating string literals with a mathematical expression. The limitations and workarounds for TypeScript literal types are discussed, and by the end of this chapter, readers should gain a deeper understanding of the TypeScript type system when applied to non-trivial problem domains.
 
 \section{Type representation of numbers}
 
+As powerful as the type system in TypeScripts, there are certain limitations that need to be addressed when working with literal numerical types. Namely, although TypeScript type syntax includes literal number types, useful for representing specific numeric values, these types do not directly support mathematical operations, such as addition or subtraction. Due to these limitations, other methods of representing numbers are explored in this thesis.
+
+One approach to representing numbers in TypeScript is to use tuples types. As described in \ref{sec:typescript-data-structures}, tuple types allow developers to describe a fixed-length JavaScript array where each element can have a specific type. As it represents a JavaScript array, the type includes all of the properties and methods found in an array, including \code{length} property, which contains the actual number of elements in the tuple. This feature can be used to represent a number, as the length of the tuple can represent the number itself, as seen in Listing \ref{lst:tuple-representation}. The actual type of a member item in a tuple is irrelevant, as the type system only cares about the length of the tuple, but for clarity purposes, the literal type \code{0} can be used as the element type of a tuple.
+
+\begin{listing}[ht]
+\caption{Tuple representation of a number}\label{lst:tuple-representation}
+\begin{minted}{TypeScript}
+type Zero = []
+type Four = [0, 0, 0, 0] 
+
+// $ExpectType 0
+type ZeroValue = Zero['length']
+
+// $ExpectType 4
+type ZeroValue = Four['length']
+\end{minted}
+\end{listing}
+
+However, manually describing a tuple is tedious. Recursion can be employed to parse a literal number type to a tuple type, as seen in \ref{lst:tuple-parse}. The \code{ParseNumber<Value>} generic type accepts a mandatory type argument \code{Value} that should be the length of the final tuple and an optional type argument \code{Acc} used to preserve the state of the recursion.
+
+First, a check is performed to see if the length of \code{Acc} is equal to the \code{Value} by checking the assignability of types. If that is the case, the tuple type found in \code{Acc} is returned. Otherwise, the list is extended with a new \code{0} element being prepended, and the function is called recursively. The function is called recursively until the length of \code{Acc} is assignable to \code{Value}.
+
+\begin{listing}[ht]
+\caption{Parse a literal number type to a tuple type}\label{lst:tuple-parse}
+\begin{minted}{TypeScript}
+type ParseNumber<
+  Value extends number,
+  Acc extends Array<0> = []
+> = Acc["length"] extends Value ? Acc : ParseNumber<Value, [0, ...Acc]>
+\end{minted}
+\end{listing}
+
+Some operations, such as addition and subtraction, can be easily implemented by spreading or inference, as seen in Listing \ref{lst:tuple-addition}. In the case of the addition operation, a new tuple type is created by spreading the elements of both tuples into a new tuple, which is then used to obtain the length representing the result.
+
+\begin{listing}[ht]
+\caption{Addition with tuple types}\label{lst:tuple-addition}
+\begin{minted}{TypeScript}
+type Add<A extends number, B extends number> = [
+  ...ParseNumber<A>, 
+  ...ParseNumber<B>
+]['length']
+\end{minted}
+\end{listing}
+
+The subtraction operation, assuming the first number is larger than the second one, is implemented with the idea that the tuple type of a first number contains all of the elements of the second number with a remainder. As seen in Listing \ref{lst:tuple-subtraction}, the \code{Subtract} generic type accepts two type arguments, \code{A} and \code{B}, which represent the numbers to subtract. A conditional type is used to check if \code{ParseNumber<A>} is assignable to a tuple that contains the elements of \code{ParseNumber<B>} followed by a remainder of the \code{number[]} type, inferred in a new type named \code{Remainder}. If true, the length of the \code{Remainder} is returned as the result of the subtraction operation. Otherwise, the \code{never} type is returned instead.
+
+\begin{listing}[ht]
+\caption{Subtraction with tuple types}\label{lst:tuple-subtraction}
+\begin{minted}{TypeScript}
+type Subtract<
+  A extends string | number,
+  B extends string | number
+> = ParseNumber<A> extends [
+  ...infer Remainder extends number[],
+  ...ParseNumber<B>
+]
+  ? Remainder["length"]
+  : never
+\end{minted}
+\end{listing}
+
+Even though this method of representing numbers is reasonably simple, it does come at a performance cost, as the tuple must contain the number of elements equal to the number itself. This issue alone poses a significant problem, primarily when representing large numbers, as TypeScript has a limit on the number of elements in a tuple. As of writing, the limit is set to 10\,000 elements\cite{ImplementationCheckerTs2023}, which is only enough for representing integer numbers no greater than 10\,000. 
+
 \begin{itemize}
-  \item Tuple representation
   \item Object representation
-  \item Parsing and formatting numbers 
+  \item Parsing and formatting numbers
 \end{itemize}
 
 \section{Addition and Subtraction}
@@ -55,7 +113,7 @@
   \item Mention alternative algorithms (Shunting-yard algorithm, Pratt parser) and the decision why parser is a better solution - create a more generic parser implementation which is easier to extend
   \item Description of the math grammar, how we ensure operator precedence and left/right-associativity
   \item Mention creating a custom code generator for detecting valid strings of a LL(1) grammar
-  \item Namespaces and default types instead of enums 
+  \item Namespaces and default types instead of enums
   \item Behavior of never type and the need to create a custom error type (duck typing)
 \end{itemize}
 
@@ -64,6 +122,6 @@
 \begin{itemize}
   \item TypeScript does not support Higher Kinded Types (essentially passing a generic type as a type parameter of an another generic type)
   \item There is a workaround to simulate HKTs using an intersection of interfaces and inheritance
-  \item Adapter for HOTScript 
+  \item Adapter for HOTScript
 \end{itemize}
 
