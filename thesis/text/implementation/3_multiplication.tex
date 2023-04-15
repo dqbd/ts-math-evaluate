@@ -1,7 +1,45 @@
 \section{Multiplication}
 
+A naive implementation of the multiplication algorithm can be created by repeatably adding the multiplicand when numbers are represented by tuple length, as seen in Listing \ref{lst:naive-multiplication}. \code{Multiply} generic type has two mandatory type parameters: \code{A} and \code{B} representing the multiplicand and multiplier respectively. The optional type parameter \code{Left} is used to track how many iterations are left before the recursion terminates. This method is considered ineffective, as the number of recursion calls is proportional to the size of the multiplicand, and the method can easily reach the instantiation depth limit with large multiplicands.
+
+\begin{listing}[ht]
+  \caption{Naive multiplication algorithm}\label{lst:naive-multiplication}
+  \begin{minted}{TypeScript}
+type Multiply<
+  A extends number,
+  B extends number,
+  Left extends number = B
+> = Left extends 0 ? 0 : Multiply<Add<A, B>, B, Subtract<B>>
+\end{minted}
+\end{listing}
+
+Because of this reason, the library implements the long multiplication method instead. Similar to the addition and subtraction algorithm, where a two-dimensional lookup object type is used to obtain both the resulting multiplication digit and the appropriate carry number. 
+
+\todo{Describe the long multiplication algorithm}
+
+\begin{listing}[ht]
+\caption{Long multiplication}\label{lst:long-multiplication}
+\begin{minted}{TypeScript}
+type MultiplyInt<
+  X extends Digit[],
+  Y extends Digit[],
+  Tmp extends { result: Digit[]; offset: Digit[] } = { result: [0]; offset: [] }
+> = Y extends [...infer Rest extends Digit[], infer Single extends Digit]
+  ? MultiplySingleInt<X, Single> extends infer SingleResult extends Digit[]
+    ? AddInt<
+        Tmp["result"],
+        [...SingleResult, ...Tmp["offset"]]
+      > extends infer Result extends Digit[]
+      ? MultiplyInt<X, Rest, { result: Result; offset: [0, ...Tmp["offset"]] }>
+      : never
+    : never
+  : Tmp["result"]
+\end{minted}
+\end{listing}
+
 \begin{itemize}
   \item Long multiplication (complexity $\Theta(n^2)$)
+  \item
   \item For each digit, we use a lookup table to create new numbers, which we add together
   \item Reduction of prefix numbers
 \end{itemize}
