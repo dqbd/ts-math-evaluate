@@ -1,0 +1,11 @@
+\section{Statement parser \& evaluator}
+
+\begin{itemize}
+  \item Architecture of parser: lexer, parser, evaluator
+  \item Decision why we are not evaluating directly in the parser - reduce the number of type instantiations
+  \item Mention alternative algorithms (Shunting-yard algorithm, Pratt parser) and the decision why parser is a better solution - create a more generic parser implementation which is easier to extend
+  \item Description of the math grammar, how we ensure operator precedence and left/right-associativity
+  \item Mention creating a custom code generator for detecting valid strings of a LL(1) grammar
+  \item Namespaces and default types instead of enums
+  \item Behavior of never type and the need to create a custom error type (duck typing)
+\end{itemize}
