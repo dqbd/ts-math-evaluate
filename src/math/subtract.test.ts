@@ -29,3 +29,6 @@ type SubFloatCase9 = Subtract<"-9", "-9">
 
 // $ExpectType "6"
 type SubFloatCase10 = Subtract<"-3", "-9">
+
+// $ExpectType "-0.877"
+type SubFloatCase11 = Subtract<"3.123", "4">

@@ -102,7 +102,6 @@ type PadFloat<
     : never
   : never
 
-// TODO: handle underflow
 export type SubFloatNumber<
   A extends FloatNumber,
   B extends FloatNumber

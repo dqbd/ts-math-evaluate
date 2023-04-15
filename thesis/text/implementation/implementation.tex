@@ -9,8 +9,8 @@ As powerful as the type system in TypeScripts, there are certain limitations tha
 One approach to representing numbers in TypeScript is to use tuples types. As described in \ref{sec:typescript-data-structures}, tuple types allow developers to describe a fixed-length JavaScript array where each element can have a specific type. As it represents a JavaScript array, the type includes all of the properties and methods found in an array, including \code{length} property, which contains the actual number of elements in the tuple. This feature can be used to represent a number, as the length of the tuple can represent the number itself, as seen in Listing \ref{lst:tuple-representation}. The actual type of a member item in a tuple is irrelevant, as the type system only cares about the length of the tuple, but for clarity purposes, the literal type \code{0} can be used as the element type of a tuple.
 
 \begin{listing}[ht]
-\caption{Tuple representation of a number}\label{lst:tuple-representation}
-\begin{minted}{TypeScript}
+  \caption{Tuple representation of a number}\label{lst:tuple-representation}
+  \begin{minted}{TypeScript}
 type Zero = []
 type Four = [0, 0, 0, 0] 
 
@@ -27,8 +27,8 @@ However, manually describing a tuple is tedious. Recursion can be employed to pa
 First, a check is performed to see if the length of \code{Acc} is equal to the \code{Value} by checking the assignability of types. If that is the case, the tuple type found in \code{Acc} is returned. Otherwise, the list is extended with a new \code{0} element being prepended, and the function is called recursively. The function is called recursively until the length of \code{Acc} is assignable to \code{Value}.
 
 \begin{listing}[ht]
-\caption{Parse a literal number type to a tuple type}\label{lst:tuple-parse}
-\begin{minted}{TypeScript}
+  \caption{Parse a literal number type to a tuple type}\label{lst:tuple-parse}
+  \begin{minted}{TypeScript}
 type ParseNumber<
   Value extends number,
   Acc extends Array<0> = []
@@ -36,11 +36,97 @@ type ParseNumber<
 \end{minted}
 \end{listing}
 
-Some operations, such as addition and subtraction, can be easily implemented by spreading or inference, as seen in Listing \ref{lst:tuple-addition}. In the case of the addition operation, a new tuple type is created by spreading the elements of both tuples into a new tuple, which is then used to obtain the length representing the result.
+It is possible to improve the number of recursions to create a tuple by expanding by a whole digit instead of by single increments. As seen in Listing \ref{lst:tuple-parse-digit}, where \code{ParsedNumber2} will first perform stringification of the literal number type \code{T} and infer the first digit recursively. The accumulator type parameter \code{Rest} is first expanded ten times by the \code{ExpandArrayTenTimes} generic type, and then the parsed digit is spread into \code{Rest} as well. The recursion is performed until the stringified number is empty and the final \code{Rest} type is returned.
 
 \begin{listing}[ht]
-\caption{Addition with tuple types}\label{lst:tuple-addition}
-\begin{minted}{TypeScript}
+  \caption{Parse by digit expansion}\label{lst:tuple-parse-digit}
+  \begin{minted}{TypeScript}
+
+type ExpandArrayTenTimes<R extends Array<0>> = [
+  ...R, ...R, ...R, ...R, ...R,
+  ...R, ...R, ...R, ...R, ...R
+]
+    
+type ParseNumber2<
+  T extends number,
+  Rest extends Array<0> = []
+> = `${T}` extends `${infer Digit extends number}${infer R}`
+  ? ParseNumber2<R, [...ExpandArrayTenTimes<Rest>, ...ParseNumber<Digit>]>
+  : Rest
+\end{minted}
+\end{listing}
+
+Even though this method of representing numbers is reasonably simple, it does come at a performance cost, as the tuple must contain the number of elements equal to the number itself. As such, the checking time of the addition and subtraction operations grows as the number grows. This issue alone poses a significant problem, primarily when representing large numbers, as TypeScript has an upper limit on the number of elements in a tuple to avoid performance degradation. As of writing, the limit is set to 10\,000 elements\cite{ImplementationCheckerTs2023}, which is only enough for representing integer numbers no greater than 10\,000.
+
+Another approach is to represent each digit of a number type into a tuple. This approach does avoid the limitation of the tuple size imposed by TypeScript, as it is now possible to represent much larger numbers whilst reducing the performance overhead as the checking time can be reduced for some operations, which work on individual digits. The number type is parsed into object types beforehand to improve the developer experience when implementing arithmetic operations, keeping the sign, the integer and the fractional parts of a decimal representation number separate. An example can be seen in Listing \ref{lst:object-representation}, where two object types are created: \code{FloatNumber}, representing a number with both integer and fractional digits, and \code{SignFloatNumber}, which is used to provide number sign of an existing parsed number.
+
+\begin{listing}[ht]
+  \caption{Interface representation of numbers}\label{lst:object-representation}
+  \begin{minted}{TypeScript}
+type Sign = "+" | "-"
+type Digit = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
+
+type FloatNumber<
+  IntDigits extends Digit[] = Digit[],
+  FracDigits extends Digit[] = Digit[]
+> = {
+  int: IntDigits
+  frac: FracDigits
+}
+
+type SignFloatNumber<
+  Sign extends "+" | "-" = "+" | "-",
+  Float extends FloatNumber<Digit[], Digit[]> = FloatNumber
+> = {
+  sign: Sign
+  float: Float
+}
+\end{minted}
+\end{listing}
+
+Parsing a number type into digits can be done by recursive types, as seen in Listing \ref{lst:object-parse}. First, \code{ParseSignFloatNumber} attempts to infer the sign of the stringified number literal type into a new \code{TSign} type. Afterwards, \code{ParseFloatNumber} generic type attempts to split the stringified literal into an integer and a fractional part. Both parts are later parsed separately in \code{ParseNumber}, matching if each string contains only digits.
+
+\begin{listing}[ht]
+  \caption{Number parsing into objects}\label{lst:object-parse}
+  \begin{minted}{TypeScript}
+type ParseNumber<S extends string> =
+  S extends `${infer TInt extends Digit}${infer Rest}`
+    ? [TInt, ...ParseNumber<Rest>]
+    : []
+
+type ParseFloatNumber<S extends NumberLike> =
+  `${S}` extends `${infer Int}.${infer Frac}`
+    ? FloatNumber<ParseNumber<Int>, ParseNumber<Frac>>
+    : FloatNumber<ParseNumber<`${S}`>, []>
+
+type ParseSignFloatNumber<T extends NumberLike> =
+  `${T}` extends `${infer TSign extends Sign}${infer Rest}`
+    ? SignFloatNumber<TSign, ParseFloatNumber<Rest>>
+    : SignFloatNumber<"+", ParseFloatNumber<T>>
+\end{minted}
+\end{listing}
+
+The formatting of the object representation of a number is implemented in a similar fashion, where a digit is concatenated with a string-type accumulator, as seen in a short code snippet in Listing \ref{lst:object-type-stringify}.
+
+\begin{listing}[ht]
+  \caption{Formatting of object types}\label{lst:object-type-stringify}
+  \begin{minted}{TypeScript}
+type JoinDigit<T extends number[]> = T extends [
+  infer A extends number,
+  ...infer R extends number[]
+]
+  ? `${A}${JoinDigit<R>}`
+  : ""
+\end{minted}
+\end{listing}
+
+\section{Addition and Subtraction}
+
+When representing the numbers as tuple lengths, some operations, such as addition and subtraction, can be easily implemented by spreading or inference, as seen in Listing \ref{lst:tuple-addition}. In the case of the addition operation, a new tuple type is created by spreading the elements of both tuples into a new tuple, which is then used to obtain the length representing the result.
+
+\begin{listing}[ht]
+  \caption{Addition with tuple types}\label{lst:tuple-addition}
+  \begin{minted}{TypeScript}
 type Add<A extends number, B extends number> = [
   ...ParseNumber<A>, 
   ...ParseNumber<B>
@@ -51,8 +137,8 @@ type Add<A extends number, B extends number> = [
 The subtraction operation, assuming the first number is larger than the second one, is implemented with the idea that the tuple type of a first number contains all of the elements of the second number with a remainder. As seen in Listing \ref{lst:tuple-subtraction}, the \code{Subtract} generic type accepts two type arguments, \code{A} and \code{B}, which represent the numbers to subtract. A conditional type is used to check if \code{ParseNumber<A>} is assignable to a tuple that contains the elements of \code{ParseNumber<B>} followed by a remainder of the \code{number[]} type, inferred in a new type named \code{Remainder}. If true, the length of the \code{Remainder} is returned as the result of the subtraction operation. Otherwise, the \code{never} type is returned instead.
 
 \begin{listing}[ht]
-\caption{Subtraction with tuple types}\label{lst:tuple-subtraction}
-\begin{minted}{TypeScript}
+  \caption{Subtraction with tuple types}\label{lst:tuple-subtraction}
+  \begin{minted}{TypeScript}
 type Subtract<
   A extends string | number,
   B extends string | number
@@ -65,20 +151,167 @@ type Subtract<
 \end{minted}
 \end{listing}
 
-Even though this method of representing numbers is reasonably simple, it does come at a performance cost, as the tuple must contain the number of elements equal to the number itself. This issue alone poses a significant problem, primarily when representing large numbers, as TypeScript has a limit on the number of elements in a tuple. As of writing, the limit is set to 10\,000 elements\cite{ImplementationCheckerTs2023}, which is only enough for representing integer numbers no greater than 10\,000. 
+As described in the previous section, the final implementation of the addition operation based on object representation of numbers is the traditional schoolbook addition with carry. The algorithm adds the numbers digit by digit and keeps track of the carry as it moves from one digit to the next. This technique has a time complexity of $\Theta(n)$, where $n$ is the number of digits in the number being added.
 
-\begin{itemize}
-  \item Object representation
-  \item Parsing and formatting numbers
-\end{itemize}
+The core building block of the schoolbook addition and subtraction algorithm is the ability to obtain the next digit alongside the carry or borrow flag when performing the operation on single decimal digits. This can be purely done in the type system alone using tuple expansion and checking for the stringified length of the tuple, as seen in \ref{lst:generated-operations}, but to improve the performance and avoid unnecessary type instantiations, a lookup table is used to obtain the next digit and the carry flag instead. The subtraction operation is implemented similarly, where a two-dimensional lookup table of tuples is used to obtain the next digit and the borrow flag.
 
-\section{Addition and Subtraction}
+The lookup table is created by iterating over all possible combinations of two digits and storing the result of the addition and the carry flag in a two-dimensional map. To improve the performance even further, the lookup tables of both the addition and subtraction operations are generated as a built step in JavaScript and stored in a separate file, which is later imported into the type system.
 
-\begin{itemize}
-  \item Schoolbook addition and subtraction with carry (complexity $\Theta(n)$)
-  \item Lookup table for addition and subtraction generated as a build step in a JavaScript
-  \item Use objects to implement \say{switch} statements
-\end{itemize}
+\begin{listing}[ht]
+  \caption{Lookup table for addition operation}\label{lst:generated-operations}
+  \begin{minted}{TypeScript}
+type AddDigitsResult<A extends Digit, B extends Digit> =
+    [...ParseNumber<A>, ...ParseNumber<B>]["length"] extends 
+    infer Length extends number
+    ? `${Length}` extends `${Digit}${infer Value extends Digit}`
+      ? [Value, true]
+      : `${Length}` extends `${infer Value extends Digit}`
+        ? [Value, false]
+        : never
+    : never
+
+// This is generated by a build step
+type AddMapCarry = {
+  [A in Digit]: {
+    [B in Digit]: AddDigitsResult<A, B>
+  }
+}
+\end{minted}
+\end{listing}
+
+The schoolbook addition algorithm, seen in Listing \ref{lst:addition-algorithm}, is implemented as three generic types. \code{AddWithCarry} accepts two digits named \code{Left} and \code{Right} and a carry flag as type arguments and is responsible for adding the two digits and propagating the carry flag to the next digit. It will first check if the \code{Carry} type is assignable to \code{true}, and if it is assignable, it will increment the \code{Left} digit. The \code{AddMapCarry} is used to obtain the result, and the \code{Or} generic type implements the binary disjunction operation to determine the carry flag in case of multiple additions due to \code{Carry} being true.
+
+\code{AddArr} is responsible for adding two tuples of digits. \code{AddArr} will attempt to extract the rightmost digit from both tuples and add them using \code{AddWithCarry}. The \code{AddArr} will be called recursively with the remaining digits and the carry flag from the previous addition until both of the tuples are empty. Note that both of the digit tuples must have the same length to prevent premature bailouts.
+
+Finally, \code{AddInt} will add two digit tuples by first padding them into tuples of the same length by prefixing them with zeroes and then calling \code{AddArr} to perform addition itself. If \code{Carry} is assignable to \code{true}, an extra \code{1} digit is prepended to the result.
+
+These foundational blocks can be further chained to add support for fractional numbers and signed numbers. As seen in Listing \ref{lst:addition-algorithm}, \code{AddFloatNumber} will first extract the integer and fractional parts of a number, performing integer addition on both parts separately. The carry flag is propagated appropriately from the fractional part to the integer part by recursively calling \code{AddFloatNumber} to increment the result.
+
+\begin{listing}[ht!]
+  \caption{Floating point addition}\label{lst:addition-float}
+  \begin{minted}{TypeScript}
+type AddFloatNumber<
+A extends FloatNumber,
+B extends FloatNumber
+> = PadFloat<A, B> extends [
+  FloatNumber<infer IntA, infer FracA>,
+  FloatNumber<infer IntB, infer FracB>
+]
+? AddArr<FracA, FracB> extends [
+    infer FracResult extends Digit[],
+    infer FracCarry extends boolean
+  ]
+  ? AddArr<IntA, IntB> extends [
+      infer IntResult extends Digit[],
+      infer IntCarry extends boolean
+    ]
+    ? IntCarry extends true
+      ? FracCarry extends true
+        ? AddFloatNumber<
+            FloatNumber<[1, ...IntResult], FracResult>,
+            FloatNumber<[1], []>
+          >
+        : FloatNumber<[1, ...IntResult], FracResult>
+      : FracCarry extends true
+      ? AddFloatNumber<
+          FloatNumber<IntResult, FracResult>,
+          FloatNumber<[1], []>
+        >
+      : FloatNumber<IntResult, FracResult>
+    : never
+  : never
+: never
+\end{minted}
+\end{listing}
+
+When working with subtraction, underflows are resolved by implementing digit comparison. Similarly to addition and subtraction, the comparison operation is performed per digit, utilising an additional two-dimensional lookup table with all possible digit comparison results represented as a number from the following set: $\{ -1, 0, 1 \}$. Based on the comparison result, the operation can be decided by using a map object type with the comparison result as the key and the operation as the value, seen in Listing \ref{lst:subtractor-switching}.
+
+\begin{listing}[ht!]
+  \caption{Subtraction switching}\label{lst:subtractor-switching}
+  \begin{minted}{TypeScript}
+type SubOperatorSwitch<A extends FloatNumber, B extends FloatNumber> = {
+  [-1]: SignFloatNumber<"-", SubFloatNumber<B, A>>
+  [0]: SignFloatNumber<"+", FloatNumber<[0], []>>
+  [1]: SignFloatNumber<"+", SubFloatNumber<A, B>>
+}[CompareAbsNumbers<A, B>]
+\end{minted}
+\end{listing}
+
+Finally, to simplify dealing with signed operations, an object type with all possible sign pairs can be used to determine whether to invoke addition or subtraction, as seen in Listing \ref{lst:addition-signed}.
+
+\begin{listing}[ht]
+  \caption{Signed number addition and subtraction}\label{lst:addition-signed}
+  \begin{minted}{TypeScript}
+type AddSignFloatNumber<
+  A extends SignFloatNumber,
+  B extends SignFloatNumber
+> = {
+  "+": {
+    "+": SignFloatNumber<"+", AddFloatNumber<A["float"], B["float"]>>
+    "-": SubOperatorSwitch<A["float"], B["float"]>
+  }
+  "-": {
+    "+": SubOperatorSwitch<B["float"], A["float"]>
+    "-": SignFloatNumber<"-", AddFloatNumber<A["float"], B["float"]>>
+  }
+}[A["sign"]][B["sign"]]
+\end{minted}
+\end{listing}
+
+
+\begin{listing}[ht!]
+  \caption{Addition algorithm}\label{lst:addition-algorithm}
+  \begin{minted}{TypeScript}
+type AddWithCarry<
+  Left extends number,
+  Right extends number,
+  Carry extends boolean
+  > = Carry extends true
+  ? AddMapCarry[Left][1] extends [
+      infer LeftTmp extends number,
+      infer LeftCarry extends boolean
+    ]
+    ? AddWithCarry<LeftTmp, Right, false> extends [
+        infer Result extends number,
+        infer RightCarry extends boolean
+      ]
+      ? [Result, Or<LeftCarry, RightCarry>]
+      : never
+    : never
+  : AddMapCarry[Left][Right]
+
+type AddArr<
+  A extends number[],
+  B extends number[],
+  Tmp extends [number[], boolean] = [[], false]
+> = [A, B, Tmp] extends [
+  [...infer ARest extends number[], infer ARight extends number],
+  [...infer BRest extends number[], infer BRight extends number],
+  [infer Result extends number[], infer Carry extends boolean]
+]
+  ? AddWithCarry<ARight, BRight, Carry> extends [
+      infer Digit extends number,
+      infer Carry extends boolean
+    ]
+    ? AddArr<ARest, BRest, [[Digit, ...Result], Carry]>
+    : never
+  : Tmp
+
+export type AddInt<A extends Digit[], B extends Digit[]> = PadStartEqually<
+  A,
+  B
+> extends [infer PA extends Digit[], infer PB extends Digit[]]
+  ? AddArr<PA, PB> extends [
+      infer Rest extends Digit[],
+      infer Carry extends boolean
+    ]
+    ? Carry extends true
+      ? [1, ...Rest]
+      : Rest
+    : never
+  : never
+\end{minted}
+\end{listing}
 
 \section{Multiplication}
 
