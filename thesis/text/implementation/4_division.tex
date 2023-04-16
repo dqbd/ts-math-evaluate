@@ -31,17 +31,7 @@ type EuclideanDivision<
 \end{minted}
 \end{listing}
 
-The long division algorithm builds on top of the Euclidean division. An implementation can be seen in \ref{lst:long-division}.
-
-\todo{Rewrite this section}
-
-\begin{itemize}
-  \item First, initialise the \code{Tmp} type argument to contain the division quotient and remainder set to 0.
-  \item Concatenate a digit from the left to the remainder from \code{Tmp}, which is then passed to the Euclidean division algorithm.
-  \item The next \code{LongDivisionDigit} invocation takes the remaining dividend and the divisor, and a new \code{DividionResult} object type instance, with remained copied and quotient concatenated from the Euclidean division.
-  \item The process is repeated until no digits remain in the dividend, at which point the quotient and remainder are returned, with the leading zeros trimmed.
-\end{itemize}
-
+The long division algorithm, seen in \ref{lst:long-division} as \code{LongDivisionDigit} generic type, implemented in this thesis builds upon the foundation of the Eucledian division. In each iteration, the leftmost digit is popped from the dividend and pushed to the end of the accumulated remainder. Subsequently, pass the newly created tuple as the remainder for the Euclidean division, together with the divisor. The next invocation of \code{LongDivisionDigit} takes the resulting dividend, the divisor and the updated accumulator of \code{DivisionResult} type. The updated \code{DivisionResult} instance has the remainder copied and the quotient concatenated from the result of the Euclidean division. The process is repeated until all digits in the dividend have been used. Finally, the quotient and remainder are returned, with the leading zeros removed.
 
 \begin{listing}[ht]
 \caption{Long division}\label{lst:long-division}
@@ -49,20 +39,20 @@ The long division algorithm builds on top of the Euclidean division. An implemen
 type LongDivisionDigit<
   Dividend extends Digit[],
   Divisor extends Digit[],
-  Tmp extends DivisionResult = DivisionResult<[], []>
+  Acc extends DivisionResult = DivisionResult<[], []>
 > = Dividend extends [
   infer Head extends Digit,
   ...infer RestDividend extends Digit[]
 ]
   ? EuclideanDivision<
-      [...Tmp["remainder"], Head],
+      [...Acc["remainder"], Head],
       Divisor
     > extends infer IntDivision extends DivisionResult
     ? LongDivisionDigit<
         RestDividend,
         Divisor,
         DivisionResult<
-          [...Tmp["quotient"], ...IntDivision["quotient"]],
+          [...Acc["quotient"], ...IntDivision["quotient"]],
           IntDivision["remainder"]
         >
       >
@@ -71,4 +61,18 @@ type LongDivisionDigit<
 \end{minted}
 \end{listing}
 
-To bypass the instantiation depth limit imposed by TypeScript, a new instance type can be used by using conditional types with inference to create a new type instance. 
+When conducting division operations involving two numbers with fractional components, the digit tuples of fractional parts are padded with zeroes to ensure equal lengths for both tuples. Afterwards, the fractional part is concatenated behind the integer part, creating an integer number compatible with the long division algorithm. Further digit shifting is not necessary, as the orders of magnitude get cancelled out during the division process, and the division itself will return a \code{FloatNumber}. An example of how the numbers are processed can be seen in Figure \ref{fig:long-division-preprocessing}.
+
+\begin{figure}
+  \begin{equation*}
+    \begin{array}{r@{\quad=\quad}r@{\quad=\quad}l}
+      123.456 & 123.456 & 123456 \times 10^{-3} \\
+      2.5 & 2.500 & 2500 \times 10^{-3} \\
+      \frac{123.456}{2.5} & \frac{123.456}{2.500} & \frac{123456 \times 10^{-3}}{2500 \times 10^{-3}} = \frac{123456}{2500} 
+    \end{array}
+  \end{equation*}
+  \caption{Preprocessing of fractional numbers for long division}\label{fig:long-division-preprocessing}
+\end{figure}
+
+
+Since both the long division and Euclidean division algorithms exhibit greater complexity and are prone to deep recursion, it is likely that when used, the instantiation depth limit imposed by TypeScript will be exceeded. As a workaround, it is possible to defer the evaluation of a type by rephrasing it as a distributive conditional type. This workaround will be remarkably useful when multiple complex arithmetic operations are chained together, as the $n$-th root operation will exemplify.
