@@ -1,8 +1,147 @@
 \section{Other operations}
 
+\subsection{Comparison} 
+
 \begin{itemize}
-  \item Exponentiation - Exponentiation by squaring (Complexity $O(n^2)\log(n)$)
-  \item Comparison operators - Lookup table, compare by digit
-  \item Round, Floor, Ceil, Truncate - use object representations
-  \item Root - Newton's method
+  \item Lookup table once again
+  \item Object notation is cool, we just omit the sign
 \end{itemize}
+
+\subsection{Rounding, flooring, ceiling, truncation}
+
+\begin{itemize}
+  \item Truncation is the easiest, just create a new \code{FloatNumber} object type with the fractional part set to an empty tuple
+  \item Ceiling is done by first truncating the number, then checking if the original number is greater than the truncated number and if that is the case, increment the truncated number by one. This is done to ensure correct behaviour when ceiling a negative number.
+  \item Flooring is done in a similar manner, decrementing a truncated number by one if the original number is less than the truncated number.
+  \item Rounding is done by explicitly checking the assignability of the first digit of the fractional part, and, if that is the case, incrementing the truncated number by one.
+\end{itemize}
+
+\subsection{Exponentiation}
+
+\begin{listing}[ht]
+\caption{}\label{lst:}
+\begin{minted}{TypeScript}
+type PowerInt<
+  X extends SignFloatNumber,
+  N extends Digit[]
+> = TrimEnd<N> extends [0]
+  ? SignFloatNumber<"+", FloatNumber<[1], []>>
+  : IsEvenInt<N> extends true
+  ? PowerInt<MultiplySignFloat<X, X>, LongDivisionDigit<N, [2]>["quotient"]>
+  : PowerInt<
+      MultiplySignFloat<X, X>,
+      LongDivisionDigit<SubDigit<N, [1]>, [2]>["quotient"]
+    > extends infer OddCase extends SignFloatNumber
+  ? MultiplySignFloat<X, OddCase>
+  : never
+\end{minted}
+\end{listing}
+
+\begin{itemize}
+  \item Exponentiation by squaring
+  \item Complexity $O(n^2)\log(n)$
+  \item Fractional numbers not supported 
+\end{itemize}
+
+\subsection{Factorial}
+
+\begin{itemize}
+  \item Implemented by recursion
+\end{itemize}
+
+\begin{listing}[ht]
+\caption{Factorial by recursion}\label{lst:factorial-recursion}
+\begin{minted}{TypeScript}
+type FactorialInt<
+  X extends Digit[],
+  Memory extends Digit[] = [1]
+> = TrimStart<X> extends infer Trimmed extends Digit[]
+  ? X extends [0]
+    ? [1]
+    : X extends [1]
+    ? Memory
+    : FactorialInt<SubDigit<Trimmed, [1]>, MultiplyInt<Memory, Trimmed>>
+  : never
+\end{minted}
+\end{listing}
+
+\subsection{$n$-th root}
+
+\begin{itemize}
+  \item Newton's method
+  \item Recursion limit to 5
+  \item Invoke \code{infer} as much as possible
+  \item Treat \code{infer} as a variable assignment, avoid unnecessary computation whenever possible
+\end{itemize}
+
+\begin{listing}[ht]
+\caption{$n$-th root - wrong version}\label{lst:root-wrong}
+\begin{minted}{TypeScript}
+type RootDigit<
+  Alpha extends SignFloatNumber,
+  N extends Digit[],
+  Step extends SignFloatNumber = SignFloatNumber<"+", FloatNumber<[1], []>>,
+  StepCnt extends Array<0> = []
+> = StepCnt["length"] extends 5
+  ? Step
+  : RootDigit<Alpha, N, MultiplySignFloat<
+      SignFloatNumber<"+", DivideInt<[1], N>>,
+      AddSignFloatNumber<
+        MultiplySignFloat<RootNSubOne<N>, Step>,
+        DivideSignFloatNumber<Alpha, PowerSignFloatNumbers<Step, RootNSubOne<N>>>
+      >
+    >, [...StepCnt, 0]>
+\end{minted}
+\end{listing}
+
+\begin{listing}[ht]
+\caption{$n$-th root - right version}\label{lst:root-right}
+\begin{minted}{TypeScript}
+type RootStepNext<
+  Alpha extends SignFloatNumber,
+  NInverse extends SignFloatNumber,
+  NSubOne extends SignFloatNumber,
+  Step extends SignFloatNumber
+> = PowerSignFloatNumbers<
+  Step,
+  NSubOne
+> extends infer StepPowNSubOne extends SignFloatNumber
+  ? DivideSignFloatNumber<
+      Alpha,
+      StepPowNSubOne
+    > extends infer RightAdd extends SignFloatNumber
+    ? MultiplySignFloat<
+        NSubOne,
+        Step
+      > extends infer LeftAdd extends SignFloatNumber
+      ? AddSignFloatNumber<
+          LeftAdd,
+          RightAdd
+        > extends infer Bracket extends SignFloatNumber
+        ? MultiplySignFloat<NInverse, Bracket>
+        : never
+      : never
+    : never
+  : never
+
+type RootDigit<
+  Alpha extends SignFloatNumber,
+  N extends Digit[],
+  Step extends SignFloatNumber = SignFloatNumber<"+", FloatNumber<[1], []>>,
+  StepCnt extends Array<0> = []
+> = StepCnt["length"] extends 5
+  ? Step
+  : RootNInverse<N> extends infer NInverse extends SignFloatNumber
+  ? RootNSubOne<N> extends infer NSubOne extends SignFloatNumber
+    ? RootStepNext<
+        Alpha,
+        NInverse,
+        NSubOne,
+        Step
+      > extends infer NextStep extends SignFloatNumber
+      ? RootDigit<Alpha, N, NextStep, [...StepCnt, 0]>
+      : never
+    : never
+  : never
+\end{minted}
+\end{listing}
