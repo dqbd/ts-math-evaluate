@@ -73,7 +73,7 @@ type IntFloat<
   DecimalPlaces extends Array<0> = Array<0>
 > = {
   mantissa: Mantissa
-  decimalPlaces: DecimalPlaces
+  precision: DecimalPlaces
 }
 
 type ExpandIntFloat<X extends FloatNumber> = IntFloat<
@@ -92,7 +92,7 @@ type Compress<
   : [Left, Right]
 
 type CompressIntFloat<X extends IntFloat> = Compress<
-  X["decimalPlaces"],
+  X["precision"],
   X["mantissa"]
 > extends [infer Int extends Digit[], infer Frac extends Digit[]]
   ? FloatNumber<Int, Frac>
@@ -106,7 +106,7 @@ type MultiplyFloat<
     ? CompressIntFloat<
         IntFloat<
           MultiplyInt<A["mantissa"], B["mantissa"]>,
-          [...A["decimalPlaces"], ...B["decimalPlaces"]]
+          [...A["precision"], ...B["precision"]]
         >
       >
     : never

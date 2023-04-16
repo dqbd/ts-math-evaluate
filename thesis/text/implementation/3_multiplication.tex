@@ -13,13 +13,11 @@ type Multiply<
 \end{minted}
 \end{listing}
 
-Because of this reason, the library implements the long multiplication method instead. Similar to the addition and subtraction algorithm, where a two-dimensional lookup object type is used to obtain both the resulting multiplication digit and the appropriate carry number. 
-
-\todo{Describe the long multiplication algorithm}
+Because of this reason, the library implements the long multiplication method instead. Similarly to the addition and subtraction algorithm, a two-dimensional lookup object type is used to obtain the resulting multiplication digit and the appropriate carry number. First, \code{MultiplyInt} will iterate on multiplier digits from right to left and multiply each digit with the multiplicand by invoking the \code{MultiplySingleInt} generic type. The result of each multiplication, appropriately offset with zeroes to account for the position of the digit in the multiplier, is then added together to obtain the final result. An example can be seen in Listing \ref{lst:long-multiplication}.
 
 \begin{listing}[ht]
-\caption{Long multiplication}\label{lst:long-multiplication}
-\begin{minted}{TypeScript}
+  \caption{Long multiplication}\label{lst:long-multiplication}
+  \begin{minted}{TypeScript}
 type MultiplyInt<
   X extends Digit[],
   Y extends Digit[],
@@ -37,9 +35,47 @@ type MultiplyInt<
 \end{minted}
 \end{listing}
 
-\begin{itemize}
-  \item Long multiplication (complexity $\Theta(n^2)$)
-  \item
-  \item For each digit, we use a lookup table to create new numbers, which we add together
-  \item Reduction of prefix numbers
-\end{itemize}
+With the core building block for integer multiplication, extending the algorithm to floating-point numbers and signed numbers is straightforward.
+
+The \code{MultiplyFloat} generic type, as seen in Listing \ref{lst:float-multiplication}, converts the floating point number to an integer by concatenating the integer part of a number with the fractional part, preserving the precision, number of digits in the fractional part, as the length of a tuple. The precision is encoded as a tuple because the precision of the multiplication is the sum of the multiplicand and multiplier precisions. This can be done by spreading the tuples representing the precisions instead of calling expensive per-digit addition recursive types.
+
+\begin{listing}[ht]
+  \caption{Float multiplication}\label{lst:float-multiplication}
+  \begin{minted}{TypeScript}
+type ExpandIntFloat<X extends FloatNumber> = IntFloat<
+  [...X["int"], ...X["frac"]],
+  ExpandNumberToArray<X["frac"]["length"]>
+>
+
+type MultiplyFloat<
+  X extends FloatNumber,
+  Y extends FloatNumber
+> = ExpandIntFloat<X> extends infer A extends IntFloat
+  ? ExpandIntFloat<Y> extends infer B extends IntFloat
+    ? CompressIntFloat<
+        IntFloat<
+          MultiplyInt<A["mantissa"], B["mantissa"]>,
+          [...A["precision"], ...B["precision"]]
+        >
+      >
+    : never
+  : never
+\end{minted}
+\end{listing}
+
+The result of the integer multiplication is then converted back to a floating-point number by shifting the integer part right, as seen in Listing \ref{lst:integer-to-float}. This is done by iteratively taking the elements from the tuple representing the precision, acting as a counter, and prepending the rightmost digit of the integer part to the fractional part. The recursion terminates when the precision tuple is empty.
+
+\begin{listing}[ht]
+  \caption{Conversion of an integer number back to a fractional number}\label{lst:integer-to-float}
+  \begin{minted}{TypeScript}
+type Compress<
+  Count extends Array<0>,
+  Left extends Digit[],
+  Right extends Digit[] = []
+> = Count extends [0, ...infer RestCount extends 0[]]
+  ? Left extends [...infer LeftRest extends Digit[], infer End extends Digit]
+    ? Compress<RestCount, LeftRest, [End, ...Right]>
+    : Compress<RestCount, Left, [0, ...Right]>
+  : [Left, Right]
+\end{minted}
+\end{listing}
