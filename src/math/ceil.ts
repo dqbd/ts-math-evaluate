@@ -9,6 +9,8 @@ import {
   StringifySignFloat,
 } from "../utils/parse"
 
+
+
 export type Ceil<Value extends NumberLike> =
   ParseSignFloatNumber<Value> extends infer Number extends SignFloatNumber
     ? TruncateSignFloatNumber<Number> extends infer TrucateNumber extends SignFloatNumber

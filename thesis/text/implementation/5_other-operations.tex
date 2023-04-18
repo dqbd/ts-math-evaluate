@@ -1,82 +1,205 @@
 \section{Other operations}
 
-\subsection{Comparison} 
+\subsection{Comparison}
 
-\begin{itemize}
-  \item Lookup table once again
-  \item Object notation is cool, we just omit the sign
-\end{itemize}
+Some operations require an additional type-level operation for comparing two numbers, such as the Euclidean division, for deciding whether to continue recursion. For that purpose, a type-level three-way comparison operator has been implemented, also known as the \say{spaceship operator} in the C++ programming language \cite{sutterConsistentComparison2017}.
 
-\subsection{Rounding, flooring, ceiling, truncation}
+The spaceship operator for comparing two numbers $x$ and $y$, denoted by $x <=> y$, is defined in Figure \ref{fig:spaceship-operator} as follows:
 
-\begin{itemize}
-  \item Truncation is the easiest, just create a new \code{FloatNumber} object type with the fractional part set to an empty tuple
-  \item Ceiling is done by first truncating the number, then checking if the original number is greater than the truncated number and if that is the case, increment the truncated number by one. This is done to ensure correct behaviour when ceiling a negative number.
-  \item Flooring is done in a similar manner, decrementing a truncated number by one if the original number is less than the truncated number.
-  \item Rounding is done by explicitly checking the assignability of the first digit of the fractional part, and, if that is the case, incrementing the truncated number by one.
-\end{itemize}
+\begin{figure}[ht]
+  \begin{equation*}
+    x <=> y =
+    \begin{cases}
+      -1 & \text{if } x < y \\
+      0  & \text{if } x = y \\
+      1  & \text{if } x > y
+    \end{cases}
+  \end{equation*}
+  \caption{spaceship operator}\label{fig:spaceship-operator}
+\end{figure}
+
+It is possible to implement the operator entirely within the TypeScript type system by decomposing each number into a tuple of elements, where the size of the tuple is equal to the number itself. As seen in Listing \ref{lst:type-level-comparison}, the \code{CompareTuples} attempts to remove the first element of both tuples until one or both of the tuples are empty. The generic type returns the appropriate value depending on which tuple is empty first.
+
+\begin{listing}[ht]
+  \caption{Type-level comparison operation of single digit}\label{lst:type-level-comparison}
+  \begin{minted}{TypeScript}
+type CompareTuples<X extends Array<0>, Y extends Array<0>> =
+  X extends [0, ...infer XRest extends Array<0>]
+  ? Y extends [0, ...infer YRest extends Array<0>]
+  ? CompareTuples<XRest, YRest>
+  : 1
+  : Y extends [0, ...Array<0>]
+  ? -1
+  : 0
+
+type Compare<X extends number, Y extends number> =
+  CompareTuples<ParseNumber<X>, ParseNumber<Y>>
+\end{minted}
+\end{listing}
+
+As is the case for addition, subtraction and multiplication, it is desirable to precompute these values for every combination of digits and store them in a lookup table.
+
+The comparison of digit tuples is implemented by first ensuring the two tuples are of equal length by padding the shorter tuple with zeroes at the beginning. The first elements of both tuples are extracted into two type variables, \code{XHead} and \code{YHead}, and are compared using the lookup table. If the digits are equal, the recursion continues with the rest of the tuples, named \code{XRest} and \code{YRest}. Otherwise, the result of the last digit comparison is returned. The full implementation can be seen in Listing \ref{lst:digit-tuple-comparison}.
+
+\begin{listing}[ht]
+  \caption{Digit tuple comparison}\label{lst:digit-tuple-comparison}
+  \begin{minted}{TypeScript}
+type CompareArr<X extends Digit[], Y extends Digit[]> = 
+  PadStartEqual<X, Y> extends [
+    [infer XHead extends Digit, ...infer XRest extends Digit[]],
+    [infer YHead extends Digit, ...infer YRest extends Digit[]]
+  ]
+    ? CmpMap[XHead][YHead] extends infer Result extends number
+      ? Result extends 0
+        ? CompareArr<XRest, YRest>
+        : Result
+      : never
+    : 0
+\end{minted}
+\end{listing}
+
+\subsection{Numeric rounding operations}
+
+The library implements four operations performing numeric rounding. Truncation is the simplest of the four implementations, where the parsing of numbers into a structured object type is doing the heavy lifting. The truncation itself is done by replacing the fractional part of a number with an empty tuple, as seen in Listing \ref{lst:truncation}
+
+\begin{listing}[ht]
+  \caption{Truncation function}\label{lst:truncation}
+  \begin{minted}{TypeScript}
+type Truncate<Number extends SignFloatNumber> =
+  SignFloatNumber<Number["sign"], FloatNumber<Number["float"]["int"], []>>
+\end{minted}
+\end{listing}
+
+Ceiling and flooring are more complex operations. In the case of the ceiling operation, the number is first truncated and then checked to see if the input number is greater than the truncated number. If that is the case, the truncated number is incremented by one and returned. This behaviour is done to obtain the same result when flooring a negative number. For flooring, the process is similar, but the truncated number is decremented by one if the original number is less than the truncated number. The implementation can be seen in \ref{lst:floor}.
+
+\begin{listing}[ht]
+  \caption{Floor function}\label{lst:floor}
+  \begin{minted}{TypeScript}
+type Floor<Number extends SignFloatNumber> =
+  TruncateSignFloatNumber<Number> extends 
+    infer TrucateNumber extends SignFloatNumber
+    ? CompareSignNumbers<Number, TrucateNumber> extends -1
+      ? SubSignFloatNumber<
+          TrucateNumber,
+          SignFloatNumber<"+", FloatNumber<[1], []>>
+        >
+      : TrucateNumber
+    : never
+\end{minted}
+\end{listing}
+
+Rounding is the most complex of the four rounding operations. The fractional part's first digit is checked to determine whether it is assignable to the union of rounding up digits ($\{ 5,6,7,8,9 \}$). If that is the case, the truncated number is incremented by one and returned. Otherwise, the truncated number is returned as is, seen in Listing \ref{lst:round}.
+
+\begin{listing}[ht]
+  \caption{Round function}\label{lst:round}
+  \begin{minted}{TypeScript}
+type RoundSignFloatNumber<Number extends SignFloatNumber> =
+  Number["float"]["frac"] extends [infer Head extends Digit, ...Digit[]]
+  ? Head extends 5 | 6 | 7 | 8 | 9
+    ? SignFloatNumber<
+        Number["sign"],
+        AddFloatNumber<
+          FloatNumber<Number["float"]["int"], []>,
+          FloatNumber<[1], []>
+        >
+      >
+    : SignFloatNumber<
+        Number["sign"], 
+        FloatNumber<Number["float"]["int"], []>
+      >
+  : Number
+\end{minted}
+\end{listing}
 
 \subsection{Exponentiation}
 
+A naive implementation of exponentiation would be based on repeated multiplication. This is an inefficient approach, as the complexity of such an algorithm would be $O(M(x) \cdot 10^n) = O(n^2 \cdot 10^n)$, where $n$ is the number of digits and $M(x)$ is the complexity of multiplication algorithm, in this instance $O(n^2)$.
+
+A more efficient exponentiation method is to perform binary exponentiation instead, as seen in Figure \ref{fig:exponentiation-by-squaring}.
+
+\begin{figure}[ht]
+  \begin{equation*}
+    x^n =
+    \begin{cases}
+      x \cdot (x^2)^\frac{n-1}{2} & \text{if } n > 0 \text{ is odd}  \\
+      (x^2)^\frac{n-1}{2}         & \text{if } n > 0 \text{ is even} \\
+      1                           & \text{if } n = 0                 \\
+      (\frac{1}{x})^n             & \text{if } n < 0
+    \end{cases}
+  \end{equation*}
+  \caption{Exponentiation by squaring}\label{fig:exponentiation-by-squaring}
+\end{figure}
+
+It can be shown that the complexity of the algorithm is $O(n^2 \cdot \log_2(10^n))$, a notable improvement over the naive approach.
+
+Parity checks done by \code{IsEventInt} as seen in Listing \ref{lst:parity-check} are done by checking the last digit of the exponent. Once again, the even digits are represented by a union type of number literal types. Notably, the conditional type is not a type itself. Developers need to write \code{true} and \code{false} types explicitly.
+
 \begin{listing}[ht]
-\caption{}\label{lst:}
-\begin{minted}{TypeScript}
-type PowerInt<
+  \caption{Parity check of digits}\label{lst:parity-check}
+  \begin{minted}{TypeScript}
+  type IsEvenInt<X extends Digit[]> = X extends [
+    ...Digit[],
+    infer Tail extends Digit
+  ]
+    ? Tail extends 0 | 2 | 4 | 6 | 8
+      ? true
+      : false
+    : false
+  \end{minted}
+\end{listing}
+
+The implementation shown in Listing \ref{lst:exponentiation-by-squaring-ts} does require trimming of excess zeroes in the exponent to ensure the correctness of a fast assignability check for termination conditions. The implementation differs from the algorithm in Figure \ref{fig:exponentiation-by-squaring} in that the \code{PowerAuxInt} includes an optional type argument \code{Y} used to convert the method to a tail-recursive generic type, bypassing the need for deferring the instantiation to avoid the depth limit.
+
+\begin{listing}[ht]
+  \caption{Auxilary exponentiation by squaring}\label{lst:exponentiation-by-squaring-ts}
+  \begin{minted}{TypeScript}
+type PowerAuxInt<
   X extends SignFloatNumber,
-  N extends Digit[]
+  N extends Digit[],
+  Y extends SignFloatNumber = SignFloatNumber<"+", FloatNumber<[1], []>>
 > = TrimEnd<N> extends [0]
-  ? SignFloatNumber<"+", FloatNumber<[1], []>>
+  ? Y
   : IsEvenInt<N> extends true
-  ? PowerInt<MultiplySignFloat<X, X>, LongDivisionDigit<N, [2]>["quotient"]>
-  : PowerInt<
+  ? PowerAuxInt<
       MultiplySignFloat<X, X>,
-      LongDivisionDigit<SubDigit<N, [1]>, [2]>["quotient"]
-    > extends infer OddCase extends SignFloatNumber
-  ? MultiplySignFloat<X, OddCase>
-  : never
+      LongDivisionDigit<N, [2]>["quotient"],
+      Y
+    >
+  : PowerAuxInt<
+      MultiplySignFloat<X, X>,
+      LongDivisionDigit<SubDigit<N, [1]>, [2]>["quotient"],
+      MultiplySignFloat<X, Y>
+    >
 \end{minted}
 \end{listing}
 
-\begin{itemize}
-  \item Exponentiation by squaring
-  \item Complexity $O(n^2)\log(n)$
-  \item Fractional numbers not supported 
-\end{itemize}
+\subsection{$n$-th root extraction}
 
-\subsection{Factorial}
+There are some cases where an operation is sufficiently complex enough that the type instantiation limit is reached, and TypeScript will prematurely abort type checking instead. One such example is the $n$-th root extraction of a number. The implementation uses the Newton-Raphson method.
 
-\begin{itemize}
-  \item Implemented by recursion
-\end{itemize}
+The Newton-Raphson method is an iterative numerical method for estimating the roots of real-valued functions. Assuming the function $f(x)$ is derivable on $x \ge 0$ and an initial guess for root is $x_0$, then:
 
-\begin{listing}[ht]
-\caption{Factorial by recursion}\label{lst:factorial-recursion}
-\begin{minted}{TypeScript}
-type FactorialInt<
-  X extends Digit[],
-  Memory extends Digit[] = [1]
-> = TrimStart<X> extends infer Trimmed extends Digit[]
-  ? X extends [0]
-    ? [1]
-    : X extends [1]
-    ? Memory
-    : FactorialInt<SubDigit<Trimmed, [1]>, MultiplyInt<Memory, Trimmed>>
-  : never
-\end{minted}
-\end{listing}
+$$x_{k+1} = x_k - \frac{f(x_k)}{f'(x_k)}$$
 
-\subsection{$n$-th root}
+Thus, to estimate the $n$-th root of a number, declared by the function $f(x) = x^n - \alpha$, where $\alpha$ is the target number to apply $n$-th root and $n$ is the degree of the root, the following definition for the next approximation is used:
 
-\begin{itemize}
-  \item Newton's method
-  \item Recursion limit to 5
-  \item Invoke \code{infer} as much as possible
-  \item Treat \code{infer} as a variable assignment, avoid unnecessary computation whenever possible
-\end{itemize}
+\begin{align*}
+  x_{k+1} & = x_k - \frac{f(x_k)}{f'(x_k)}                                                                         \\
+          & = x_k - \frac{x_k^n - \alpha}{n \cdot x_k^{n-1}}                                                       \\
+          & = \frac{1}{n} \left( (n-1) \cdot x_k + \frac{\alpha}{x_k^{n-1}} \right)                                \\
+          & = \underbrace{\frac{n-1}{n}}_\text{L} x_k + \underbrace{\frac{\alpha}{n}}_\text{R} \frac{1}{x_k^{n-1}} \\
+          & = L \cdot x_k + R \cdot \frac{1}{x_k^{n-1}}                                                            \\
+\end{align*}
+
+A naive implementation can be done by intimately mirroring the algorithm and nesting the generic types for readability, shown in Listing \ref{lst:root-wrong}. However, as it turns out, TypeScript will bail out due to the depth limit. Instead, to bypass the limit, the final implementation seen in Listing \ref{lst:root-right} uses \code{infer} keyword to defer instantiation as much as possible, essentially treating \code{infer} as a way to assign intermediate values to variables.
+
+Even so, it is not desired for the algorithm to run indefinitely; instead, the iteration is cut off after seven iterations, as more iterations will cause the type checker to reach the instantiation limit.
+
+\todo{Revise the code snippets to reflect the equation changes}
 
 \begin{listing}[ht]
-\caption{$n$-th root - wrong version}\label{lst:root-wrong}
-\begin{minted}{TypeScript}
+  \caption{$n$-th root - wrong version}\label{lst:root-wrong}
+  \begin{minted}{TypeScript}
 type RootDigit<
   Alpha extends SignFloatNumber,
   N extends Digit[],
@@ -95,8 +218,8 @@ type RootDigit<
 \end{listing}
 
 \begin{listing}[ht]
-\caption{$n$-th root - right version}\label{lst:root-right}
-\begin{minted}{TypeScript}
+  \caption{$n$-th root - right version}\label{lst:root-right}
+  \begin{minted}{TypeScript}
 type RootStepNext<
   Alpha extends SignFloatNumber,
   NInverse extends SignFloatNumber,

@@ -14,19 +14,23 @@ import {
 
 type OneSignFloatNumber = SignFloatNumber<"+", FloatNumber<[1], []>>
 
-type PowerInt<
+type PowerAuxInt<
   X extends SignFloatNumber,
-  N extends Digit[]
+  N extends Digit[],
+  Y extends SignFloatNumber = SignFloatNumber<"+", FloatNumber<[1], []>>
 > = TrimEnd<N> extends [0]
-  ? SignFloatNumber<"+", FloatNumber<[1], []>>
+  ? Y
   : IsEvenInt<N> extends true
-  ? PowerInt<MultiplySignFloat<X, X>, LongDivisionDigit<N, [2]>["quotient"]>
-  : PowerInt<
+  ? PowerAuxInt<
       MultiplySignFloat<X, X>,
-      LongDivisionDigit<SubDigit<N, [1]>, [2]>["quotient"]
-    > extends infer OddCase extends SignFloatNumber
-  ? MultiplySignFloat<X, OddCase>
-  : never
+      LongDivisionDigit<N, [2]>["quotient"],
+      Y
+    >
+  : PowerAuxInt<
+      MultiplySignFloat<X, X>,
+      LongDivisionDigit<SubDigit<N, [1]>, [2]>["quotient"],
+      MultiplySignFloat<X, Y>
+    >
 
 // TODO: handle fractional numbers / convert to never
 export type PowerSignFloatNumbers<
@@ -37,9 +41,9 @@ export type PowerSignFloatNumbers<
       OneSignFloatNumber,
       X
     > extends infer Xinv extends SignFloatNumber
-    ? PowerInt<Xinv, N["float"]["int"]>
+    ? PowerAuxInt<Xinv, N["float"]["int"]>
     : never
-  : PowerInt<X, N["float"]["int"]>
+  : PowerAuxInt<X, N["float"]["int"]>
 
 export type Power<
   X extends NumberLike,
