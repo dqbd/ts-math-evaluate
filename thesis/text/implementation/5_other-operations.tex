@@ -193,9 +193,7 @@ Thus, to estimate the $n$-th root of a number, declared by the function $f(x) = 
 
 A naive implementation can be done by intimately mirroring the algorithm and nesting the generic types for readability, shown in Listing \ref{lst:root-wrong}. However, as it turns out, TypeScript will bail out due to the depth limit. Instead, to bypass the limit, the final implementation seen in Listing \ref{lst:root-right} uses \code{infer} keyword to defer instantiation as much as possible, essentially treating \code{infer} as a way to assign intermediate values to variables.
 
-Even so, it is not desired for the algorithm to run indefinitely; instead, the iteration is cut off after seven iterations, as more iterations will cause the type checker to reach the instantiation limit.
-
-\todo{Revise the code snippets to reflect the equation changes}
+Even so, it is not desired for the algorithm to run indefinitely; instead, the iteration is cut off after seven iterations, as more iterations will cause the type checker to reach the instantiation limit when evaluating.
 
 \begin{listing}[ht]
   \caption{$n$-th root - wrong version}\label{lst:root-wrong}
@@ -220,28 +218,30 @@ type RootDigit<
 \begin{listing}[ht]
   \caption{$n$-th root - right version}\label{lst:root-right}
   \begin{minted}{TypeScript}
-type RootStepNext<
-  Alpha extends SignFloatNumber,
-  NInverse extends SignFloatNumber,
+type OneSignFloatNumber = SignFloatNumber<"+", FloatNumber<[1], []>>
+
+type RootDigitIter<
   NSubOne extends SignFloatNumber,
-  Step extends SignFloatNumber
-> = PowerSignFloatNumbers<
-  Step,
-  NSubOne
-> extends infer StepPowNSubOne extends SignFloatNumber
-  ? DivideSignFloatNumber<
-      Alpha,
-      StepPowNSubOne
-    > extends infer RightAdd extends SignFloatNumber
-    ? MultiplySignFloat<
-        NSubOne,
-        Step
-      > extends infer LeftAdd extends SignFloatNumber
+  L extends SignFloatNumber,
+  R extends SignFloatNumber,
+  Step extends SignFloatNumber = OneSignFloatNumber,
+  StepCnt extends Array<0> = []
+> = StepCnt["length"] extends 7
+  ? Step
+  : MultiplySignFloat<L, Step> extends infer LStep extends SignFloatNumber
+  ? PowerSignFloatNumbers<
+      Step,
+      NSubOne
+    > extends infer StepPowNSubOne extends SignFloatNumber
+    ? DivideSignFloatNumber<
+        R,
+        StepPowNSubOne
+      > extends infer RStep extends SignFloatNumber
       ? AddSignFloatNumber<
-          LeftAdd,
-          RightAdd
-        > extends infer Bracket extends SignFloatNumber
-        ? MultiplySignFloat<NInverse, Bracket>
+          LStep,
+          RStep
+        > extends infer Sum extends SignFloatNumber
+        ? RootDigitIter<NSubOne, L, R, Sum, [...StepCnt, 0]>
         : never
       : never
     : never
@@ -249,20 +249,19 @@ type RootStepNext<
 
 type RootDigit<
   Alpha extends SignFloatNumber,
-  N extends Digit[],
-  Step extends SignFloatNumber = SignFloatNumber<"+", FloatNumber<[1], []>>,
-  StepCnt extends Array<0> = []
-> = StepCnt["length"] extends 5
-  ? Step
-  : RootNInverse<N> extends infer NInverse extends SignFloatNumber
-  ? RootNSubOne<N> extends infer NSubOne extends SignFloatNumber
-    ? RootStepNext<
-        Alpha,
-        NInverse,
-        NSubOne,
-        Step
-      > extends infer NextStep extends SignFloatNumber
-      ? RootDigit<Alpha, N, NextStep, [...StepCnt, 0]>
+  N extends Digit[]
+> = SignFloatNumber<
+  "+",
+  FloatNumber<N, []>
+> extends infer N extends SignFloatNumber
+  ? SubSignFloatNumber<
+      N,
+      OneSignFloatNumber
+    > extends infer NSubOne extends SignFloatNumber
+    ? DivideSignFloatNumber<NSubOne, N> extends infer L extends SignFloatNumber
+      ? DivideSignFloatNumber<Alpha, N> extends infer R extends SignFloatNumber
+        ? RootDigitIter<NSubOne, L, R>
+        : never
       : never
     : never
   : never
