@@ -1,7 +1,64 @@
-\section{Statement parser \& evaluator}
+\section{Statement parser and evaluator}
+
+The API of implemented mathematical operations as generic types are well suited for smaller expressions. However, the interface can be lacking when attempting to express complex expressions. The goal of this thesis is thus to present a compiler, which accepts a literal string type containing a mathematical expression and returns the result of the expression, also as a literal string type. The compiler is built in three parts: the lexer, the parser and the evaluator:
+
+\begin{enumerate}
+  \item \textit{The lexer} (lexical analyser) is responsible for breaking down the input literal string type into a sequence of meaningful units called tokens, removing any whitespace characters in the process. 
+  \item \textit{The parser} (syntax analyser) accepts the sequence of tokens as the input and produces an abstract syntax tree (AST), which represents the structure of a mathematical expression more suitable for evaluation. 
+  \item \textit{The evaluator} traverses the AST and evaluates each node of the AST, returning the result of the expression as a literal string type.
+\end{enumerate}
+
+This thesis implements a top-down LL(1) parser for the mathematical expressions. The grammar used for the parser is as follows (Listing \ref{lst:math-grammar}):
+
+\todo{format the grammar better}
+
+\begin{listing}[ht]
+\caption{Math grammar}\label{lst:math-grammar}
+\begin{minted}{TypeScript}
+START -> ADD
+
+ADD -> MUL ADDx
+ADDx -> + MUL ADDx
+ADDx -> - MUL ADDx
+ADDx ->
+
+MUL -> FACT MULx
+MULx -> * FACT MULx
+MULx -> / FACT MULx
+MULx -> % FACT MULx
+MULx ->
+
+FACT -> UNARY FACTx
+FACTx -> ! FACTx
+FACTx ->
+
+UNARY -> - UNARY
+UNARY -> + UNARY
+UNARY -> POW
+
+POW -> TERM POWx
+POWx -> ^ POW
+POWx ->
+
+TERM -> unary ( ADD )
+TERM -> binary ( ADD , ADD )
+TERM -> ( ADD )
+TERM -> number
+\end{minted}
+\end{listing}
+
+
+The resulting grammar is an LL(1) grammar: a context-free grammar, where each production rule is of the form $A \rightarrow \alpha$. 
+
+\todo{Create a better description of LL(1) grammar}
+
+There are various alternative bottom-up parsers for processing and parsing mathematical expressions, namely the Shunting-yard algorithm and the Pratt parser. The main reason why a top-down approach has been chosen is due to the goal of introducing a more generic parser implementation, which can be easily extended to support other mathematical operations or other LL(1) grammars. 
+
+\todo{Add better reasoning for choosing a top-down parser}
+
+The evaluator itself is not required per se, and the expression can be evaluated directly in the parser, but to avoid the instantiation depth limit and to simplify debugging and unit testing, the parser emits an AST as a temporary result, and the evaluation is performed in a separate step. 
 
 \begin{itemize}
-  \item Architecture of parser: lexer, parser, evaluator
   \item Decision why we are not evaluating directly in the parser - reduce the number of type instantiations
   \item Mention alternative algorithms (Shunting-yard algorithm, Pratt parser) and the decision why parser is a better solution - create a more generic parser implementation which is easier to extend
   \item Description of the math grammar, how we ensure operator precedence and left/right-associativity
