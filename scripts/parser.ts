@@ -20,7 +20,7 @@ const sourceGrammar = outdent`
 
   ADD -> MUL ADDx
   ADDx -> Token.Plus MUL ADDx
-  ADDx -> Token.Minus MUL ADDx
+  ADDx -> Token.Minus ADDx
   ADDx ->
 
   MUL -> FACT MULx
