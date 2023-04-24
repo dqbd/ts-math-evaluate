@@ -8,7 +8,7 @@ export namespace AST {
     Number = "number",
   }
 
-  export type BinaryType<
+  export type Binary<
     Left extends unknown = unknown,
     Op extends string = string,
     Right extends unknown = unknown
@@ -19,7 +19,7 @@ export namespace AST {
     right: Right
   }
 
-  export type UnaryType<
+  export type Unary<
     Op extends string = string,
     Value extends unknown = unknown
   > = {
@@ -28,12 +28,12 @@ export namespace AST {
     value: Value
   }
 
-  export type NumberType<Value extends string = string> = {
+  export type Number<Value extends string = string> = {
     type: Type.Number
     value: Value
   }
 
-  export type _ = BinaryType | UnaryType | NumberType
+  export type _ = Binary | Unary | Number
 }
 
 /*
@@ -97,7 +97,7 @@ export namespace RecursiveParser {
                 Token.RightBracket,
                 T
               > extends infer T extends Parser
-              ? ReturnParser<T, AST.UnaryType<Head["value"], T["return"]>>
+              ? ReturnParser<T, AST.Unary<Head["value"], T["return"]>>
               : Error.Parser
             : Error.Parser
           : Error.Parser
@@ -114,7 +114,7 @@ export namespace RecursiveParser {
                   > extends infer R extends Parser
                   ? ReturnParser<
                       R,
-                      AST.BinaryType<L["return"], Head["value"], R["return"]>
+                      AST.Binary<L["return"], Head["value"], R["return"]>
                     >
                   : Error.Parser
                 : Error.Parser
@@ -132,14 +132,14 @@ export namespace RecursiveParser {
         : Error.Parser
       : T["head"] extends infer Head extends Token.Number
       ? ConsumeParser<Token.Number, T> extends infer T extends Parser
-        ? ReturnParser<T, AST.NumberType<Head["value"]>>
+        ? ReturnParser<T, AST.Number<Head["value"]>>
         : Error.Parser
       : Error.Parser
 
   type POWx<T extends Parser> = T["head"] extends Token.Power
     ? ConsumeParser<Token.Power, T> extends infer T extends Parser
       ? POW<T> extends infer R extends Parser
-        ? ReturnParser<R, AST.BinaryType<T["return"], "^", R["return"]>>
+        ? ReturnParser<R, AST.Binary<T["return"], "^", R["return"]>>
         : Error.Parser
       : Error.Parser
     : T["head"] extends
@@ -170,13 +170,13 @@ export namespace RecursiveParser {
   type UNARY<T extends Parser> = T["head"] extends Token.Minus
     ? ConsumeParser<Token.Minus, T> extends infer T extends Parser
       ? UNARY<T> extends infer T extends Parser
-        ? ReturnParser<T, AST.UnaryType<"-", T["return"]>>
+        ? ReturnParser<T, AST.Unary<"-", T["return"]>>
         : Error.Parser
       : Error.Parser
     : T["head"] extends Token.Plus
     ? ConsumeParser<Token.Plus, T> extends infer T extends Parser
       ? UNARY<T> extends infer T extends Parser
-        ? ReturnParser<T, AST.UnaryType<"+", T["return"]>>
+        ? ReturnParser<T, AST.Unary<"+", T["return"]>>
         : Error.Parser
       : Error.Parser
     : T["head"] extends
@@ -192,7 +192,7 @@ export namespace RecursiveParser {
   type FACTx<T extends Parser> = T["head"] extends Token.Factorial
     ? ConsumeParser<Token.Factorial, T> extends infer T extends Parser
       ? FACTx<
-          ReturnParser<T, AST.UnaryType<"!", T["return"]>>
+          ReturnParser<T, AST.Unary<"!", T["return"]>>
         > extends infer T extends Parser
         ? T
         : Error.Parser
@@ -227,7 +227,7 @@ export namespace RecursiveParser {
     ? ConsumeParser<Token.Multiply, T> extends infer T extends Parser
       ? FACT<T> extends infer R extends Parser
         ? MULx<
-            ReturnParser<R, AST.BinaryType<T["return"], "*", R["return"]>>
+            ReturnParser<R, AST.Binary<T["return"], "*", R["return"]>>
           > extends infer T extends Parser
           ? T
           : Error.Parser
@@ -237,7 +237,7 @@ export namespace RecursiveParser {
     ? ConsumeParser<Token.Divide, T> extends infer T extends Parser
       ? FACT<T> extends infer R extends Parser
         ? MULx<
-            ReturnParser<R, AST.BinaryType<T["return"], "/", R["return"]>>
+            ReturnParser<R, AST.Binary<T["return"], "/", R["return"]>>
           > extends infer T extends Parser
           ? T
           : Error.Parser
@@ -247,7 +247,7 @@ export namespace RecursiveParser {
     ? ConsumeParser<Token.Modulo, T> extends infer T extends Parser
       ? FACT<T> extends infer R extends Parser
         ? MULx<
-            ReturnParser<R, AST.BinaryType<T["return"], "%", R["return"]>>
+            ReturnParser<R, AST.Binary<T["return"], "%", R["return"]>>
           > extends infer T extends Parser
           ? T
           : Error.Parser
@@ -280,7 +280,7 @@ export namespace RecursiveParser {
     ? ConsumeParser<Token.Plus, T> extends infer T extends Parser
       ? MUL<T> extends infer R extends Parser
         ? ADDx<
-            ReturnParser<R, AST.BinaryType<T["return"], "+", R["return"]>>
+            ReturnParser<R, AST.Binary<T["return"], "+", R["return"]>>
           > extends infer T extends Parser
           ? T
           : Error.Parser
@@ -290,7 +290,7 @@ export namespace RecursiveParser {
     ? ConsumeParser<Token.Minus, T> extends infer T extends Parser
       ? MUL<T> extends infer R extends Parser
         ? ADDx<
-            ReturnParser<R, AST.BinaryType<T["return"], "-", R["return"]>>
+            ReturnParser<R, AST.Binary<T["return"], "-", R["return"]>>
           > extends infer T extends Parser
           ? T
           : Error.Parser

@@ -190,6 +190,8 @@ function printUserId(id: string | number) {
   \end{minted}
 \end{listing}
 
+\todo{Add description to namespaces}
+
 An intersection of types can be represented by the \code{\&} operator. Similarly to the union type, \code{X \& Y} can be read as a type for a value that can simultaneously belong to type \code{X} and \code{Y}. These intersection types are of particular interest when working with object types, as an intersection of two object types has all properties of both object types, as an object with both of the properties can be assigned to both of the intersection member types. For this particular reason, intersection types are commonly used to merge two object types, as seen in \ref{lst:intersection-types}\footnote{We can also use \code{extends} keyword to merge two interfaces}.
 
 \begin{listing}[ht]

@@ -1,68 +1,152 @@
 \section{Statement parser and evaluator}
 
-The API of implemented mathematical operations as generic types are well suited for smaller expressions. However, the interface can be lacking when attempting to express complex expressions. The goal of this thesis is thus to present a compiler, which accepts a literal string type containing a mathematical expression and returns the result of the expression, also as a literal string type. The compiler is built in three parts: the lexer, the parser and the evaluator:
+The generic types for mathematical operations are well suited for simple expressions. However, the proposed interface can be too verbose when describing complex formulas. A more elegant solution is to represent both input and output as a literal string type and let a compiler do the parsing and evaluation of the expression. The input literal string type will contain a mathematical expression in infix notation, and the output literal string type will contain the result of the expression. The compiler is built in three parts: the lexer, the parser and the evaluator, which will be described in the following sections.
 
-\begin{enumerate}
-  \item \textit{The lexer} (lexical analyser) is responsible for breaking down the input literal string type into a sequence of meaningful units called tokens, removing any whitespace characters in the process. 
-  \item \textit{The parser} (syntax analyser) accepts the sequence of tokens as the input and produces an abstract syntax tree (AST), which represents the structure of a mathematical expression more suitable for evaluation. 
-  \item \textit{The evaluator} traverses the AST and evaluates each node of the AST, returning the result of the expression as a literal string type.
-\end{enumerate}
+\subsection{Lexer}
 
-This thesis implements a top-down LL(1) parser for the mathematical expressions. The grammar used for the parser is as follows (Listing \ref{lst:math-grammar}):
+The lexical analyser (lexer) is responsible for dividing the input literal string type into a sequence of meaningful units called tokens. The goal of a lexer is to remove whitespaces and inconsistencies to simplify the input stream, which is helpful for later stages of parsing. One such example is the parsing of numbers: consuming a single number token is easier than parsing each digit of a number, which can unnecessarily complicate the design of a parser.
 
-\todo{format the grammar better}
+The following section will provide an in-depth look into the handwritten lexer implementation. Namespaces have been used to describe the object types representing tokens, ensuring proper isolation between different type aliases and preventing naming clashes without the need to resort to prefixing. An example can be seen in \ref{lst:lexer-token-namespace}, where \code{Plus} and \code{Minus} are type aliases for the object types, whereas \vcode{_} is a union type for when a placeholder for a token is needed. Also, instead of utilising the \code{never} type for errors, a string enum is used to prevent unintended matches when performing assignability checks, as \code{never} is a subtype of all types.
 
 \begin{listing}[ht]
-\caption{Math grammar}\label{lst:math-grammar}
-\begin{minted}{TypeScript}
-START -> ADD
+  \caption{Lexer token namespace}\label{lst:lexer-token-namespace}
+  \begin{minted}{TypeScript}
+enum Error {
+  Lexer = "LexerError",
+  Parser = "ParserError",
+}
 
-ADD -> MUL ADDx
-ADDx -> + MUL ADDx
-ADDx -> - MUL ADDx
-ADDx ->
-
-MUL -> FACT MULx
-MULx -> * FACT MULx
-MULx -> / FACT MULx
-MULx -> % FACT MULx
-MULx ->
-
-FACT -> UNARY FACTx
-FACTx -> ! FACTx
-FACTx ->
-
-UNARY -> - UNARY
-UNARY -> + UNARY
-UNARY -> POW
-
-POW -> TERM POWx
-POWx -> ^ POW
-POWx ->
-
-TERM -> unary ( ADD )
-TERM -> binary ( ADD , ADD )
-TERM -> ( ADD )
-TERM -> number
+namespace Token {
+  export type Plus = { type: "Plus" } 
+  export type Minus = { type: "Minus" } 
+  export type _ = Plus | Minus
+} 
 \end{minted}
 \end{listing}
 
+The lexing itself is done by a generic type, which accepts a literal string type as a type argument and returns either a string enum as an error or an object type containing the matched token and the remaining unparsed input. As seen in Listing \code{lst:lexer-structure}, the \code{HandleToken} attempts to perform pattern matching on the first character of the input string literal type \code{T}. If succeeded, the matched token is returned wrapped in an object type defined by \code{LexResult} generic type, passing both the matched token and the remaining input to the next iteration of the \code{HandleToken} generic type. If the pattern matching fails, the \code{Error.Lexer} string enum is returned instead. This structure can be chained together to create a lexer for multiple token types, such as function keywords or numbers.
 
-The resulting grammar is an LL(1) grammar: a context-free grammar, where each production rule is of the form $A \rightarrow \alpha$. 
+\begin{listing}[ht]
+  \caption{Lexer Structure}\label{lst:lexer-structure}
+  \begin{minted}{TypeScript}
+type LexResult<Rest extends string, Result extends Token._> = {
+  result: Result
+  rest: Rest
+}
+type HandleToken<T extends string> = 
+  T extends `${infer Head}${infer Rest}`
+  ? Head extends "+"
+    ? LexResult<Rest, Token.Plus>
+    : Error.Lexer
+  : Head extends "-"
+    ? LexResult<Rest, Token.Minus>
+    : Error.Lexer
+  : Error.Lexer
+\end{minted}
+\end{listing}
 
-\todo{Create a better description of LL(1) grammar}
+\subsection{Parser}
 
-There are various alternative bottom-up parsers for processing and parsing mathematical expressions, namely the Shunting-yard algorithm and the Pratt parser. The main reason why a top-down approach has been chosen is due to the goal of introducing a more generic parser implementation, which can be easily extended to support other mathematical operations or other LL(1) grammars. 
+Infix notation is the most common way of writing mathematical expressions and is more intuitive for humans to read and write. However, it is not ideal for computers due to the complexity of parsing algorithms, which must adequately evaluate parentheses and operator precedence rules. Postfix notation addresses the shortcomings of infix notation by explicitly stating the order of computation, making the evaluation unambiguous.
 
-\todo{Add better reasoning for choosing a top-down parser}
+Various methods exist for converting an expression in infix notation. However, this thesis focuses on implementing a top-down LL(1) parser for mathematical expression. The main reason for choosing the LL(1) parser is the extendibility and suitability for supporting other LL(1) grammars more readily. Some other common parsers were considered for this thesis, including the Shunting-Yard algorithm, using two stacks for operators and output operands, and the Pratt parser, a recursive descent parsing algorithm utilising a precedence table for extendability.
 
-The evaluator itself is not required per se, and the expression can be evaluated directly in the parser, but to avoid the instantiation depth limit and to simplify debugging and unit testing, the parser emits an AST as a temporary result, and the evaluation is performed in a separate step. 
+LL(1) parsers are a class of top-down parsers that read inputs from left to right and construct a leftmost derivation of the input. They use a single token of lookahead when parsing a sentence, meaning that the parser can only see the next token before parsing. LL(1) parsers recognise LL(1) grammars, which are a special case of context-free grammars. The grammar must be unambiguous, left-recursive and with no common prefixes among the alternatives of any expansion rule. The grammar used for this thesis is as follows (Figure \ref{fig:math-grammar}):
 
-\begin{itemize}
-  \item Decision why we are not evaluating directly in the parser - reduce the number of type instantiations
-  \item Mention alternative algorithms (Shunting-yard algorithm, Pratt parser) and the decision why parser is a better solution - create a more generic parser implementation which is easier to extend
-  \item Description of the math grammar, how we ensure operator precedence and left/right-associativity
-  \item Mention creating a custom code generator for detecting valid strings of a LL(1) grammar
-  \item Namespaces and default types instead of enums
-  \item Behavior of never type and the need to create a custom error type (duck typing)
-\end{itemize}
+\begin{figure}[ht]
+  \begin{multicols}{2}
+    \begin{enumerate}
+      \item \code{START} $\rightarrow$ \code{ADD} \code{.}
+
+      \item \code{ADD} $\rightarrow$ \code{MUL} \code{ADDx} \code{.}
+      \item \code{ADDx} $\rightarrow$ \mintinline{TypeScript}{"+"} \code{MUL} \code{ADDx} \code{.}
+      \item \code{ADDx} $\rightarrow$ \mintinline{TypeScript}{"-"} \code{MUL} \code{ADDx} \code{.}
+      \item \code{ADDx} $\rightarrow$ \code{.}
+
+      \item \code{MUL} $\rightarrow$ \code{FACT} \code{MULx} \code{.}
+      \item \code{MULx} $\rightarrow$ \mintinline{TypeScript}{"*"} \code{FACT} \code{MULx} \code{.}
+      \item \code{MULx} $\rightarrow$ \mintinline{TypeScript}{"/"} \code{FACT} \code{MULx} \code{.}
+      \item \code{MULx} $\rightarrow$ \mintinline{TypeScript}{"%"} \code{FACT} \code{MULx} \code{.}
+
+      \item \code{FACT} $\rightarrow$ \code{UNARY} \code{FACTx} \code{.}
+      \item \code{FACTx} $\rightarrow$ \mintinline{TypeScript}{"!"} \code{FACTx} \code{.}
+      \item \code{FACTx} $\rightarrow$ \code{.}
+
+      \item \code{UNARY} $\rightarrow$ \mintinline{TypeScript}{"-"} \code{UNARY} \code{.}
+      \item \code{UNARY} $\rightarrow$ \mintinline{TypeScript}{"+"} \code{UNARY} \code{.}
+      \item \code{UNARY} $\rightarrow$ \code{POW} \code{.}
+
+      \item \code{POW} $\rightarrow$ \code{TERM} \code{POWx} \code{.}
+      \item \code{POWx} $\rightarrow$ \mintinline{TypeScript}{"^"} \code{POW} \code{.}
+      \item \code{POWx} $\rightarrow$ \code{.}
+
+      \item \code{TERM} $\rightarrow$ \mintinline{TypeScript}{"unary"} \mintinline{TypeScript}{"("} \code{ADD} \mintinline{TypeScript}{")"} \code{.}
+      \item \code{TERM} $\rightarrow$ \mintinline{TypeScript}{"binary"} \mintinline{TypeScript}{"("} \code{ADD} \code{,} \code{ADD} \mintinline{TypeScript}{")"} \code{.}
+      \item \code{TERM} $\rightarrow$ \mintinline{TypeScript}{"("} \code{ADD} \mintinline{TypeScript}{")"} \code{.}
+      \item \code{TERM} $\rightarrow$ \mintinline{TypeScript}{"number"} \code{.}
+    \end{enumerate}
+  \end{multicols}
+  \caption{LL(1) grammar for mathematical expressions}
+  \label{fig:math-grammar}
+\end{figure}
+
+
+Operator precedence is baked into the grammar by having the higher precedence operators at the later parts of the grammar. The left-associativity and right-associativity is defined by the way how the recursion has been defined in the grammar. As seen Table \ref{table:associativity}, the position of the non-terminal is the deciding factor for associativity.
+
+\todo{Description of the math grammar, how we ensure operator precedence and left/right-associativity}
+
+\begin{table}[h]
+  \centering
+  \begin{tabular}{|c|c|}
+    \hline
+    Left associativity & Right associativity                                                \\
+    \hline
+
+    \makecell{
+    \code{ADD} $\rightarrow$ \code{TERM} \code{.}                                           \\
+      \code{ADD} $\rightarrow$ \code{ADD} \mintinline{TypeScript}{"+"} \code{TERM} \code{.}
+    }
+                       &
+    \makecell{
+    \code{ADD} $\rightarrow$ \code{TERM} \code{.}                                           \\
+      \code{ADD} $\rightarrow$ \code{TERM} \mintinline{TypeScript}{"+"} \code{ADD} \code{.}
+    }
+
+    \\
+    \hline
+
+    \makecell{
+    \code{ADD} $\rightarrow$ \code{TERM} \code{ADD'} \code{.}                               \\
+    \code{ADD'} $\rightarrow$ \mintinline{TypeScript}{"+"} \code{TERM} \code{ADD'} \code{.} \\
+      \code{ADD'} $\rightarrow$ \code{.}
+    }
+                       &
+
+    \makecell{
+    \code{ADD} $\rightarrow$ \code{TERM} \code{ADD'} \code{.}                               \\
+    \code{ADD'} $\rightarrow$ \mintinline{TypeScript}{"+"} \code{ADD} \code{.}              \\
+      \code{ADD'} $\rightarrow$ \code{.}
+    }
+    \\
+    \hline
+  \end{tabular}
+  \caption{Grammar comparison between left-associativity and right-associativity}
+  \label{table:associativity}
+\end{table}
+
+A custom code generation tool has been developed to generate an appropriate parser from the LL(1) grammar. Assuming the grammar is a LL(1) grammar, both the FIRST and FOLLOW set is generated for each of the non-terminals in the grammar. The parsing table is created using the FIRST and FOLLOW sets.
+
+The FIRST set of a non-terminal is a set of terminals, that can appear as the first symbol in a string derived from that non-terminal. The FOLLOW set of a non-terminal is a set of terminals that can appear immediately after the non-terminal.
+
+The parsing table is created as follows: for each of the production rule $A \rightarrow \alpha$ found in the grammar, do the following:
+
+\begin{enumerate}
+  \item For each terminal $a$ in the FIRST(A), add $A \rightarrow \alpha$ to the parsing table at the position $[A, a]$.
+  \item If the EOF token is in the FIRST(A) set, add $A \rightarrow \alpha$ to the parsing at position $[A, b]$ for each terminal $b$ in the FOLLOW(A) set.
+\end{enumerate}
+
+\subsection{Evaluator}
+
+The evaluator traverses the AST and evaluates each node of the AST, returning the result of the expression as a literal string type.
+
+The evaluator itself is not required per se, and the expression can be evaluated directly in the parser, but to avoid the instantiation depth limit and to simplify debugging and unit testing, the parser emits an AST as a temporary result, and the evaluation is performed in a separate step.

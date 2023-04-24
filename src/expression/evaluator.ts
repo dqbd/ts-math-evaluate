@@ -17,7 +17,7 @@ import {
 import { NumberLike } from "../utils/parse"
 import { AST } from "./parser"
 
-export type Evaluate<T> = T extends AST.BinaryType<
+export type Evaluate<T> = T extends AST.Binary<
   infer Left,
   infer Op,
   infer Right
@@ -65,7 +65,7 @@ export type Evaluate<T> = T extends AST.BinaryType<
         : never
       : never
     : never
-  : T extends AST.UnaryType<infer Op, infer Value>
+  : T extends AST.Unary<infer Op, infer Value>
   ? Op extends "abs"
     ? Evaluate<Value> extends infer ValueStr extends NumberLike
       ? Abs<ValueStr>
@@ -99,6 +99,6 @@ export type Evaluate<T> = T extends AST.BinaryType<
       ? Factorial<ValueStr>
       : never
     : never
-  : T extends AST.NumberType<infer Value extends string>
+  : T extends AST.Number<infer Value extends string>
   ? Value
   : never
