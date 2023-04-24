@@ -51,39 +51,71 @@ Infix notation is the most common way of writing mathematical expressions and is
 
 Various methods exist for converting an expression in infix notation. However, this thesis focuses on implementing a top-down LL(1) parser for mathematical expression. The main reason for choosing the LL(1) parser is the extendibility and suitability for supporting other LL(1) grammars more readily. Some other common parsers were considered for this thesis, including the Shunting-Yard algorithm, using two stacks for operators and output operands, and the Pratt parser, a recursive descent parsing algorithm utilising a precedence table for extendability.
 
+
+Grammar is a set of rules that defines the syntax of a language. The grammar consists of a set of terminals, non-terminals, a set of production rules and a start symbol. Terminals are the basic unit of the language, while non-terminals are placeholders for other terminals and non-terminals. Production rules define how non-terminals can be expanded into a sequence of other non-terminals and terminals while the start symbol defines the starting non-terminal.
+
+Derivation
+
+Leftmost derivation
+
+Rightmost derivation
+
+Ambiguous grammar
+
+Table of operator precedence
+
+
+\begin{table}[h]
+  \centering
+  \begin{tabular}{|c|l|l|}
+    \hline
+    \textbf{Precedence} & \textbf{Operator Type}              & \textbf{Associativity} \\ \hline
+    1                   & Addition, Subtraction               & left-to-right          \\ \hline
+    2                   & Multiplication, Division, Remainder & left-to-right          \\ \hline
+    3                   & Factorial                           & non-associative        \\ \hline
+    4                   & Unary plus, Unary negation          & non-associative        \\ \hline
+    5                   & Exponentiation                      & right-to-left          \\ \hline
+    6                   & Function call                       & non-associative        \\ \hline
+    7                   & Grouping                            & non-associative        \\ \hline
+  \end{tabular}
+  \caption{Associativity and precedence rules for math expression}
+  \label{table:associativity}
+\end{table}
+
+
 LL(1) parsers are a class of top-down parsers that read inputs from left to right and construct a leftmost derivation of the input. They use a single token of lookahead when parsing a sentence, meaning that the parser can only see the next token before parsing. LL(1) parsers recognise LL(1) grammars, which are a special case of context-free grammars. The grammar must be unambiguous, left-recursive and with no common prefixes among the alternatives of any expansion rule. The grammar used for this thesis is as follows (Figure \ref{fig:math-grammar}):
 
 \begin{figure}[ht]
   \begin{multicols}{2}
     \begin{enumerate}
-      \item \code{START} $\rightarrow$ \code{ADD} \code{.}
+      \item \code{START} $\rightarrow$ \code{ADD} .
 
-      \item \code{ADD} $\rightarrow$ \code{MUL} \code{ADDx} \code{.}
-      \item \code{ADDx} $\rightarrow$ \mintinline{TypeScript}{"+"} \code{MUL} \code{ADDx} \code{.}
-      \item \code{ADDx} $\rightarrow$ \mintinline{TypeScript}{"-"} \code{MUL} \code{ADDx} \code{.}
-      \item \code{ADDx} $\rightarrow$ \code{.}
+      \item \code{ADD} $\rightarrow$ \code{MUL} \code{ADDx} .
+      \item \code{ADDx} $\rightarrow$ \mcode{"+"} \code{MUL} \code{ADDx} .
+      \item \code{ADDx} $\rightarrow$ \mcode{"-"} \code{MUL} \code{ADDx} .
+      \item \code{ADDx} $\rightarrow$ \code{$\varepsilon$} .
 
-      \item \code{MUL} $\rightarrow$ \code{FACT} \code{MULx} \code{.}
-      \item \code{MULx} $\rightarrow$ \mintinline{TypeScript}{"*"} \code{FACT} \code{MULx} \code{.}
-      \item \code{MULx} $\rightarrow$ \mintinline{TypeScript}{"/"} \code{FACT} \code{MULx} \code{.}
-      \item \code{MULx} $\rightarrow$ \mintinline{TypeScript}{"%"} \code{FACT} \code{MULx} \code{.}
+      \item \code{MUL} $\rightarrow$ \code{FACT} \code{MULx} .
+      \item \code{MULx} $\rightarrow$ \mcode{"*"} \code{FACT} \code{MULx} .
+      \item \code{MULx} $\rightarrow$ \mcode{"/"} \code{FACT} \code{MULx} .
+      \item \code{MULx} $\rightarrow$ \mcode{"%"} \code{FACT} \code{MULx} .
 
-      \item \code{FACT} $\rightarrow$ \code{UNARY} \code{FACTx} \code{.}
-      \item \code{FACTx} $\rightarrow$ \mintinline{TypeScript}{"!"} \code{FACTx} \code{.}
-      \item \code{FACTx} $\rightarrow$ \code{.}
+      \item \code{FACT} $\rightarrow$ \code{UNARY} \code{FACTx} .
+      \item \code{FACTx} $\rightarrow$ \mcode{"!"} \code{FACTx} .
+      \item \code{FACTx} $\rightarrow$ \code{$\varepsilon$} .
 
-      \item \code{UNARY} $\rightarrow$ \mintinline{TypeScript}{"-"} \code{UNARY} \code{.}
-      \item \code{UNARY} $\rightarrow$ \mintinline{TypeScript}{"+"} \code{UNARY} \code{.}
-      \item \code{UNARY} $\rightarrow$ \code{POW} \code{.}
+      \item \code{UNARY} $\rightarrow$ \mcode{"-"} \code{UNARY} .
+      \item \code{UNARY} $\rightarrow$ \mcode{"+"} \code{UNARY} .
+      \item \code{UNARY} $\rightarrow$ \code{POW} .
 
-      \item \code{POW} $\rightarrow$ \code{TERM} \code{POWx} \code{.}
-      \item \code{POWx} $\rightarrow$ \mintinline{TypeScript}{"^"} \code{POW} \code{.}
-      \item \code{POWx} $\rightarrow$ \code{.}
+      \item \code{POW} $\rightarrow$ \code{TERM} \code{POWx} .
+      \item \code{POWx} $\rightarrow$ \mcode{"^"} \code{POW} .
+      \item \code{POWx} $\rightarrow$ \code{$\varepsilon$}.
 
-      \item \code{TERM} $\rightarrow$ \mintinline{TypeScript}{"unary"} \mintinline{TypeScript}{"("} \code{ADD} \mintinline{TypeScript}{")"} \code{.}
-      \item \code{TERM} $\rightarrow$ \mintinline{TypeScript}{"binary"} \mintinline{TypeScript}{"("} \code{ADD} \code{,} \code{ADD} \mintinline{TypeScript}{")"} \code{.}
-      \item \code{TERM} $\rightarrow$ \mintinline{TypeScript}{"("} \code{ADD} \mintinline{TypeScript}{")"} \code{.}
-      \item \code{TERM} $\rightarrow$ \mintinline{TypeScript}{"number"} \code{.}
+      \item \code{TERM} $\rightarrow$ \mcode{"unary"} \mcode{"("} \code{ADD} \mcode{")"} .
+      \item \code{TERM} $\rightarrow$ \mcode{"binary"} \mcode{"("} \code{ADD} \mcode{","} \code{ADD} \mcode{")"} .
+      \item \code{TERM} $\rightarrow$ \mcode{"("} \code{ADD} \mcode{")"} .
+      \item \code{TERM} $\rightarrow$ \mcode{"number"} .
     \end{enumerate}
   \end{multicols}
   \caption{LL(1) grammar for mathematical expressions}
@@ -91,7 +123,14 @@ LL(1) parsers are a class of top-down parsers that read inputs from left to righ
 \end{figure}
 
 
-Operator precedence is baked into the grammar by having the higher precedence operators at the later parts of the grammar. The left-associativity and right-associativity is defined by the way how the recursion has been defined in the grammar. As seen Table \ref{table:associativity}, the position of the non-terminal is the deciding factor for associativity.
+
+Grammar
+- Production
+- Non-terminal
+- Terminal
+
+
+Operator precedence is baked into the grammar by having the higher precedence operators at the later parts of the grammar. The left-associativity and right-associativity is defined by the way how the recursion has been defined in the grammar. As seen Table \ref{table:associativity-grammar}, the position of the non-terminal is the deciding factor for associativity.
 
 \todo{Description of the math grammar, how we ensure operator precedence and left/right-associativity}
 
@@ -131,7 +170,7 @@ Operator precedence is baked into the grammar by having the higher precedence op
     \hline
   \end{tabular}
   \caption{Grammar comparison between left-associativity and right-associativity}
-  \label{table:associativity}
+  \label{table:associativity-grammar}
 \end{table}
 
 A custom code generation tool has been developed to generate an appropriate parser from the LL(1) grammar. Assuming the grammar is a LL(1) grammar, both the FIRST and FOLLOW set is generated for each of the non-terminals in the grammar. The parsing table is created using the FIRST and FOLLOW sets.

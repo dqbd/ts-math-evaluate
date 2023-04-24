@@ -16,35 +16,35 @@ function constructGrammar(rules: string[]) {
 }
 
 const sourceGrammar = outdent`
-  S -> ADD
+  START -> ADD
 
   ADD -> MUL ADDx
-  ADDx -> + MUL ADDx
-  ADDx -> - MUL ADDx
+  ADDx -> Token.Plus MUL ADDx
+  ADDx -> Token.Minus MUL ADDx
   ADDx ->
 
   MUL -> FACT MULx
-  MULx -> * FACT MULx
-  MULx -> / FACT MULx
-  MULx -> % FACT MULx
+  MULx -> Token.Multiply FACT MULx
+  MULx -> Token.Divide FACT MULx
+  MULx -> Token.Modulo FACT MULx
   MULx ->
 
   FACT -> UNARY FACTx
-  FACTx -> ! FACTx
+  FACTx -> Token.Factorial FACTx
   FACTx ->
 
-  UNARY -> - UNARY
-  UNARY -> + UNARY
+  UNARY -> Token.Minus UNARY
+  UNARY -> Token.Plus UNARY
   UNARY -> POW
 
   POW -> TERM POWx
-  POWx -> ^ POW
+  POWx -> Token.Power POW
   POWx ->
 
-  TERM -> unary ( ADD )
-  TERM -> binary ( ADD , ADD )
-  TERM -> ( ADD )
-  TERM -> number
+  TERM -> Token.UnaryFunction Token.LeftBracket ADD Token.RightBracket
+  TERM -> Token.BinaryFunction Token.LeftBracket ADD Token.Comma ADD Token.RightBracket
+  TERM -> Token.LeftBracket ADD Token.RightBracket
+  TERM -> Token.Number
 `
   .split("\n")
   .filter((i) => i.includes("->"))
@@ -188,9 +188,17 @@ for (let i = 0; i < grammar.length; ++i) {
   }
 }
 
+const parsingTableDebug = Object.fromEntries(
+  [...parseTableNumber.entries()].map(([k, v]) => [
+    k,
+    Object.fromEntries([...v.entries()].map(([k, v]) => [k, v + 1])),
+  ])
+)
+
+console.table(parsingTableDebug)
+
 for (const nonTerminal of parseTableNumber.keys()) {
   // group terminals by rules
-
   const terminalRules = parseTableNumber.get(nonTerminal)!
   const rulesForTerminals = new Map<number, Set<Terminal>>()
 
@@ -202,37 +210,50 @@ for (const nonTerminal of parseTableNumber.keys()) {
     rulesForTerminals.get(production)?.add(terminal)
   }
 
+  function getSmb(smb: string) {
+    if (smb === "$") return "Token.EOF"
+    return smb
+  }
+
   let data = `type ${nonTerminal}<T extends Parser> = `
 
   for (const [productionIdx, terminals] of rulesForTerminals.entries()) {
     const production = grammar[productionIdx]
 
     const condition = `T["head"] extends ${[...terminals]
-      .map((terminal) => `"${terminal}"`)
+      .map((smb) => `${getSmb(smb)}`)
       .join(" | ")}`
 
     const rule = production.right
       .map((smb) => {
+        if (smb === "$") return null
+
         if (isTerminal(smb)) {
-          return `ConsumeParser<"${smb}", T> extends infer T extends Parser`
+          return `ConsumeParser<${getSmb(
+            smb
+          )}, T> extends infer T extends Parser`
         }
 
         return `${smb}<T> extends infer T extends Parser`
       })
       .reverse()
       .reduce<string>((memo, cond, idx, arr) => {
+        if (cond === null) {
+          return "T"
+        }
+
         if (idx === 0) {
           return outdent`
             ${cond} 
               ? T 
-              : ParseError
+              : Error.Parser
           `
         }
 
         return outdent`
           ${cond}
             ? ${memo}
-            : ParseError
+            : Error.Parser
         `
       }, "")
 
@@ -243,7 +264,7 @@ for (const nonTerminal of parseTableNumber.keys()) {
     `
   }
 
-  data += "ParseError"
+  data += "Error.Parser"
 
   console.log(format(data, { parser: "typescript" }))
 }
