@@ -1,0 +1,56 @@
+\glsdefs@newdocentry{gcd}%
+{%
+name={\acronymfont {\glsentryshort {gcd}}},%
+sort={GCD},%
+type={acronym},%
+first={GCD},%
+firstplural={GCDs},%
+text={GCD},%
+plural={GCDs},%
+description={Greatest Common Divisor},%
+descriptionplural={Greatest Common Divisor},%
+symbol={\relax },%
+symbolplural={\relax },%
+user1={},%
+user2={},%
+user3={},%
+user4={},%
+user5={},%
+user6={},%
+long={Greatest Common Divisor},%
+longplural={Greatest Common Divisors},%
+short={GCD},%
+shortplural={GCDs},%
+counter={page},%
+parent={},%
+%
+}%
+
+\glsdefs@newdocentry{lcm}%
+{%
+name={\acronymfont {\glsentryshort {lcm}}},%
+sort={LCM},%
+type={acronym},%
+first={LCM},%
+firstplural={LCMs},%
+text={LCM},%
+plural={LCMs},%
+description={Least Common Multiple},%
+descriptionplural={Least Common Multiple},%
+symbol={\relax },%
+symbolplural={\relax },%
+user1={},%
+user2={},%
+user3={},%
+user4={},%
+user5={},%
+user6={},%
+long={Least Common Multiple},%
+longplural={Least Common Multiples},%
+short={LCM},%
+shortplural={LCMs},%
+counter={page},%
+parent={},%
+%
+}%
+

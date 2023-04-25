@@ -122,7 +122,6 @@
     "**/CVS": true,
     "**/.DS_Store": true,
     "**/Thumbs.db": true,
-    "**/*.aux": true,
     "**/*.bbl": true,
     "**/*.bcf": true,
     "**/*.blg": true,
@@ -151,5 +150,15 @@
   "[latex]": {
     "editor.wordWrap": "wordWrapColumn",
     "editor.wordWrapColumn": 90
-  }
+  },
+  "latex-workshop.latex.recipes": [
+    {
+      "name": "latexmk",
+      "tools": ["latexmk"]
+    },
+    {
+      "name": "latexmk -> makeglossaries -> latexmk * 2",
+      "tools": ["latexmk", "makeglossaries", "latexmk", "latexmk"]
+    }
+  ]
 }

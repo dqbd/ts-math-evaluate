@@ -3,8 +3,10 @@
     "module": "commonjs",
     "strict": true,
     "skipLibCheck": true,
-    "moduleResolution": "node"
+    "moduleResolution": "node",
+    "target": "ES2022",
+    "esModuleInterop": true
   },
-  "include": ["src"],
+  "include": ["src", "scripts"],
   "exclude": ["node_modules/**"]
 }

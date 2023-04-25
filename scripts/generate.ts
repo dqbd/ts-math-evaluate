@@ -1,6 +1,6 @@
-const fs = require("fs")
-const path = require("path")
-const prettier = require("prettier")
+import * as fs from "fs"
+import * as path from "path"
+import * as prettier from "prettier"
 
 const digit = Array(10)
   .fill(0)

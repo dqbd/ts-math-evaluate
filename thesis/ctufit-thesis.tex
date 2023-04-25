@@ -74,12 +74,9 @@
 
 \setcounter{secnumdepth}{4} % numbering sections; 4: subsubsection
 
-
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % CUSTOMIZATION of this template END
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 
 %%%%%%%%%%%%%%%%%%%%%%
 % DEMO CONTENTS SETTINGS
@@ -91,16 +88,17 @@
 \usepackage{makecell}
 \usepackage{inconsolata}
 \usepackage{dirtytalk}
+\usepackage{qtree}
 \usepackage[style=iso-numeric]{biblatex}
 \addbibresource{sources.bib}
-% \usepackage{listings} % typesetting of sources
-\usepackage[newfloat]{minted} % typesetting of sources
+\usepackage[newfloat]{minted}
 \usepackage{caption}
 \usepackage{fnpct}
 \usepackage{multicol}
 \usepackage{amsmath}
+\usepackage[acronym,nonumberlist,toc,numberedsection=autolabel]{glossaries}
+\makeglossaries
 
-%theorems, definitions, etc.
 \theoremstyle{plain}
 \newtheorem{theorem}{Věta}
 \newtheorem{lemma}[theorem]{Tvrzení}
@@ -115,7 +113,7 @@
 \newtheorem{remark}[theorem]{Pozorování}
 \newtheorem*{remark*}{Pozorování}
 \numberwithin{theorem}{chapter}
-%theorems, definitions, etc. END
+
 %%%%%%%%%%%%%%%%%%%%%%
 % DEMO CONTENTS SETTINGS END
 %%%%%%%%%%%%%%%%%%%%%%
@@ -133,6 +131,15 @@
 \NewDocumentCommand{\mcode}{v}{%
   \mintinline{TypeScript}{#1}%
 }
+
+\newacronym{tc39}{TC39}{ECMA International, Technical Committee 39}
+\newacronym{w3c}{W3C}{World Wide Web Consortium}
+\newacronym{ast}{AST}{Abstract syntax tree}
+\newacronym{ide}{IDE}{Integrated development environment}
+\newacronym{lsp}{LSP}{Language Server Protocol}
+\newacronym{dsl}{DSL}{Domain Specific Languages}
+\newacronym{npm}{NPM}{Node Package Manager}
+\newacronym{ts}{TS}{TypeScript}
 
 \begin{document}
 \frontmatter\frontmatterinit % do not remove these two commands
@@ -171,7 +178,6 @@
 % ACKNOWLEDGMENT END
 %%%%%%%%%%%%%%%%%%%
 
-
 %%%%%%%%%%%%%%%%%%%
 % DECLARATION
 % FILL IN / MODIFY
@@ -180,9 +186,9 @@
 % ENG: choose one of approved texts of the declaration. DO NOT CREATE YOUR OWN. Find the approved texts at https://courses.fit.cvut.cz/SFE/download/index.html#_documents (document Declaration for FT in English)
 % CZE/SLO: Vyberte jedno z fakultou schvalenych prohlaseni. NEVKLADEJTE VLASTNI TEXT. Schvalena prohlaseni najdete zde: https://courses.fit.cvut.cz/SZZ/dokumenty/index.html#_dokumenty (prohlášení do ZP)
 \begin{declarationpage}
-  FILL IN ACCORDING TO THE INSTRUCTIONS. VYPLŇTE V SOULADU S POKYNY. Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Curabitur sagittis hendrerit ante. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos hymenaeos. Cras pede libero, dapibus nec, pretium sit amet, tempor quis. Sed vel lectus. Donec odio tempus molestie, porttitor ut, iaculis quis, sem. Suspendisse sagittis ultrices augue. Donec ipsum massa, ullamcorper in, auctor et, scelerisque sed, est. In sem justo, commodo ut, suscipit at, pharetra vitae, orci. Pellentesque pretium lectus id turpis.
+  I hereby declare that the presented thesis is my own work and that I have cited all sources of information in accordance with the Guideline for adhering to ethical principles when elaborating an academic final thesis.
 
-  Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Curabitur sagittis hendrerit ante. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos hymenaeos. Cras pede libero, dapibus nec, pretium sit amet, tempor quis. Sed vel lectus. Donec odio tempus molestie, porttitor ut, iaculis quis, sem. Suspendisse sagittis ultrices augue. Donec ipsum massa, ullamcorper in, auctor et, scelerisque sed, est. In sem justo, commodo ut, suscipit at, pharetra vitae, orci. Pellentesque pretium lectus id turpis.
+  I acknowledge that my thesis is subject to the rights and obligations stipulated by the Act No. 121/2000 Coll., the Copyright Act, as amended. In accordance with Article 46(6) of the Act, I hereby grant a nonexclusive authorization (license) to utilize this thesis, including any and all computer programs incorporated therein or attached thereto and all corresponding documentation (hereinafter collectively referred to as the “Work”), to any and all persons that wish to utilize the Work. Such persons are entitled to use the Work in any way (including for-profit purposes) that does not detract from its value. This authorization is not limited in terms of time, location and quantity.
 \end{declarationpage}
 %%%%%%%%%%%%%%%%%%%
 % DECLARATION END
@@ -227,12 +233,8 @@
 % OR REMOVE ENTIRELY
 % List the abbreviations in lexicography order.
 %%%%%%%%%%%%%%%%%%%
-\chapter{Seznam zkratek}
+\printglossaries
 
-\begin{tabular}{rl}
-  TC39 & ECMA International, Technical Committee 39 \\
-  W3C  & World Wide Web Consortium
-\end{tabular}
 %%%%%%%%%%%%%%%%%%%
 % ABBREVIATIONS END
 %%%%%%%%%%%%%%%%%%%

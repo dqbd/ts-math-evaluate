@@ -62,10 +62,9 @@ export namespace AST {
   POWx -> ^ POW
   POWx ->
 
-  FUNC -> unary ( TERM )
-  FUNC -> binary ( TERM , TERM )
-  FUNC -> TERM
-
+  TERM -> unary ( ADD )
+  TERM -> binary ( ADD , TERM )
+  TERM -> TERM
   TERM -> ( ADD )
   TERM -> number
 */
@@ -145,15 +144,9 @@ export namespace RecursiveParser {
         : Error.Parser
       : Error.Parser
     : T["head"] extends
-        | Token.EOF
-        | Token.Factorial
-        | Token.Multiply
-        | Token.Divide
-        | Token.Modulo
-        | Token.Plus
-        | Token.Minus
-        | Token.RightBracket
-        | Token.Comma
+        | Token.EOF | Token.Factorial | Token.Multiply
+        | Token.Divide | Token.Modulo | Token.Plus
+        | Token.Minus | Token.RightBracket | Token.Comma
     ? T
     : Error.Parser
 

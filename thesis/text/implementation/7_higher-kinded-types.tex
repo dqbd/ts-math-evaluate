@@ -1,5 +1,49 @@
 \section{Higher kinded types}
 
+When working with types within the type system, it is sometimes desired to 
+
+- A kind describes the number of type arguments a type constructor takes. 
+- Analogous to higher-order functions if comparing generic types to functions.
+
+- Type constructor of a generic type accepts type arguments and returns a Type
+- Type constructor of a higher-kinded type accepts other type constructors as type arguments and returns a type constructor
+
+Why it is important?
+
+- Composability 
+- Pipes 
+type mapArray = <A, B>(self: Array<A>, fn: (a: A) => B) => Array<B>
+type mapSet = <A, B>(self: Set<A>, fn: (a: A) => B) => Set<B>
+type mapSet = <A, B>(self: Set<A>, fn: (a: A) => B) => Set<B>
+
+Haskell:
+- Functor
+- Monad
+
+
+Types can be classified in terms of their order, describing the depth of kinds.
+
+Zero-kind types
+- primitive Types
+- literal types 
+- template string literals
+
+First-kind types
+- Array<?>
+- Record<?, ?>
+- Promise<?>
+
+Higher-kind types
+
+
+how does higher kinded types worn in Haskell?
+
+At the time of writing, TypeScript does not support higher-kinded types natively \cite{DocumentationTypeScriptFunctional}. 
+
+There is a way how to emulate a behavior of higher-kinded types. 
+
+
+
 \begin{itemize}
   \item TypeScript does not support Higher Kinded Types (essentially passing a generic type as a type parameter of an another generic type)
   \item There is a workaround to simulate HKTs using an intersection of interfaces and inheritance

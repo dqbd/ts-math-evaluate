@@ -229,7 +229,6 @@ type Keys = keyof User
 
 \todo{indexed access type}
 
-
 \subsection{Special data types}
 
 When working with unions and intersections, we need to be able to describe a type, which can describe a union of all possible types or a type, which is created by intersecting two types with no related properties. We refer to these types as universal supertypes and universal subtypes, respectively. Universal supertypes, also known as top types, are types that are a superset of all other types and are used to represent any possible value. Whereas universal subtypes, also known as bottom types, are types that are a subset of all other types and are often used to describe a type that has no permitted values.
@@ -530,7 +529,7 @@ type FilterCorrect<Haystack extends string[], Needle extends string> =
 
 \subsection{Template Literal Types}
 
-Finally, template literal types are based on the string literal types, allowing string interpolation and manipulation within the TypeScript type system. For this thesis, we use template literal types to create a parser of mathematical expressions. However, template literal types can be used to create fully typed string-based Domain Specific Languages (DSLs).
+Finally, template literal types are based on the string literal types, allowing string interpolation and manipulation within the TypeScript type system. For this thesis, we use template literal types to create a parser of mathematical expressions. However, template literal types can be used to create fully typed string-based \acrfull{dsl}.
 
 Similar to the syntax of JavaScript template literal strings, we use backticks to create a new template literal type. When used with a string literal type, a template literal will create a new string literal type by concatenation \cite{DocumentationTemplateLiteral}. For example, the type \code{\`{}Hello \$\{"World"\}\`{}} will create a new string literal type \code{"Hello World"}.
 
