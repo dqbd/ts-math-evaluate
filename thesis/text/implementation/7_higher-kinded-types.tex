@@ -32,11 +32,20 @@ With higher kinded types, it is possible to declare a monad generic type \cite{w
 
 However, as of writing, higher-kinded types are not natively supported by TypeScript \cite{DocumentationTypeScriptFunctional}. Fortunately, it is possible to emulate the behaviour of higher kinded types.
 
-There are two ways to achieve the behaviour of \acrshort{hkt}. One such way can be achieved by implementing lightweight higher-kinded polymorphism \cite{yallopLightweightHigherKindedPolymorphism2014} and defunctionalisation of kinds \cite{reynoldsDefinitionalInterpretersHigherorder1972}, a technique for translating higher-order programs into a first-order language. The technique is as follows:
+There are two ways to achieve the behaviour of \acrshort{hkt}. One such way can be achieved by implementing lightweight higher-kinded polymorphism \cite{yallopLightweightHigherKindedPolymorphism2014} and defunctionalisation of kinds \cite{reynoldsDefinitionalInterpretersHigherorder1972}, a technique for translating higher-order programs into a first-order language. The main idea is to create a mapping of unique names of type constructors to their implementations. Afterwards, a \code{Kind} utility converts the name and the appropriate type argument to the corresponding higher-kinded type. An example can be seen in Listing \ref{lst:emulating-hkt-legacy}. 
 
-\todo{Describe HKTs using old method}
+\begin{listing}[ht]
+  \caption{\acrshort{hkt} emulation using lightweight higher-kinded polymorphism}\label{lst:emulating-hkt-legacy}
+  \begin{minted}{TypeScript}
+type URItoKind<A> = { "Foo": Foo<A>; "Bar": Bar<A>; "Baz": Baz<A> }
+type URI = keyof URItoKind<unknown>
+type Kind<F extends URI, A> = URItoKind<A>[F];
 
-This method is historically used in libraries for typed functional programming such as fp-ts \cite{GcantiFptsFunctional}. Unfortunately, this method requires a central registry of URIs that are used to identify the appropriate type constructor and extendability based on module augmentation is limited.
+type MapValuesWith<O, Type extends URI> = Kind<Type, O>
+\end{minted}
+\end{listing}
+
+This method is historically used in libraries for typed functional programming such as \code{fp-ts} \cite{GcantiFptsFunctional}. Unfortunately, this method requires a central registry of URIs that are used to identify the appropriate type constructor and extendability based on module augmentation is limited.
 
 The other possible method for implementing \acrshort{hkt}s is by utilising the properties of type unification with \code{this}. This method is thoroughly used in HOTscript \cite{vergnaudHigherOrderTypeScriptHOTScript2023} and a simplified implementation can be seen in Listing \ref{lst:emulating-hkt}.
 
