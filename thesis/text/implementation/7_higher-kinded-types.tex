@@ -1,51 +1,68 @@
 \section{Higher kinded types}
 
-When working with types within the type system, it is sometimes desired to 
+\acrfull{hkt}, also known as higher-order types, are a powerful type system language feature that enables describing expressive generic types by allowing accepting other generic types as type arguments. To demonstrate, consider the following Listing \ref{lst:duplicate-generic-types}. As can be seen, all three generic types do essentially the same type instantiation, only with different type constructors.
 
-- A kind describes the number of type arguments a type constructor takes. 
-- Analogous to higher-order functions if comparing generic types to functions.
+\begin{listing}[ht]
+  \caption{Duplicate generic types}\label{lst:duplicate-generic-types}
+  \begin{minted}{TypeScript}
+type Foo<O> = O extends string ? `Foo<${O}>` : never
+type Bar<O> = O extends string ? `Bar<${O}>` : never
+type Baz<O> = O extends string ? `Baz<${O}>` : never
 
-- Type constructor of a generic type accepts type arguments and returns a Type
-- Type constructor of a higher-kinded type accepts other type constructors as type arguments and returns a type constructor
+type MapValuesWithFoo<O> = { [K in keyof O]: Foo<O[K]> }
+type MapValuesWithBar<O> = { [K in keyof O]: Bar<O[K]> }
+type MapValuesWithBaz<O> = { [K in keyof O]: Baz<O[K]> }
+\end{minted}
+\end{listing}
 
-Why it is important?
+With \acrshort{hkt}s, it is possible to define a single higher-order generic type, that accepts a type constructor as an argument. The type constructor is then applied to each property of the object type. The result is shown in Listing \ref{lst:proposed-hkt-syntax}.
 
-- Composability 
-- Pipes 
-type mapArray = <A, B>(self: Array<A>, fn: (a: A) => B) => Array<B>
-type mapSet = <A, B>(self: Set<A>, fn: (a: A) => B) => Set<B>
-type mapSet = <A, B>(self: Set<A>, fn: (a: A) => B) => Set<B>
+\begin{listing}[ht]
+  \caption{Proposed HKT syntax in TypeScript}\label{lst:proposed-hkt-syntax}
+  \begin{minted}{TypeScript}
+type MapValuesWith<O, T<~>> = { [K in keyof O]: T<O[K]> }
 
-Haskell:
-- Functor
-- Monad
+type MapValuesWithFoo<O> = MapValuesWith<O, Foo>;
+type MapValuesWithBar<O> = MapValuesWith<O, Bar>;
+type MapValuesWithBaz<O> = MapValuesWith<O, Baz>;
+\end{minted}
+\end{listing}
 
+With higher kinded types, it is possible to declare a monad generic type \cite{wadlerMonadsFunctionalProgramming1993} or applicative functors \cite{mcbrideApplicativeProgrammingEffects2008}, design patterns commonly found in functional programming languages such as Haskell or Scala.
 
-Types can be classified in terms of their order, describing the depth of kinds.
+However, as of writing, higher-kinded types are not natively supported by TypeScript \cite{DocumentationTypeScriptFunctional}. Fortunately, it is possible to emulate the behaviour of higher kinded types.
 
-Zero-kind types
-- primitive Types
-- literal types 
-- template string literals
+There are two ways to achieve the behaviour of \acrshort{hkt}. One such way can be achieved by implementing lightweight higher-kinded polymorphism \cite{yallopLightweightHigherKindedPolymorphism2014} and defunctionalisation of kinds \cite{reynoldsDefinitionalInterpretersHigherorder1972}, a technique for translating higher-order programs into a first-order language. The technique is as follows:
 
-First-kind types
-- Array<?>
-- Record<?, ?>
-- Promise<?>
+\todo{Describe HKTs using old method}
 
-Higher-kind types
+This method is historically used in libraries for typed functional programming such as fp-ts \cite{GcantiFptsFunctional}. Unfortunately, this method requires a central registry of URIs that are used to identify the appropriate type constructor and extendability based on module augmentation is limited.
 
+The other possible method for implementing \acrshort{hkt}s is by utilising the properties of type unification with \code{this}. This method is thoroughly used in HOTscript \cite{vergnaudHigherOrderTypeScriptHOTScript2023} and a simplified implementation can be seen in Listing \ref{lst:emulating-hkt}.
 
-how does higher kinded types worn in Haskell?
+\begin{listing}[ht]
+  \caption{Type unification for emulating \acrshort{hkt}s}\label{lst:emulating-hkt}
+  \begin{minted}{TypeScript}
+interface Fn { input: unknown; output: unknown; }
 
-At the time of writing, TypeScript does not support higher-kinded types natively \cite{DocumentationTypeScriptFunctional}. 
+type Call<fn extends Fn, input> = (fn & { input: input })["output"];
 
-There is a way how to emulate a behavior of higher-kinded types. 
+interface Foo extends Fn {
+  output: this["input"] extends infer O extends string ? `Foo<${O}>` : never;
+}
 
+interface Bar extends Fn {
+  output: this["input"] extends infer O extends string ? `Bar<${O}>` : never;
+}
 
+interface Baz extends Fn {
+  output: this["input"] extends infer O extends string ? `Baz<${O}>` : never;
+}
 
-\begin{itemize}
-  \item TypeScript does not support Higher Kinded Types (essentially passing a generic type as a type parameter of an another generic type)
-  \item There is a workaround to simulate HKTs using an intersection of interfaces and inheritance
-  \item Adapter for HOTScript
-\end{itemize}
+type MapValuesWith<O, Wrap extends Fn> = {
+  [K in keyof O]: Call<Wrap, O[K]>
+}
+\end{minted}
+\end{listing}
+
+The most popular implementation of the latter method, HOTScript, exposes most of the core functionality of the library as a public facing API. Thus, an additional public facing API for mathematical operations has been exposed for users of HOTScript, extending the library with an advanced mathematical expression evaluator implemented in this work.
