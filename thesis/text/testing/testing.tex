@@ -1,27 +1,37 @@
-\chapter{Testing and release management}
+\chapter{Development Tooling and Testing}
 
-\section{Developer experience}
+\section{Testing and development}
 
-By using \code{tsserver}, we can see and verify the types representing a symbol during development, by hovering on top of a symbol. This does provide some useful feedback during development but does require significant context switching with the mouse pointer, especially when switching back and forth from implementation to testing. There are various plugins for editors, that are able to display the inferred types in a different manner. One such key plugin used thoroughly during development is \code{vscode-twoslash-plugins} \cite{theroxVscodetwoslashqueries2023}, which allows inserting a \vcode{// ^?} comment to display the inferred type of an expression right in the editor.
+During the development of the type-level mathematical expression evaluator, several invaluable tools were discovered and utilised that significantly contributed to the implementation. This section is devoted to discussing these tools and their impact on the overall development process.
 
-\todo {Add a screenshot of the vscode-twoslash-plugins in action}
+The core of the development experience is underpinned by TypeScript Standalone Server, also known as \code{tsserver}. \code{tsserver} encapsulates both the compiler and the accompanying language services for use in editors and \acrshort{ide}s, communicating via \acrshort{lsp} to add support for code completion, auto-importing, symbol renaming etc. \code{tsserver} also provides the ability to see the inferred types of any symbol by hovering on top the symbol. This service is invaluable when developing a type-level library, as it allows the developer to break down complex types into smaller pieces, achieving better readability.
+
+Pretty TypeScript Errors \cite{balasianoPrettyTypeScriptErrors2023} attempts to parse and reformat the TypeScript error messages to be more human-readable. This is especially helpful when dealing with complex object types, where the error messages can become unreadable since the error message and the serialised type is printed out on a single line.
+
+\todo{Add an example for Pretty TypeScript Errors}
+
+Another critical tool used when developing the implementation is \code{vscode-twoslash-plugin} \cite{theroxVscodetwoslashqueries2023}.
+
+\todo{Add an example for vscode-twoslash-plugin}
 
 \begin{itemize}
-  \item Testing with eslint
-  \item \$ExpectType and twoslash operator 
-  \item Testing with vitest and \code{ExpectType}
+  \item \code{tsserver} allows us to see the inferred types during development by hovering on top of a symbol
+  \item \code{vscode-twoslash-plugin} allows us to see the inferred types of a symbol selected by the caret inlined directly in the editor
+  \item Testing of types is done by \code{eslint}, \code{@typescript-eslint} and \code{eslint-plugin-expect-type}.
+  \item Explanation of \code{\$ExpectType} and \vcode{// ^?} operator
 \end{itemize}
 
-\section{Testing with eslint}
-
-\todo {Describe \$ExpectType}
-
-To remedy the issue, we are using \code{eslint} together with \code{@typescript-eslint/parser} as the source code parser and \code{eslint-plugin-expect-type} plugin to create unit tests for each of the math methods.
+\section{CI/CD workflow and release management}
 
 \begin{itemize}
-  \item Developer experience
-  \item Unit tests, integration tests (\code{eslint}, \code{eslint-plugin-expect-type})
-  \item Github Actions
-  \item Changesets - automatic release management
-  \item Comparison between existing TS math libraries
+  \item Using Github Actions
+  \item Two main workflows: one for running tests, a second one for releasing
+  \item Changesets \cite{ChangesetsChangesets2023} - how the package is released
+\end{itemize}
+
+\section{Performance testing}
+
+\begin{itemize}
+  \item Difference between operations, execution time + number of created types \code{yarn tsc --noEmit --incremental false --generateTrace trace --extendedDiagnostics --listFiles -p tsconfig.json --explainFiles}
+  \item Comparison between other libraries (arielhs/ts-arithmetic)
 \end{itemize}
