@@ -1,3 +1,5 @@
+\glossaryentry{VSCode?\glossentry{vscode}|setentrycounter[]{page}"\glsnumberformat}{v}
+\glossaryentry{TS?\glossentry{ts}|setentrycounter[]{page}"\glsnumberformat}{v}
 \glossaryentry{HKT?\glossentry{hkt}|setentrycounter[]{page}"\glsnumberformat}{vii}
 \glossaryentry{HKT?\glossentry{hkt}|setentrycounter[]{page}"\glsnumberformat}{vii}
 \glossaryentry{IDE?\glossentry{ide}|setentrycounter[]{page}"\glsnumberformat}{1}
@@ -20,3 +22,6 @@
 \glossaryentry{HKT?\glossentry{hkt}|setentrycounter[]{page}"\glsnumberformat}{48}
 \glossaryentry{IDE?\glossentry{ide}|setentrycounter[]{page}"\glsnumberformat}{49}
 \glossaryentry{LSP?\glossentry{lsp}|setentrycounter[]{page}"\glsnumberformat}{49}
+\glossaryentry{VSCode?\glossentry{vscode}|setentrycounter[]{page}"\glsnumberformat}{49}
+\glossaryentry{VSCode?\glossentry{vscode}|setentrycounter[]{page}"\glsnumberformat}{50}
+\glossaryentry{TS?\glossentry{ts}|setentrycounter[]{page}"\glsnumberformat}{50}
