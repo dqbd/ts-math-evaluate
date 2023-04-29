@@ -5,7 +5,9 @@ interface Node {
   children: Node[]
 }
 
-function buildTree(results: string[]): Node {
+type BuildTree = (results: string[]) => Node
+
+const buildTree: BuildTree = (results) => {
   const root: Node = { children: [] }
   for (const result of results) {
     const parts = result.split("/")
@@ -22,7 +24,13 @@ function buildTree(results: string[]): Node {
   return root
 }
 
-function walkDirTree(root: Node, depth = 1): string[] {
+function walkDirTree(
+  root: {
+    name?: string
+    children: Node[]
+  },
+  depth = 1
+): string[] {
   // .1 readme.txt\DTcomment{stručný popis obsahu média}.
   const tree: string[] = []
   for (const child of root.children) {
