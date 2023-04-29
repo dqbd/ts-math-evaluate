@@ -2,7 +2,32 @@
 
 Advanced utility types do have a significant strain on type checking and can have a negative impact on the developer experience with worse latency of language services and longer build times when building with \code{tsc}. The performance test suite has been created to measure the impact of various implemented math operations on type-checking performance. 
 
-Two metrics are measured in the performance test suite: the \say{check time} obtained from extended diagnostics when compiling via \code{tsc} and the number of type instantiations performed when evaluating utility types.
+Two metrics are measured in the performance test suite: the \say{check time} obtained from extended diagnostics when compiling via \code{tsc} and the number of type instantiations performed when evaluating utility types. These metrics can be obtained from the \code{tsc} \acrshort{cli} with the \code{--extendedDiagnostics} flag, but parsing the compiler output can be unnecessarily error-prone. Instead, the TypeScript API does expose an internal \code{performance} singleton, which, combined with internal \code{extendedDiagnostics} flag and Compiler \acrshort{api}, can be used to obtain the same metrics programmatically, as seen in Listing \ref{lst:performance-metrics}.
+
+\begin{listing}[ht]
+\caption{Programmatic access to internal extendend performance metrics}\label{lst:performance-metrics}
+\begin{minted}{TypeScript}
+import * as ts from "typescript"
+const performance = (ts as any).performance
+
+performance.enable()
+const program = ts.createProgram(fileNames, {
+  noEmit: true,
+  incremental: false,
+  extendedDiagnostics: true,
+})
+program.emit()
+
+console.log(`Instantiation count: ${program.getInstantiationCount()}`)
+console.log(`Check time: ${performance.getDuration("Check")}`)
+performance.disable()
+\end{minted}
+\end{listing}
+
+
+
+
+
 
 \begin{itemize}
   \item Difference between operations, execution time + number of created types \code{yarn tsc --noEmit --incremental false --generateTrace trace --extendedDiagnostics --listFiles -p tsconfig.json --explainFiles}
