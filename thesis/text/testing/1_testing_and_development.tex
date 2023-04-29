@@ -1,5 +1,3 @@
-\chapter{Development Tooling and Testing}
-
 \section{Testing and development}
 
 During the development of the type-level mathematical expression evaluator, several invaluable tools were discovered and utilised that significantly contributed to the implementation. This section is devoted to discussing these tools and their impact on the overall development process.
@@ -35,8 +33,8 @@ Finally, Pretty TypeScript Errors \cite{balasianoPrettyTypeScriptErrors2023} att
 Some generic types include an accompanying unit test to ensure correctness and prevent regression. Testing is backed with \code{eslint}\cite{ESLint2023}, a static code analyser for JavaScript and TypeScript. Configuration-wise, \code{@typescript-eslint/parser} has been set up as the parser used by ESLint for properly analysing TypeScript code, and \code{eslint-plugin-expect-type} has been added for writing type assertions as comments. \code{eslint-plugin-expect-type} enables writing \code{\$ExpectType}, \code{\$ExpectError} and twoslash type assertions (\vcode{// ^?}). An example test assertion can be seen in Listing \ref{lst:expect-type}.
 
 \begin{listing}[ht]
-\caption{Type assertion with \code{\$ExpectType}}\label{lst:expect-type}
-\begin{minted}{TypeScript}
+  \caption{Type assertion with \code{\$ExpectType}}\label{lst:expect-type}
+  \begin{minted}{TypeScript}
 // $ExpectType "0.3619047620"
 type EvaluateCase = Evaluate<
   RecursiveParser.Parse<Lexer<"3.1 + 2.5 * (1 - 5.6) / 4.2">>
@@ -46,17 +44,4 @@ type EvaluateCase = Evaluate<
 
 Other testing frameworks, such as Jest or Vitest, have been considered for this thesis but ultimately rejected due to the lacklustre support for type-level assertions. These frameworks tend to output only the values mismatch errors without printing out the actual inferred type.
 
-\section{CI/CD workflow and release management}
-
-\begin{itemize}
-  \item Using Github Actions
-  \item Two main workflows: one for running tests, a second one for releasing
-  \item Changesets \cite{ChangesetsChangesets2023} - how the package is released
-\end{itemize}
-
-\section{Performance testing}
-
-\begin{itemize}
-  \item Difference between operations, execution time + number of created types \code{yarn tsc --noEmit --incremental false --generateTrace trace --extendedDiagnostics --listFiles -p tsconfig.json --explainFiles}
-  \item Comparison between other libraries (arielhs/ts-arithmetic)
-\end{itemize}
+\todo{Validate this claim}
