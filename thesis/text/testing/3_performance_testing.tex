@@ -1,5 +1,12 @@
 \section{Performance testing}
 
+Advanced utility types do have a significant strain on type checking and can have a negative impact on the developer experience with worse latency of language services and longer build times when building with \code{tsc}. The performance test suite has been created to measure the impact of various implemented math operations on type checking performance. 
+
+Two metrics are measured in the performance test suite: the \say{check time} obtained from extended diagnostics when compiling via \code{tsc} and the number of type instantiations performed when evaluating utility types.
+
+
+
+
 \begin{itemize}
   \item Difference between operations, execution time + number of created types \code{yarn tsc --noEmit --incremental false --generateTrace trace --extendedDiagnostics --listFiles -p tsconfig.json --explainFiles}
   \item Comparison between other libraries (arielhs/ts-arithmetic)
