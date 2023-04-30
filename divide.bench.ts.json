@@ -1,0 +1,268 @@
+{
+  "Divide<\"1\", \"3\">": {
+    "instantiationCount": {
+      "mean": 56065,
+      "variance": 0
+    },
+    "symbolCount": {
+      "mean": 97644,
+      "variance": 0
+    },
+    "checkTime": {
+      "mean": 611.1183231711387,
+      "variance": 3712.122149724509
+    }
+  },
+  "Divide<\"10\", \"3\">": {
+    "instantiationCount": {
+      "mean": 56007,
+      "variance": 0
+    },
+    "symbolCount": {
+      "mean": 97646,
+      "variance": 0
+    },
+    "checkTime": {
+      "mean": 566.626604950428,
+      "variance": 1312.9779365113502
+    }
+  },
+  "Divide<\"100\", \"3\">": {
+    "instantiationCount": {
+      "mean": 56190,
+      "variance": 0
+    },
+    "symbolCount": {
+      "mean": 97792,
+      "variance": 0
+    },
+    "checkTime": {
+      "mean": 554.2809578418731,
+      "variance": 178.3203576230204
+    }
+  },
+  "Divide<\"1000\", \"3\">": {
+    "instantiationCount": {
+      "mean": 56257,
+      "variance": 0
+    },
+    "symbolCount": {
+      "mean": 97867,
+      "variance": 0
+    },
+    "checkTime": {
+      "mean": 545.5406210303306,
+      "variance": 1368.3422333487542
+    }
+  },
+  "Divide<\"10000\", \"3\">": {
+    "instantiationCount": {
+      "mean": 56317,
+      "variance": 0
+    },
+    "symbolCount": {
+      "mean": 97906,
+      "variance": 0
+    },
+    "checkTime": {
+      "mean": 552.3237404584885,
+      "variance": 1120.0728544752774
+    }
+  },
+  "Divide<\"100000\", \"3\">": {
+    "instantiationCount": {
+      "mean": 56377,
+      "variance": 0
+    },
+    "symbolCount": {
+      "mean": 97945,
+      "variance": 0
+    },
+    "checkTime": {
+      "mean": 579.1137739300727,
+      "variance": 841.8474157142248
+    }
+  },
+  "Divide<\"1000000\", \"3\">": {
+    "instantiationCount": {
+      "mean": 56437,
+      "variance": 0
+    },
+    "symbolCount": {
+      "mean": 97984,
+      "variance": 0
+    },
+    "checkTime": {
+      "mean": 590.3914041876793,
+      "variance": 2730.208811453658
+    }
+  },
+  "Divide<\"10000000\", \"3\">": {
+    "instantiationCount": {
+      "mean": 56497,
+      "variance": 0
+    },
+    "symbolCount": {
+      "mean": 98023,
+      "variance": 0
+    },
+    "checkTime": {
+      "mean": 552.036207985878,
+      "variance": 983.1479037285125
+    }
+  },
+  "Divide<\"100000000\", \"3\">": {
+    "instantiationCount": {
+      "mean": 56557,
+      "variance": 0
+    },
+    "symbolCount": {
+      "mean": 98062,
+      "variance": 0
+    },
+    "checkTime": {
+      "mean": 552.2182106018066,
+      "variance": 1549.2122346556766
+    }
+  },
+  "Divide<\"1000000000\", \"3\">": {
+    "instantiationCount": {
+      "mean": 56617,
+      "variance": 0
+    },
+    "symbolCount": {
+      "mean": 98101,
+      "variance": 0
+    },
+    "checkTime": {
+      "mean": 576.9743711590767,
+      "variance": 1538.6617826664988
+    }
+  },
+  "Divide<\"10000000000\", \"3\">": {
+    "instantiationCount": {
+      "mean": 56677,
+      "variance": 0
+    },
+    "symbolCount": {
+      "mean": 98140,
+      "variance": 0
+    },
+    "checkTime": {
+      "mean": 584.413811969757,
+      "variance": 1771.3998275245872
+    }
+  },
+  "Divide<\"100000000000\", \"3\">": {
+    "instantiationCount": {
+      "mean": 56767,
+      "variance": 0
+    },
+    "symbolCount": {
+      "mean": 98271,
+      "variance": 0
+    },
+    "checkTime": {
+      "mean": 575.2797022938728,
+      "variance": 2817.7109868974826
+    }
+  },
+  "Divide<\"1000000000000\", \"3\">": {
+    "instantiationCount": {
+      "mean": 56875,
+      "variance": 0
+    },
+    "symbolCount": {
+      "mean": 98450,
+      "variance": 0
+    },
+    "checkTime": {
+      "mean": 574.0339050292969,
+      "variance": 1187.0906431115657
+    }
+  },
+  "Divide<\"10000000000000\", \"3\">": {
+    "instantiationCount": {
+      "mean": 56985,
+      "variance": 0
+    },
+    "symbolCount": {
+      "mean": 98632,
+      "variance": 0
+    },
+    "checkTime": {
+      "mean": 572.939627802372,
+      "variance": 1845.741213315838
+    }
+  },
+  "Divide<\"100000000000000\", \"3\">": {
+    "instantiationCount": {
+      "mean": 57097,
+      "variance": 0
+    },
+    "symbolCount": {
+      "mean": 98817,
+      "variance": 0
+    },
+    "checkTime": {
+      "mean": 544.0291497588157,
+      "variance": 187.06634646228844
+    }
+  },
+  "Divide<\"1000000000000000\", \"3\">": {
+    "instantiationCount": {
+      "mean": 57211,
+      "variance": 0
+    },
+    "symbolCount": {
+      "mean": 99005,
+      "variance": 0
+    },
+    "checkTime": {
+      "mean": 610.6468377709389,
+      "variance": 1628.6978119021765
+    }
+  },
+  "Divide<\"10000000000000000\", \"3\">": {
+    "instantiationCount": {
+      "mean": 57327,
+      "variance": 0
+    },
+    "symbolCount": {
+      "mean": 99196,
+      "variance": 0
+    },
+    "checkTime": {
+      "mean": 597.4917199969292,
+      "variance": 751.0288734212048
+    }
+  },
+  "Divide<\"100000000000000000\", \"3\">": {
+    "instantiationCount": {
+      "mean": 57445,
+      "variance": 0
+    },
+    "symbolCount": {
+      "mean": 99390,
+      "variance": 0
+    },
+    "checkTime": {
+      "mean": 549.7233734369278,
+      "variance": 404.5449212809172
+    }
+  },
+  "Divide<\"1000000000000000000\", \"3\">": {
+    "instantiationCount": {
+      "mean": 57565,
+      "variance": 0
+    },
+    "symbolCount": {
+      "mean": 99587,
+      "variance": 0
+    },
+    "checkTime": {
+      "mean": 580.1837599515915,
+      "variance": 1396.0654444848092
+    }
+  }
+}

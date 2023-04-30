@@ -1,5 +1,49 @@
 \chapter{Conclusion}
 
-\section{Advantages and disadvantes of TS}
+\section{Advantages and disadvantages of TS}
+
+Practical uses of implemented meta TypeScript 
+
+- Numerical operations: Describing exact numbers for proper type hinting (media-queries), type-level unit conversion 
+- Generic bullshit: enhance type safety and code correctness 
+- Parser: easily introduce a parser for a different grammar, such as JSON or other DSLs with an appropriate lexer.
+- Crazy ideas: more complex generic types, such as a type-level implementation of a neural network for recognising digits \cite{arshLilnasySee2023}.
+
+- The benchmarking utility can be useful for library maintainers to monitor potential performance regressions when working with multiple contributors. 
+
+
+Truncation issues
+- noErrorTruncation: true
+- defaultMaximumTrucationLength
+- manually recreate intermediate types 
+
+Hidden and cryptic errors -> need to deep resolve 
+
+\begin{listing}[ht]
+\caption{Deep resolve}\label{lst:deep-resolve}
+\begin{minted}{TypeScript}
+type Resolve<T> = T extends Function ? T : { [K in keyof T]: T[K] };
+\end{minted}
+\end{listing}
+
+Theoretical and practical shortcomings of the TypeScript type system
+- Lack of built-in type-level assertions and checks 
+- Lack of optional / named generics (https://github.com/microsoft/TypeScript/pull/26349)
+- Lack of higher kinded types (can be emulated)
+- Lack of higher level type level arithmetic operations (can be emulated, ofc...)
+
+Limitations:
+- crossProductUnion depth limit: 100000
+- instantiationDepth limit: 100
+- instantiationCount limit: 5000000
+- types related to discriminated type depth limit: 25 combinations
+- complex subtype checks: thrown if about 1M subtypes left to check
+- maximum tuple size (10000)
+- numeric literal limitation (2 ** 53 - 1)
+
+- Hard limitations for type instantiation depth, size of a tuple limitation etc. 
+- Possible footguns with type inference and gradual type system (function overloading)
+
+- Relative slow type checking (checker is written in TypeScript to dogfood the language, but a lot can be achieved by switching to a different language, such as Rust, see the upcoming stc project \cite{Stc2023})
 
 \section{Future work}

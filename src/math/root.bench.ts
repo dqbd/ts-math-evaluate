@@ -1,0 +1,21 @@
+import { Root } from "./root"
+
+export type Case1 = Root<"1", "2">
+export type Case10 = Root<"10", "2">
+export type Case100 = Root<"100", "2">
+export type Case1000 = Root<"1000", "2">
+export type Case10000 = Root<"10000", "2">
+export type Case100000 = Root<"100000", "2">
+export type Case1000000 = Root<"1000000", "2">
+export type Case10000000 = Root<"10000000", "2">
+export type Case100000000 = Root<"100000000", "2">
+export type Case1000000000 = Root<"1000000000", "2">
+export type Case10000000000 = Root<"10000000000", "2">
+export type Case100000000000 = Root<"100000000000", "2">
+export type Case1000000000000 = Root<"1000000000000", "2">
+export type Case10000000000000 = Root<"10000000000000", "2">
+export type Case100000000000000 = Root<"100000000000000", "2">
+export type Case1000000000000000 = Root<"1000000000000000", "2">
+export type Case10000000000000000 = Root<"10000000000000000", "2">
+export type Case100000000000000000 = Root<"100000000000000000", "2">
+export type Case1000000000000000000 = Root<"1000000000000000000", "2">

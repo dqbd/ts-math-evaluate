@@ -1,0 +1,21 @@
+import { Add } from "./add"
+
+export type Case1 = Add<"1", "1">
+export type Case10 = Add<"1", "10">
+export type Case100 = Add<"1", "100">
+export type Case1000 = Add<"1", "1000">
+export type Case10000 = Add<"1", "10000">
+export type Case100000 = Add<"1", "100000">
+export type Case1000000 = Add<"1", "1000000">
+export type Case10000000 = Add<"1", "10000000">
+export type Case100000000 = Add<"1", "100000000">
+export type Case1000000000 = Add<"1", "1000000000">
+export type Case10000000000 = Add<"1", "10000000000">
+export type Case100000000000 = Add<"1", "100000000000">
+export type Case1000000000000 = Add<"1", "1000000000000">
+export type Case10000000000000 = Add<"1", "10000000000000">
+export type Case100000000000000 = Add<"1", "100000000000000">
+export type Case1000000000000000 = Add<"1", "1000000000000000">
+export type Case10000000000000000 = Add<"1", "10000000000000000">
+export type Case100000000000000000 = Add<"1", "100000000000000000">
+export type Case1000000000000000000 = Add<"1", "1000000000000000000">

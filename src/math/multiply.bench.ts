@@ -1,0 +1,21 @@
+import { Multiply } from "./multiply"
+
+export type Case1 = Multiply<"1", "1">
+export type Case10 = Multiply<"1", "10">
+export type Case100 = Multiply<"1", "100">
+export type Case1000 = Multiply<"1", "1000">
+export type Case10000 = Multiply<"1", "10000">
+export type Case100000 = Multiply<"1", "100000">
+export type Case1000000 = Multiply<"1", "1000000">
+export type Case10000000 = Multiply<"1", "10000000">
+export type Case100000000 = Multiply<"1", "100000000">
+export type Case1000000000 = Multiply<"1", "1000000000">
+export type Case10000000000 = Multiply<"1", "10000000000">
+export type Case100000000000 = Multiply<"1", "100000000000">
+export type Case1000000000000 = Multiply<"1", "1000000000000">
+export type Case10000000000000 = Multiply<"1", "10000000000000">
+export type Case100000000000000 = Multiply<"1", "100000000000000">
+export type Case1000000000000000 = Multiply<"1", "1000000000000000">
+export type Case10000000000000000 = Multiply<"1", "10000000000000000">
+export type Case100000000000000000 = Multiply<"1", "100000000000000000">
+export type Case1000000000000000000 = Multiply<"1", "1000000000000000000">

@@ -1,0 +1,21 @@
+import { Divide } from "./divide"
+
+export type Case1 = Divide<"1", "3">
+export type Case10 = Divide<"10", "3">
+export type Case100 = Divide<"100", "3">
+export type Case1000 = Divide<"1000", "3">
+export type Case10000 = Divide<"10000", "3">
+export type Case100000 = Divide<"100000", "3">
+export type Case1000000 = Divide<"1000000", "3">
+export type Case10000000 = Divide<"10000000", "3">
+export type Case100000000 = Divide<"100000000", "3">
+export type Case1000000000 = Divide<"1000000000", "3">
+export type Case10000000000 = Divide<"10000000000", "3">
+export type Case100000000000 = Divide<"100000000000", "3">
+export type Case1000000000000 = Divide<"1000000000000", "3">
+export type Case10000000000000 = Divide<"10000000000000", "3">
+export type Case100000000000000 = Divide<"100000000000000", "3">
+export type Case1000000000000000 = Divide<"1000000000000000", "3">
+export type Case10000000000000000 = Divide<"10000000000000000", "3">
+export type Case100000000000000000 = Divide<"100000000000000000", "3">
+export type Case1000000000000000000 = Divide<"1000000000000000000", "3">
