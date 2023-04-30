@@ -12,8 +12,6 @@ import { Or } from "../utils/boolean"
 import { CompareAbsNumbers } from "./comparison"
 import { AddFloatNumber } from "./add"
 
-// TODO: místo LUT expandovat do tuple
-// TODO: nelze to sloučit s Add? Co mít LUT / tuple expanzi do jednoho
 type _SubWithCarry<
   Left extends number,
   Right extends number,
