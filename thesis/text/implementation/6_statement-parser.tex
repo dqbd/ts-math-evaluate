@@ -11,7 +11,6 @@ The lexical analyser (lexer) is responsible for dividing the input literal strin
 The following section will provide an in-depth look into the handwritten lexer implementation. Namespaces have been used to describe the object types representing tokens, ensuring proper isolation between different type aliases and preventing naming clashes without the need to resort to prefixing. An example can be seen in \ref{lst:lexer-token-namespace}, where \code{Plus} and \code{Minus} are type aliases for the object types, whereas \vcode{_} is a union type for when a placeholder for a token is needed. Also, instead of utilising the \code{never} type for errors, a string enum is used to prevent unintended matches when performing assignability checks, as \code{never} is a subtype of all types.
 
 \begin{listing}[ht]
-  \caption{Lexer token namespace}\label{lst:lexer-token-namespace}
   \begin{minted}{TypeScript}
 enum Error {
   Lexer = "LexerError",
@@ -24,12 +23,12 @@ namespace Token {
   export type _ = Plus | Minus
 } 
 \end{minted}
+  \caption{Lexer token namespace}\label{lst:lexer-token-namespace}
 \end{listing}
 
 The lexing itself is done by a generic type, which accepts a literal string type as a type argument and returns either a string enum as an error or an object type containing the matched token and the remaining unparsed input. As seen in Listing \code{lst:lexer-structure}, the \code{HandleToken} attempts to perform pattern matching on the first character of the input string literal type \code{T}. If succeeded, the matched token is returned wrapped in an object type defined by \code{LexResult} generic type, passing both the matched token and the remaining input to the next iteration of the \code{HandleToken} generic type. If the pattern matching fails, the \code{Error.Lexer} string enum is returned instead. This structure can be chained together to create a lexer for multiple token types, such as function keywords or numbers.
 
 \begin{listing}[ht]
-  \caption{Lexer Structure}\label{lst:lexer-structure}
   \begin{minted}{TypeScript}
 type LexResult<Rest extends string, Result extends Token._> = {
   result: Result
@@ -45,6 +44,7 @@ type HandleToken<T extends string> =
     : Error.Lexer
   : Error.Lexer
 \end{minted}
+  \caption{Lexer Structure}\label{lst:lexer-structure}
 \end{listing}
 
 \subsection{Parser}
@@ -206,7 +206,6 @@ The final grammar used for this thesis can be seen in Figure \ref{fig:math-gramm
 A custom code generation tool has been developed to generate a parser running entirely in the TypeScript type system from the provided LL(1) grammar, using the aforementioned algorithm for creating the parsing table and appropriate recursive descent parser. The interface of a parser is defined as a generic type \code{Parser}, accepting a tuple of lexer tokens and a possible output \acrshort{ast} node type as type parameters, seen in Listing \ref{lst:parser-interface}. The generic type returns an object type, with an additional \code{head} property for simplifying the matching of the current lookahead token needed by the LL(1) parser. \code{ConsumeParser} is a generic type for consuming a token from the input stream and returning a new object type with the rest of the token stream.
 
 \begin{listing}[ht]
-  \caption{Core parser interface}\label{lst:parser-interface}
   \begin{minted}{TypeScript}
 interface Parser<T extends Token._[] = Token._[], A extends AST._ = AST._> {
   tokens: T
@@ -223,12 +222,12 @@ type ConsumeParser<
       : []
     : Error.Parser
 \end{minted}
+  \caption{Core parser interface}\label{lst:parser-interface}
 \end{listing}
 
 With the following building blocks, it is possible to write a recursive descent parser based on the obtained parser table. An example can be seen in Listing \ref{lst:pow-parser}, where a non-terminal \code{POW} and \code{POWx} is transformed into generic types accepting a type instance of \code{Parser} as the type parameter. The generic type attempts to match a lexer token by performing an assignability check and if succeeded, either the token can be consumed by using \code{ConsumeParser}, yielding a new parser to work with, or the parser can be passed on to the next generic type. The \code{ReturnParser} generic type reassigns the AST node, essentially acting as a way to return a value from a generic type.
 
 \begin{listing}[ht]
-  \caption{Implementation of exponentiation parser}\label{lst:pow-parser}
   \begin{minted}{TypeScript}
 type POWx<T extends Parser> = T["head"] extends Token.Power
   ? ConsumeParser<Token.Power, T> extends infer T extends Parser
@@ -252,6 +251,7 @@ type POW<T extends Parser> = T["head"] extends
     : Error.Parser
   : Error.Parser
 \end{minted}
+  \caption{Implementation of exponentiation parser}\label{lst:pow-parser}
 \end{listing}
 
 \subsection{Evaluator}
@@ -261,7 +261,6 @@ Finally, the evaluator takes the \acrshort{ast} returned by the parser as the in
 As the \acrshort{ast} does already take operator precedence and associativity into account, the evaluator itself only recursively traverses the tree, visiting each of the \acrshort{ast} nodes and performing the appropriate operation by pattern matching. A shortened example can be seen in Listing \ref{lst:evaluator-example}.
 
 \begin{listing}[ht]
-  \caption{Evaluator example}\label{lst:evaluator-example}
   \begin{minted}{TypeScript}
 export type Evaluate<T> = T extends AST.Binary<
   infer Left,
@@ -279,6 +278,7 @@ export type Evaluate<T> = T extends AST.Binary<
   ? Value
   : never
 \end{minted}
+  \caption{Evaluator example}\label{lst:evaluator-example}
 \end{listing}
 
 The evaluator itself is not required per se, and the expression can be evaluated directly in the parser, but to avoid the instantiation depth limit and to simplify debugging and unit testing, the parser emits an \acrshort{ast} as a temporary result, and the evaluation is performed in a separate step. This does have the additional benefit of simplifying testing of the entire parsing mechanics, as the \acrshort{ast} can be easily inspected and compared to the expected result.

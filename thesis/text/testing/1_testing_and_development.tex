@@ -33,11 +33,11 @@ Finally, Pretty TypeScript Errors \cite{balasianoPrettyTypeScriptErrors2023} att
 Some generic types include an accompanying unit test to ensure correctness and prevent regression. Testing is backed with \code{eslint}\cite{ESLint2023}, a static code analyser for JavaScript and TypeScript. Configuration-wise, \code{@typescript-eslint/parser} has been set up as the parser used by ESLint for properly analysing TypeScript code, and \code{eslint-plugin-expect-type} has been added for writing type assertions as comments. \code{eslint-plugin-expect-type} enables writing \code{\$ExpectType}, \code{\$ExpectError} and twoslash type assertions (\vcode{// ^?}). An example test assertion can be seen in Listing \ref{lst:expect-type}.
 
 \begin{listing}[ht]
-  \caption{Type assertion with \code{\$ExpectType}}\label{lst:expect-type}
   \begin{minted}{TypeScript}
 // $ExpectType "0.3619047620"
 type EvaluateCase = Evaluate<
   RecursiveParser.Parse<Lexer<"3.1 + 2.5 * (1 - 5.6) / 4.2">>
 >
 \end{minted}
+  \caption{Type assertion with \code{\$ExpectType}}\label{lst:expect-type}
 \end{listing}

@@ -21,7 +21,6 @@ The spaceship operator for comparing two numbers $x$ and $y$, denoted by $x <=> 
 It is possible to implement the operator entirely within the TypeScript type system by decomposing each number into a tuple of elements, where the size of the tuple is equal to the number itself. As seen in Listing \ref{lst:type-level-comparison}, the \code{CompareTuples} attempts to remove the first element of both tuples until one or both of the tuples are empty. The generic type returns the appropriate value depending on which tuple is empty first.
 
 \begin{listing}[ht]
-  \caption{Type-level comparison operation of single digit}\label{lst:type-level-comparison}
   \begin{minted}{TypeScript}
 type CompareTuples<X extends Array<0>, Y extends Array<0>> =
   X extends [0, ...infer XRest extends Array<0>]
@@ -35,6 +34,7 @@ type CompareTuples<X extends Array<0>, Y extends Array<0>> =
 type Compare<X extends number, Y extends number> =
   CompareTuples<ParseNumber<X>, ParseNumber<Y>>
 \end{minted}
+  \caption{Type-level comparison operation of single digit}\label{lst:type-level-comparison}
 \end{listing}
 
 As is the case for addition, subtraction and multiplication, it is desirable to precompute these values for every combination of digits and store them in a lookup table.
@@ -42,7 +42,6 @@ As is the case for addition, subtraction and multiplication, it is desirable to 
 The comparison of digit tuples is implemented by first ensuring the two tuples are of equal length by padding the shorter tuple with zeroes at the beginning. The first elements of both tuples are extracted into two type variables, \code{XHead} and \code{YHead}, and are compared using the lookup table. If the digits are equal, the recursion continues with the rest of the tuples, named \code{XRest} and \code{YRest}. Otherwise, the result of the last digit comparison is returned. The full implementation can be seen in Listing \ref{lst:digit-tuple-comparison}.
 
 \begin{listing}[ht]
-  \caption{Digit tuple comparison}\label{lst:digit-tuple-comparison}
   \begin{minted}{TypeScript}
 type CompareArr<X extends Digit[], Y extends Digit[]> = 
   PadStartEqual<X, Y> extends [
@@ -56,6 +55,7 @@ type CompareArr<X extends Digit[], Y extends Digit[]> =
       : never
     : 0
 \end{minted}
+  \caption{Digit tuple comparison}\label{lst:digit-tuple-comparison}
 \end{listing}
 
 \subsection{Numeric rounding operations}
@@ -63,17 +63,16 @@ type CompareArr<X extends Digit[], Y extends Digit[]> =
 The library implements four operations performing numeric rounding. Truncation is the simplest of the four implementations, where the parsing of numbers into a structured object type is doing the heavy lifting. The truncation itself is done by replacing the fractional part of a number with an empty tuple, as seen in Listing \ref{lst:truncation}
 
 \begin{listing}[ht]
-  \caption{Truncation function}\label{lst:truncation}
   \begin{minted}{TypeScript}
 type Truncate<Number extends SignFloatNumber> =
   SignFloatNumber<Number["sign"], FloatNumber<Number["float"]["int"], []>>
 \end{minted}
+  \caption{Truncation function}\label{lst:truncation}
 \end{listing}
 
 Ceiling and flooring are more complex operations. In the case of the ceiling operation, the number is first truncated and then checked to see if the input number is greater than the truncated number. If that is the case, the truncated number is incremented by one and returned. This behaviour is done to obtain the same result when flooring a negative number. For flooring, the process is similar, but the truncated number is decremented by one if the original number is less than the truncated number. The implementation can be seen in \ref{lst:floor}.
 
 \begin{listing}[ht]
-  \caption{Floor function}\label{lst:floor}
   \begin{minted}{TypeScript}
 type Floor<Number extends SignFloatNumber> =
   TruncateSignFloatNumber<Number> extends 
@@ -86,12 +85,12 @@ type Floor<Number extends SignFloatNumber> =
       : TrucateNumber
     : never
 \end{minted}
+  \caption{Floor function}\label{lst:floor}
 \end{listing}
 
 Rounding is the most complex of the four rounding operations. The fractional part's first digit is checked to determine whether it is assignable to the union of rounding up digits ($\{ 5,6,7,8,9 \}$). If that is the case, the truncated number is incremented by one and returned. Otherwise, the truncated number is returned as is, seen in Listing \ref{lst:round}.
 
 \begin{listing}[ht]
-  \caption{Round function}\label{lst:round}
   \begin{minted}{TypeScript}
 type RoundSignFloatNumber<Number extends SignFloatNumber> =
   Number["float"]["frac"] extends [infer Head extends Digit, ...Digit[]]
@@ -109,6 +108,7 @@ type RoundSignFloatNumber<Number extends SignFloatNumber> =
       >
   : Number
 \end{minted}
+  \caption{Round function}\label{lst:round}
 \end{listing}
 
 \subsection{Exponentiation}
@@ -135,7 +135,6 @@ It can be shown that the complexity of the algorithm is $O(n^2 \cdot \log_2(10^n
 Parity checks done by \code{IsEventInt} as seen in Listing \ref{lst:parity-check} are done by checking the last digit of the exponent. Once again, the even digits are represented by a union type of number literal types. Notably, the conditional type is not a type itself. Developers need to write \code{true} and \code{false} types explicitly.
 
 \begin{listing}[ht]
-  \caption{Parity check of digits}\label{lst:parity-check}
   \begin{minted}{TypeScript}
   type IsEvenInt<X extends Digit[]> = X extends [
     ...Digit[],
@@ -146,12 +145,12 @@ Parity checks done by \code{IsEventInt} as seen in Listing \ref{lst:parity-check
       : false
     : false
   \end{minted}
+  \caption{Parity check of digits}\label{lst:parity-check}
 \end{listing}
 
 The implementation shown in Listing \ref{lst:exponentiation-by-squaring-ts} does require trimming of excess zeroes in the exponent to ensure the correctness of a fast assignability check for termination conditions. The implementation differs from the algorithm in Figure \ref{fig:exponentiation-by-squaring} in that the \code{PowerAuxInt} includes an optional type argument \code{Y} used to convert the method to a tail-recursive generic type, bypassing the need for deferring the instantiation to avoid the depth limit.
 
 \begin{listing}[ht]
-  \caption{Auxilary exponentiation by squaring}\label{lst:exponentiation-by-squaring-ts}
   \begin{minted}{TypeScript}
 type PowerAuxInt<
   X extends SignFloatNumber,
@@ -171,6 +170,7 @@ type PowerAuxInt<
       MultiplySignFloat<X, Y>
     >
 \end{minted}
+  \caption{Auxilary exponentiation by squaring}\label{lst:exponentiation-by-squaring-ts}
 \end{listing}
 
 \subsection{$n$-th root extraction}
@@ -196,7 +196,7 @@ A naive implementation can be done by intimately mirroring the algorithm and nes
 Even so, it is not desired for the algorithm to run indefinitely; instead, the iteration is cut off after seven iterations, as more iterations will cause the type checker to reach the instantiation limit when evaluating.
 
 \begin{listing}[ht]
-  \caption{$n$-th root - wrong version}\label{lst:root-wrong}
+
   \begin{minted}{TypeScript}
 type RootDigit<
   Alpha extends SignFloatNumber,
@@ -213,10 +213,10 @@ type RootDigit<
       >
     >, [...StepCnt, 0]>
 \end{minted}
+  \caption{$n$-th root - incorrect version}\label{lst:root-wrong}
 \end{listing}
 
 \begin{listing}[ht]
-  \caption{$n$-th root - right version}\label{lst:root-right}
   \begin{minted}{TypeScript}
 type OneSignFloatNumber = SignFloatNumber<"+", FloatNumber<[1], []>>
 
@@ -266,6 +266,7 @@ type RootDigit<
     : never
   : never
 \end{minted}
+  \caption{$n$-th root - correct version}\label{lst:root-right}
 \end{listing}
 
 \clearpage

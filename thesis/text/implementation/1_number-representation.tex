@@ -5,7 +5,6 @@ As powerful as the type system in TypeScripts, there are certain limitations tha
 One approach to representing numbers in TypeScript is to use tuples types. As described in \ref{sec:typescript-data-structures}, tuple types allow developers to describe a fixed-length JavaScript array where each element can have a specific type. As it represents a JavaScript array, the type includes all of the properties and methods found in an array, including \code{length} property, which contains the actual number of elements in the tuple. This feature can be used to represent a number, as the length of the tuple can represent the number itself, as seen in Listing \ref{lst:tuple-representation}. The actual type of a member item in a tuple is irrelevant, as the type system only cares about the length of the tuple, but for clarity purposes, the literal type \code{0} can be used as the element type of a tuple.
 
 \begin{listing}[ht]
-  \caption{Tuple representation of a number}\label{lst:tuple-representation}
   \begin{minted}{TypeScript}
 type Zero = []
 type Four = [0, 0, 0, 0] 
@@ -16,6 +15,7 @@ type ZeroValue = Zero['length']
 // $ExpectType 4
 type ZeroValue = Four['length']
 \end{minted}
+  \caption{Tuple representation of a number}\label{lst:tuple-representation}
 \end{listing}
 
 However, manually describing a tuple is tedious. Recursion can be employed to parse a literal number type to a tuple type, as seen in \ref{lst:tuple-parse}. The \code{ParseNumber<Value>} generic type accepts a mandatory type argument \code{Value} that should be the length of the final tuple and an optional type argument \code{Acc} used to preserve the state of the recursion.
@@ -23,19 +23,18 @@ However, manually describing a tuple is tedious. Recursion can be employed to pa
 First, a check is performed to see if the length of \code{Acc} is equal to the \code{Value} by checking the assignability of types. If that is the case, the tuple type found in \code{Acc} is returned. Otherwise, the list is extended with a new \code{0} element being prepended, and the function is called recursively. The function is called recursively until the length of \code{Acc} is assignable to \code{Value}.
 
 \begin{listing}[ht]
-  \caption{Parse a literal number type to a tuple type}\label{lst:tuple-parse}
   \begin{minted}{TypeScript}
 type ParseNumber<
   Value extends number,
   Acc extends Array<0> = []
 > = Acc["length"] extends Value ? Acc : ParseNumber<Value, [0, ...Acc]>
 \end{minted}
+  \caption{Parse a literal number type to a tuple type}\label{lst:tuple-parse}
 \end{listing}
 
 It is possible to improve the number of recursions to create a tuple by expanding by a whole digit instead of by single increments. As seen in Listing \ref{lst:tuple-parse-digit}, where \code{ParsedNumber2} will first perform stringification of the literal number type \code{T} and infer the first digit recursively. The accumulator type parameter \code{Rest} is first expanded ten times by the \code{ExpandArrayTenTimes} generic type, and then the parsed digit is spread into \code{Rest} as well. The recursion is performed until the stringified number is empty and the final \code{Rest} type is returned.
 
 \begin{listing}[ht]
-  \caption{Parse by digit expansion}\label{lst:tuple-parse-digit}
   \begin{minted}{TypeScript}
 
 type ExpandArrayTenTimes<R extends Array<0>> = [
@@ -50,6 +49,7 @@ type ParseNumber2<
   ? ParseNumber2<R, [...ExpandArrayTenTimes<Rest>, ...ParseNumber<Digit>]>
   : Rest
 \end{minted}
+  \caption{Parse by digit expansion}\label{lst:tuple-parse-digit}
 \end{listing}
 
 Even though this method of representing numbers is reasonably simple, it does come at a performance cost, as the tuple must contain the number of elements equal to the number itself. As such, the checking time of the addition and subtraction operations grows as the number grows. This issue alone poses a significant problem, primarily when representing large numbers, as TypeScript has an upper limit on the number of elements in a tuple to avoid performance degradation. As of writing, the limit is set to 10\,000 elements\cite{ImplementationCheckerTs2023}, which is only enough for representing integer numbers no greater than 10\,000.
@@ -57,7 +57,6 @@ Even though this method of representing numbers is reasonably simple, it does co
 Another approach is to represent each digit of a number type into a tuple. This approach does avoid the limitation of the tuple size imposed by TypeScript, as it is now possible to represent much larger numbers whilst reducing the performance overhead as the checking time can be reduced for some operations, which work on individual digits. The number type is parsed into object types beforehand to improve the developer experience when implementing arithmetic operations, keeping the sign, the integer and the fractional parts of a decimal representation number separate. An example can be seen in Listing \ref{lst:object-representation}, where two object types are created: \code{FloatNumber}, representing a number with both integer and fractional digits, and \code{SignFloatNumber}, which is used to provide number sign of an existing parsed number.
 
 \begin{listing}[ht]
-  \caption{Interface representation of numbers}\label{lst:object-representation}
   \begin{minted}{TypeScript}
 type Sign = "+" | "-"
 type Digit = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
@@ -78,12 +77,12 @@ type SignFloatNumber<
   float: Float
 }
 \end{minted}
+  \caption{Interface representation of numbers}\label{lst:object-representation}
 \end{listing}
 
 Parsing a number type into digits can be done by recursive types, as seen in Listing \ref{lst:object-parse}. First, \code{ParseSignFloatNumber} attempts to infer the sign of the stringified number literal type into a new \code{TSign} type. Afterwards, \code{ParseFloatNumber} generic type attempts to split the stringified literal into an integer and a fractional part. Both parts are later parsed separately in \code{ParseNumber}, matching if each string contains only digits.
 
 \begin{listing}[ht]
-  \caption{Number parsing into objects}\label{lst:object-parse}
   \begin{minted}{TypeScript}
 type ParseNumber<S extends string> =
   S extends `${infer TInt extends Digit}${infer Rest}`
@@ -100,12 +99,12 @@ type ParseSignFloatNumber<T extends NumberLike> =
     ? SignFloatNumber<TSign, ParseFloatNumber<Rest>>
     : SignFloatNumber<"+", ParseFloatNumber<T>>
 \end{minted}
+  \caption{Number parsing into objects}\label{lst:object-parse}
 \end{listing}
 
 The formatting of the object representation of a number is implemented in a similar fashion, where a digit is concatenated with a string-type accumulator, as seen in a short code snippet in Listing \ref{lst:object-type-stringify}.
 
 \begin{listing}[ht]
-  \caption{Formatting of object types}\label{lst:object-type-stringify}
   \begin{minted}{TypeScript}
 type JoinDigit<T extends number[]> = T extends [
   infer A extends number,
@@ -114,4 +113,5 @@ type JoinDigit<T extends number[]> = T extends [
   ? `${A}${JoinDigit<R>}`
   : ""
 \end{minted}
+  \caption{Formatting of object types}\label{lst:object-type-stringify}
 \end{listing}
