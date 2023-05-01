@@ -1,49 +1,37 @@
 \chapter{Conclusion}
 
-\section{Advantages and disadvantages of TS}
+This thesis set out to implement a mathematical expression evaluator entirely written in the type system of TypeScript. Core concepts and techniques of TypeScript type-level programming were introduced and explained. The implementation of the expression evaluator was described in detail, and the implementation was evaluated in terms of correctness and performance using type-level unit tests and benchmarking suites.
 
-Practical uses of implemented meta TypeScript 
+The created evaluator is a proof-of-concept, demonstrating the capabilities of the TypeScript type system while addressing some of the limitations of the type system by applying workarounds.
 
-- Numerical operations: Describing exact numbers for proper type hinting (media-queries), type-level unit conversion 
-- Generic bullshit: enhance type safety and code correctness 
-- Parser: easily introduce a parser for a different grammar, such as JSON or other DSLs with an appropriate lexer.
-- Crazy ideas: more complex generic types, such as a type-level implementation of a neural network for recognising digits \cite{arshLilnasySee2023}.
+This thesis also provides a comprehensive guide to the TypeScript syntax and type system and can be used as a reference for beginners to the type-level programming in TypeScript. Additional tools and utility types were introduced to aid the development of the mathematical evaluator, namely the benchmarking tool and the LL(1) parser generator.
 
-- The benchmarking utility can be useful for library maintainers to monitor potential performance regressions when working with multiple contributors. 
+The rest of this chapter will discuss both the practicality of the created types and the limitations of the type system found during development. Finally, the future work will be outlined.
 
+\section{Practical usage}
 
-Truncation issues
-- noErrorTruncation: true
-- defaultMaximumTrucationLength
-- manually recreate intermediate types 
+The TypeScript type system is powerful for static type checking and inference. However, it is not without its limitations. These advanced types are considered to be extreme and are generally not recommended to be used in production code, as they can severely impact the compilation time and the in-editor developer experience.
 
-Hidden and cryptic errors -> need to deep resolve 
+Nevertheless, there are some possible practical use cases for these advanced types. Literal types are often used to describe a design system and accompanying design tokens. Namely, numeric literal types are used to describe the spacing and sizing of components. When the spacing is defined in other units, such as \code{rem} or \code{em}, developers often need to manually convert the values into pixels. A utility type can be introduced to convert values in \code{rem} or \code{em} units into pixels and reverse. This can be further expanded to allow more type transformations, such as converting a Tailwind CSS class name into a CSS string without any TypeScript editor plugins.
 
-\begin{listing}[ht]
-\caption{Deep resolve}\label{lst:deep-resolve}
-\begin{minted}{TypeScript}
-type Resolve<T> = T extends Function ? T : { [K in keyof T]: T[K] };
-\end{minted}
-\end{listing}
+The parser and the accompanying parser generator can accept any LL(1) grammar and can be used to parse more complex formats, such as JSON. Finally, the benchmarking tool can be used to benchmark any type-level code in isolation, keeping all the test cases in a single file.
 
-Theoretical and practical shortcomings of the TypeScript type system
-- Lack of built-in type-level assertions and checks 
-- Lack of optional / named generics (https://github.com/microsoft/TypeScript/pull/26349)
-- Lack of higher kinded types (can be emulated)
-- Lack of higher level type level arithmetic operations (can be emulated, ofc...)
+\section{Limitations of the TypeScript type system}
 
-Limitations:
-- crossProductUnion depth limit: 100000
-- instantiationDepth limit: 100
-- instantiationCount limit: 5000000
-- types related to discriminated type depth limit: 25 combinations
-- complex subtype checks: thrown if about 1M subtypes left to check
-- maximum tuple size (10000)
-- numeric literal limitation (2 ** 53 - 1)
+When developing the implementation of the evaluator, some limitations of the TypeScript type system were discovered.
 
-- Hard limitations for type instantiation depth, size of a tuple limitation etc. 
-- Possible footguns with type inference and gradual type system (function overloading)
+In general, error messages in TypeScript are suboptimal. They tend to be displayed in one line without any formatting, and if they include complicated types, the types are truncated, which leads to a suboptimal debugging experience. Even with \code{noErrorTruncation} flag turned on in \code{tsconfig.json}, the type message is still truncated due to a hard limit. The limit can be artificially raised by patching the TypeScript source code, namely by increasing the \code{defaultMaximumTrucationLength} limit, but this is not a viable solution for production code. The only other option is to manually recreate intermediate types when debugging complicated types.
 
-- Relative slow type checking (checker is written in TypeScript to dogfood the language, but a lot can be achieved by switching to a different language, such as Rust, see the upcoming stc project \cite{Stc2023})
+The type checker itself contains many hardcoded constraints to prevent performance degradation, ranging from the maximum tuple size to the limit on both instantiation count and depth. Some checks can be bypassed using various workarounds, often at a performance cost, discussed in previous chapters. However, these workarounds are poorly documented in the official TypeScript documentation and can break with new TypeScript releases without further notice.
+
+Even though the TypeScript type system is powerful for complex types, some highly requested features are still missing as of the writing of this thesis, such as the lack of partial type argument inference \cite{ImplementPartialType} or lack of built-in utility types for type-level assertions. Some of these features can be partially emulated, such as the lack of higher kinded types, but the behaviour can also change with new TypeScript releases.
+
+Finally, as the type checker itself is written in TypeScript to dogfood the language, it can be inherently slow when working with larger TypeScript codebases. Some of these performance issues are being solved by rewriting the type checker in a different programming language, such as Rust \cite{Stc2023}, but the project is still under active development.
 
 \section{Future work}
+
+Most of the future work is geared towards the underlying tooling and utilities rather than the mathematical expression evaluator itself, which can be further extended by adding additional mathematical operations based on the existing utility types implemented in this thesis.
+
+For instance, the LL(1) parser generator is not flexible enough, as it can only generate code for LL(1) grammars, which, while being sufficient for mathematical expressions and other simple formats such as JSON, is not enough for more complex grammars. Future work could include creating a more generic Look-Ahead LR parser generator, which would be able to parse more complex grammars and programming languages.
+
+The benchmarking utility itself can be extended and packaged both as an \acrshort{npm} package and as a GitHub Action. This is especially useful for library maintainers, which can use the additional CI step to monitor potential performance regressions when reviewing pull requests from contributors.
