@@ -53,49 +53,54 @@ Infix notation is the most common way of writing mathematical expressions and is
 
 Various methods exist for converting an expression in infix notation. However, this thesis focuses on implementing a top-down LL(1) parser for mathematical expression. The main reason for choosing the LL(1) parser is the extendibility and suitability for supporting other LL(1) grammars more readily. Some other common parsers were considered for this thesis, including the Shunting-Yard algorithm, using two stacks for operators and output operands, and the Pratt parser, a recursive descent parsing algorithm utilising a precedence table for extendability.
 
-In order to explain the LL(1) parser, the following sections will describe the core concepts of grammar and parsing. Grammar is a set of rules that defines the syntax of a language. The grammar $G = (\Sigma, N, R, S)$ consists of a set of terminals $\Sigma$, a set of non-terminals $N$, a set of production rules $R$ and a start symbol $S$. Terminals are the basic unit of the language, while non-terminals are placeholders for other terminals and non-terminals. Production rules define how non-terminals can be expanded into a sequence of other non-terminals and terminals while the start symbol defines the starting non-terminal. The parsing itself will create a derivation, which is a sequence of production rules applications transforming a string of symbols, usually starting from the start symbol of the grammar.
+In order to explain the LL(1) parser, the following sections will describe the core concepts of grammar and parsing. Grammar is a set of rules that defines the syntax of a language. The grammar $G = (\Sigma, N, R, S)$ consists of a set of terminals $\Sigma$, a set of non-terminals $N$, a set of production rules $R$ and a start symbol $S$. Terminals are the basic unit of the language, while non-terminals are placeholders for other terminals and non-terminals. Production rules define how non-terminals can be expanded into a sequence of other non-terminals and terminals, while the start symbol defines the starting non-terminal. The parsing itself will create a derivation, which is a sequence of production rules applications transforming a string of symbols, usually starting from the start symbol of the grammar.
 
-A derivation can be visualised as a tree, also known as the derivation tree or parse tree. Each node of the tree represents a symbol in the string and each edge represents a production rule application. The root of the tree is the start symbol of the grammar and the leaves are the terminal symbols of the string.
+A derivation can be visualised as a tree, also known as the derivation tree or parse tree. Each node of the tree represents a symbol in the string, and each edge represents a production rule application. The root of the tree is the start symbol of the grammar, and the leaves are the terminal symbols of the string.
 
-There are multiple ways to construct a derivation tree: either by replacing the leftmost non-terminal symbol with the righthand side of a production rule or by replacing the rightmost non-terminal symbol with the righthand side of a production rule. The former is known as the leftmost derivation while the latter is known as the rightmost derivation. Finally, an ambiguous grammar is a grammar that can produce multiple derivation trees for the same string.
+There are multiple ways to construct a derivation tree: either by replacing the leftmost non-terminal symbol with the righthand side of a production rule or by replacing the rightmost non-terminal symbol with the righthand side of a production rule. The former is known as the leftmost derivation, while the latter is known as the rightmost derivation. Finally, an ambiguous grammar is a grammar that can produce multiple derivation trees for the same string.
 
 As an example, consider the given simplified grammar for mathematical expressions applied for the expression $3 + 4 * 5$. As can be seen in Figure \ref{fig:ambiguous-grammar}, the given grammar is ambiguous, as there are multiple possible derivation trees for the given input string.
 
 \begin{figure}[ht]
-  \begin{multicols}{3}
-    \begin{enumerate}
-      \item \code{E} $\rightarrow$ \code{E} \mcode{"+"} \code{E} .
-      \item \code{E} $\rightarrow$ \code{E} \mcode{"*"} \code{E} .
-      \item \code{E} $\rightarrow$ \mcode{"number"} .
-    \end{enumerate}
-  \end{multicols}
+  \centering
+  \begin{minipage}{0.8\linewidth}
+    \begin{multicols}{2}
+      \Tree [
+      .E
+        [ .E [ .3 ] ]
+      +
+      [ .E [ .E [ .4 ] ] * [ .E [ .5 ]] ]
+      ]
+
+      \Tree [
+      .E
+      [ .E [ .E [ .3 ] ] + [ .E [ .4 ] ] ]
+      *
+        [ .E [ .5 ] ]
+      ]
+    \end{multicols}
+
+    \begin{multicols}{3}
+      \begin{enumerate}
+        \item \code{E} $\rightarrow$ \code{E} \mcode{"+"} \code{E} .
+        \item \code{E} $\rightarrow$ \code{E} \mcode{"*"} \code{E} .
+        \item \code{E} $\rightarrow$ \mcode{"number"} .
+      \end{enumerate}
+    \end{multicols}
+  \end{minipage}
   \caption{An example of ambiguous grammar and the parsing tree for $3+4*5$}
   \label{fig:ambiguous-grammar}
 \end{figure}
 
-\begin{multicols}{2}
-  \Tree [
-  .E
-    [ .E [ .3 ] ]
-  +
-  [ .E [ .E [ .4 ] ] * [ .E [ .5 ]] ]
-  ]
 
-  \Tree [
-  .E
-  [ .E [ .E [ .3 ] ] + [ .E [ .4 ] ] ]
-  *
-    [ .E [ .5 ] ]
-  ]
-\end{multicols}
 
 LL(1) parsers are a class of top-down parsers that read the input string from left to right and construct a leftmost derivation of the input. They use a single token of lookahead when parsing a sentence, meaning that the parser can only see the next token before parsing.  LL(1) parsers recognise LL(1) grammars, which are a special case of context-free grammars. The grammar must be unambiguous, without any left recursion and common prefixes among the alternatives of any expansion rule to be deterministic.
 
-The parser relies upon two important concepts: the FIRST($\alpha$) and FOLLOW($A$) sets. Assuming a context-free grammar $G = (\Sigma, N, R, S)$, the FIRST($\alpha$) set is a set of terminals, that can appear as the first symbol in a string derived from $\alpha$. Formally, FIRST($\alpha$) can be defined as follows:
+The parser relies upon two important concepts: the FIRST($\alpha$) and FOLLOW($A$) sets. Assuming a context-free grammar $G = (\Sigma, N, R, S)$, the FIRST($\alpha$) set is a set of terminals that can appear as the first symbol in a string derived from $\alpha$. Formally, FIRST($\alpha$) can be defined as follows:
 
 $$\text{FIRST}(\alpha) = \{ a | \alpha \Rightarrow^\star a\beta, a \in \Sigma, \alpha, \beta \in (N \cup \Sigma)^\star \} \cup \{ \varepsilon | \alpha \Rightarrow^\star \varepsilon \}$$
 
-The FOLLOW($A$) set is a set of terminals, that can appear as the next symbol in a string derived from a given non-terminal symbol $A$. Formally, FOLLOW($A$) can be defined as follows:
+The FOLLOW($A$) set is a set of terminals that can appear as the next symbol in a string derived from a given non-terminal symbol $A$. Formally, FOLLOW($A$) can be defined as follows:
 
 $$\text{FOLLOW}(A) = \{ a | S \Rightarrow^\star \alpha A\beta, a \in \text{FIRST}(\beta) \} $$
 
@@ -110,21 +115,21 @@ When designing a LL(1) grammar for mathematical expressions, operator precedence
 
 \begin{table}[ht]
   \centering
-  \begin{tabular}{|c|l|l|}
+  \begin{tabular}{c|l|l}
     \hline
     \textbf{Precedence} & \textbf{Operator Type}              & \textbf{Associativity} \\ \hline
-    1                   & Addition, Subtraction               & left-to-right          \\ \hline
-    2                   & Multiplication, Division, Remainder & left-to-right          \\ \hline
-    3                   & Factorial                           & non-associative        \\ \hline
-    4                   & Unary plus, Unary negation          & non-associative        \\ \hline
-    5                   & Exponentiation                      & right-to-left          \\ \hline
+    1                   & Addition, Subtraction               & left-to-right          \\ 
+    2                   & Multiplication, Division, Remainder & left-to-right          \\ 
+    3                   & Factorial                           & non-associative        \\ 
+    4                   & Unary plus, Unary negation          & non-associative        \\ 
+    5                   & Exponentiation                      & right-to-left          \\ 
     6                   & Function call, grouping             & non-associative        \\ \hline
   \end{tabular}
   \caption{Associativity and precedence rules for math expressions}
   \label{table:associativity}
 \end{table}
 
-The final grammar used for this thesis can be seen in Figure \ref{fig:math-grammar}. The operator precedence rules is baked into the grammar itself, where the non-terminals representing the higher precedence operations are expanded later. The associativity of operators have been taken into consideration as well, by changing the position of the non-terminal from the lefthand side, essentially switching from left recursion to right recursion and vice versa. An example can be seen in \ref{table:associativity-grammar}, where both the previous context-free grammar and the appropriately modified LL(1) version of the grammar is shown to demonstrate the difference between these two grammars.
+The final grammar used for this thesis can be seen in Figure \ref{fig:math-grammar}. The operator precedence rules are baked into the grammar itself, where the non-terminals representing the higher precedence operations are expanded later. The associativity of operators has been taken into consideration as well by changing the position of the non-terminal from the lefthand side, essentially switching from left recursion to right recursion and vice versa. An example can be seen in \ref{table:associativity-grammar}, where both the previous context-free grammar and the appropriately modified LL(1) version of the grammar is shown to demonstrate the difference between these two grammars.
 
 \begin{figure}[ht]
   \begin{multicols}{2}
@@ -166,17 +171,17 @@ The final grammar used for this thesis can be seen in Figure \ref{fig:math-gramm
 
 \begin{table}[h]
   \centering
-  \begin{tabular}{|c|c|}
+  \begin{tabular}{l|l}
     \hline
-    Left associativity & Right associativity                                                \\
+    \textbf{Left associativity} & \textbf{Right associativity}                              \\
     \hline
 
-    \makecell{
+    \makecell[l]{
     \code{ADD} $\rightarrow$ \code{TERM} \code{.}                                           \\
       \code{ADD} $\rightarrow$ \code{ADD} \mintinline{TypeScript}{"+"} \code{TERM} \code{.}
     }
-                       &
-    \makecell{
+                                &
+    \makecell[l]{
     \code{ADD} $\rightarrow$ \code{TERM} \code{.}                                           \\
       \code{ADD} $\rightarrow$ \code{TERM} \mintinline{TypeScript}{"+"} \code{ADD} \code{.}
     }
@@ -184,17 +189,17 @@ The final grammar used for this thesis can be seen in Figure \ref{fig:math-gramm
     \\
     \hline
 
-    \makecell{
+    \makecell[l]{
     \code{ADD} $\rightarrow$ \code{TERM} \code{ADD'} \code{.}                               \\
     \code{ADD'} $\rightarrow$ \mintinline{TypeScript}{"+"} \code{TERM} \code{ADD'} \code{.} \\
-      \code{ADD'} $\rightarrow$ \code{.}
+      \code{ADD'} $\rightarrow$ \code{$\varepsilon$} \code{.}
     }
-                       &
+                                &
 
-    \makecell{
+    \makecell[l]{
     \code{ADD} $\rightarrow$ \code{TERM} \code{ADD'} \code{.}                               \\
     \code{ADD'} $\rightarrow$ \mintinline{TypeScript}{"+"} \code{ADD} \code{.}              \\
-      \code{ADD'} $\rightarrow$ \code{.}
+      \code{ADD'} $\rightarrow$ \code{$\varepsilon$} \code{.}
     }
     \\
     \hline
@@ -225,7 +230,7 @@ type ConsumeParser<
   \caption{Core parser interface}\label{lst:parser-interface}
 \end{listing}
 
-With the following building blocks, it is possible to write a recursive descent parser based on the obtained parser table. An example can be seen in Listing \ref{lst:pow-parser}, where a non-terminal \code{POW} and \code{POWx} is transformed into generic types accepting a type instance of \code{Parser} as the type parameter. The generic type attempts to match a lexer token by performing an assignability check and if succeeded, either the token can be consumed by using \code{ConsumeParser}, yielding a new parser to work with, or the parser can be passed on to the next generic type. The \code{ReturnParser} generic type reassigns the AST node, essentially acting as a way to return a value from a generic type.
+With the following building blocks, it is possible to write a recursive descent parser based on the obtained parser table. An example can be seen in Listing \ref{lst:pow-parser}, where a non-terminal \code{POW} and \code{POWx} are transformed into generic types accepting a type instance of \code{Parser} as the type parameter. The generic type attempts to match a lexer token by performing an assignability check. If succeeded, either the token can be consumed by using \code{ConsumeParser}, yielding a new parser to work with, or the parser can be passed on to the next generic type. The \code{ReturnParser} generic type reassigns the AST node, essentially acting as a way to return a value from a generic type.
 
 \begin{listing}[ht]
   \begin{minted}{TypeScript}

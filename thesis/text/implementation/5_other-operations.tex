@@ -4,19 +4,16 @@
 
 Some operations require an additional type-level operation for comparing two numbers, such as the Euclidean division, for deciding whether to continue recursion. For that purpose, a type-level three-way comparison operator has been implemented, also known as the \say{spaceship operator} in the C++ programming language \cite{sutterConsistentComparison2017}.
 
-The spaceship operator for comparing two numbers $x$ and $y$, denoted by $x <=> y$, is defined in Figure \ref{fig:spaceship-operator} as follows:
+The spaceship operator for comparing two numbers $x$ and $y$, denoted by $x <=> y$, is defined in equation \ref{eq:spaceship-operator} as follows:
 
-\begin{figure}[ht]
-  \begin{equation*}
-    x <=> y =
-    \begin{cases}
-      -1 & \text{if } x < y \\
-      0  & \text{if } x = y \\
-      1  & \text{if } x > y
-    \end{cases}
-  \end{equation*}
-  \caption{spaceship operator}\label{fig:spaceship-operator}
-\end{figure}
+\begin{equation}\label{eq:spaceship-operator}
+  x <=> y =
+  \begin{cases}
+    -1 & \text{if } x < y \\
+    0  & \text{if } x = y \\
+    1  & \text{if } x > y
+  \end{cases}
+\end{equation}
 
 It is possible to implement the operator entirely within the TypeScript type system by decomposing each number into a tuple of elements, where the size of the tuple is equal to the number itself. As seen in Listing \ref{lst:type-level-comparison}, the \code{CompareTuples} attempts to remove the first element of both tuples until one or both of the tuples are empty. The generic type returns the appropriate value depending on which tuple is empty first.
 
@@ -115,20 +112,17 @@ type RoundSignFloatNumber<Number extends SignFloatNumber> =
 
 A naive implementation of exponentiation would be based on repeated multiplication. This is an inefficient approach, as the complexity of such an algorithm would be $O(M(x) \cdot 10^n) = O(n^2 \cdot 10^n)$, where $n$ is the number of digits and $M(x)$ is the complexity of multiplication algorithm, in this instance $O(n^2)$.
 
-A more efficient exponentiation method is to perform binary exponentiation instead, as seen in Figure \ref{fig:exponentiation-by-squaring}.
+A more efficient exponentiation method is to perform binary exponentiation instead, as seen in equation \ref{eq:exponentiation-by-squaring}:
 
-\begin{figure}[ht]
-  \begin{equation*}
-    x^n =
-    \begin{cases}
-      x \cdot (x^2)^\frac{n-1}{2} & \text{if } n > 0 \text{ is odd}  \\
-      (x^2)^\frac{n-1}{2}         & \text{if } n > 0 \text{ is even} \\
-      1                           & \text{if } n = 0                 \\
-      (\frac{1}{x})^n             & \text{if } n < 0
-    \end{cases}
-  \end{equation*}
-  \caption{Exponentiation by squaring}\label{fig:exponentiation-by-squaring}
-\end{figure}
+\begin{equation}\label{eq:exponentiation-by-squaring}
+  x^n =
+  \begin{cases}
+    x \cdot (x^2)^\frac{n-1}{2} & \text{if } n > 0 \text{ is odd}  \\
+    (x^2)^\frac{n-1}{2}         & \text{if } n > 0 \text{ is even} \\
+    1                           & \text{if } n = 0                 \\
+    (\frac{1}{x})^n             & \text{if } n < 0
+  \end{cases}
+\end{equation}
 
 It can be shown that the complexity of the algorithm is $O(n^2 \cdot \log_2(10^n))$, a notable improvement over the naive approach.
 
@@ -179,24 +173,27 @@ There are some cases where an operation is so complex that the type instantiatio
 
 The Newton-Raphson method \cite{gerlachAcceleratedConvergenceNewton1994} is an iterative numerical method for estimating the roots of real-valued functions. Assuming the function $f(x)$ is derivable on $x \ge 0$ and an initial guess for root is $x_0$, then:
 
-$$x_{k+1} = x_k - \frac{f(x_k)}{f'(x_k)}$$
+\begin{equation}
+  x_{k+1} = x_k - \frac{f(x_k)}{f'(x_k)}
+\end{equation}
 
 Thus, to estimate the $n$-th root of a number, declared by the function $f(x) = x^n - \alpha$, where $\alpha$ is the target number to apply $n$-th root and $n$ is the degree of the root, the following definition for the next approximation is used:
 
-\begin{align*}
-  x_{k+1} & = x_k - \frac{f(x_k)}{f'(x_k)}                                                                         \\
-          & = x_k - \frac{x_k^n - \alpha}{n \cdot x_k^{n-1}}                                                       \\
-          & = \frac{1}{n} \left( (n-1) \cdot x_k + \frac{\alpha}{x_k^{n-1}} \right)                                \\
-          & = \underbrace{\frac{n-1}{n}}_\text{L} x_k + \underbrace{\frac{\alpha}{n}}_\text{R} \frac{1}{x_k^{n-1}} \\
-          & = L \cdot x_k + R \cdot \frac{1}{x_k^{n-1}}                                                            \\
-\end{align*}
+\begin{equation}
+  \begin{split}
+    x_{k+1} & = x_k - \frac{f(x_k)}{f'(x_k)}                                                                         \\
+            & = x_k - \frac{x_k^n - \alpha}{n \cdot x_k^{n-1}}                                                       \\
+            & = \frac{1}{n} \left( (n-1) \cdot x_k + \frac{\alpha}{x_k^{n-1}} \right)                                \\
+            & = \underbrace{\frac{n-1}{n}}_\text{L} x_k + \underbrace{\frac{\alpha}{n}}_\text{R} \frac{1}{x_k^{n-1}} \\
+            & = L \cdot x_k + R \cdot \frac{1}{x_k^{n-1}}                                                            \\
+  \end{split}
+\end{equation}
 
 A naive implementation can be done by intimately mirroring the algorithm and nesting the generic types for readability, shown in Listing \ref{lst:root-wrong}. However, as it turns out, TypeScript will bail out due to the depth limit. Instead, to bypass the limit, the final implementation seen in Listing \ref{lst:root-right} uses \code{infer} keyword to defer instantiation as much as possible, essentially treating \code{infer} as a way to assign intermediate values to variables.
 
 Even so, it is not desired for the algorithm to run indefinitely; instead, the iteration is cut off after seven iterations, as more iterations will cause the type checker to reach the instantiation limit when evaluating.
 
 \begin{listing}[ht]
-
   \begin{minted}{TypeScript}
 type RootDigit<
   Alpha extends SignFloatNumber,

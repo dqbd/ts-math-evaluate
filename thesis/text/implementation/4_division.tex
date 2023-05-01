@@ -1,8 +1,10 @@
 \section{Division and modulo}
 
-The implementation of the division algorithm is split into two main parts: the Euclidean division and the long division algorithm. Given two integers, a dividend $x$ and a divisor $y$, the Euclidean division aims to find a quotient $q$ and a remainder $r$, which satisfies the following equation:
+The implementation of the division algorithm is split into two main parts: the Euclidean division and the long division algorithm. Given two integers, a dividend $x$ and a divisor $y$, the Euclidean division aims to find a quotient $q$ and a remainder $r$, which satisfies the following equation \ref{eq:euclidean-division}:
 
-$$x = y\cdot q + r \qquad \text{if } 0 \le r < |b|$$
+\begin{equation}\label{eq:euclidean-division}
+  x = y\cdot q + r \qquad \text{if } 0 \le r < |b|
+\end{equation}
 
 The Euclidean algorithm finds the quotient and the remainder using repeated subtraction as seen in \ref{lst:euclidean-division}. The \code{DivisionResult} contains both the temporary quotient and remainder values passed to the next iteration. The \code{EuclideanDivision} generic type first checks if the remainder is greater than or equal to the divisor. If that is the case, the quotient is incremented by one using \code{AddInt} generic type and the remainder is subtracted by the divisor using \code{SubDigit}. The process is repeated until the remainder is less than the divisor, at which point the computed quotient and remainder are returned.
 
@@ -61,18 +63,15 @@ type LongDivisionDigit<
   \caption{Long division}\label{lst:long-division}
 \end{listing}
 
-When conducting division operations involving two numbers with fractional components, the digit tuples of fractional parts are padded with zeroes to ensure equal lengths for both tuples. Afterwards, the fractional part is concatenated behind the integer part, creating an integer number compatible with the long division algorithm. Further digit shifting is not necessary, as the orders of magnitude get cancelled out during the division process, and the division itself will return a \code{FloatNumber}. An example of how the numbers are processed can be seen in Figure \ref{fig:long-division-preprocessing}.
+When conducting division operations involving two numbers with fractional components, the digit tuples of fractional parts are padded with zeroes to ensure equal lengths for both tuples. Afterwards, the fractional part is concatenated behind the integer part, creating an integer number compatible with the long division algorithm. Further digit shifting is not necessary, as the orders of magnitude get cancelled out during the division process, and the division itself will return a \code{FloatNumber}. An example of how the numbers are processed can be seen in \ref{fig:long-division-preprocessing}:
 
-\begin{figure}
-  \begin{equation*}
-    \begin{array}{r@{\quad=\quad}r@{\quad=\quad}l}
-      123.456             & 123.456               & 123456 \times 10^{-3}                                                   \\
-      2.5                 & 2.500                 & 2500 \times 10^{-3}                                                     \\
-      \frac{123.456}{2.5} & \frac{123.456}{2.500} & \frac{123456 \times 10^{-3}}{2500 \times 10^{-3}} = \frac{123456}{2500}
-    \end{array}
-  \end{equation*}
-  \caption{Preprocessing of fractional numbers for long division}\label{fig:long-division-preprocessing}
-\end{figure}
+\begin{equation}\label{fig:long-division-preprocessing}
+  \begin{array}{r@{\quad=\quad}r@{\quad=\quad}l}
+    123.456             & 123.456               & 123456 \times 10^{-3}                                                   \\
+    2.5                 & 2.500                 & 2500 \times 10^{-3}                                                     \\
+    \frac{123.456}{2.5} & \frac{123.456}{2.500} & \frac{123456 \times 10^{-3}}{2500 \times 10^{-3}} = \frac{123456}{2500}
+  \end{array}
+\end{equation}
 
 Since both the long division and Euclidean division algorithms exhibit greater complexity and are prone to deep recursion, it is likely that when used, the instantiation depth limit imposed by TypeScript will be exceeded. As a workaround, it is possible to defer the evaluation of a type by rephrasing it as a distributive conditional type. This workaround will be remarkably useful when multiple complex arithmetic operations are chained together, as the $n$-th root operation will exemplify.
 
