@@ -2,7 +2,7 @@ import { IsEvenInt } from "./comparison"
 import { DivideSignFloatNumber, LongDivisionDigit } from "./divide"
 import { MultiplySignFloat } from "./multiply"
 import { SubDigit } from "./subtract"
-import { TrimEnd } from "../utils/array"
+import { TrimEnd, TrimEndAll } from "../utils/array"
 import {
   Digit,
   FloatNumber,
@@ -32,18 +32,19 @@ type PowerAuxInt<
       MultiplySignFloat<X, Y>
     >
 
-// TODO: handle fractional numbers / convert to never
 export type PowerSignFloatNumbers<
   X extends SignFloatNumber,
   N extends SignFloatNumber
-> = N["sign"] extends "-"
-  ? DivideSignFloatNumber<
-      OneSignFloatNumber,
-      X
-    > extends infer Xinv extends SignFloatNumber
-    ? PowerAuxInt<Xinv, N["float"]["int"]>
-    : never
-  : PowerAuxInt<X, N["float"]["int"]>
+> = TrimEndAll<N["float"]["frac"]> extends []
+  ? N["sign"] extends "-"
+    ? DivideSignFloatNumber<
+        OneSignFloatNumber,
+        X
+      > extends infer Xinv extends SignFloatNumber
+      ? PowerAuxInt<Xinv, N["float"]["int"]>
+      : never
+    : PowerAuxInt<X, N["float"]["int"]>
+  : never
 
 export type Power<
   X extends NumberLike,
