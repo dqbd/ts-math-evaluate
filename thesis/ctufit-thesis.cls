@@ -492,11 +492,11 @@
 				frame=single,framerule=0pt,xleftmargin=\fboxsep,xrightmargin=\fboxsep}%
 	}{}%
 	\@ifpackageloaded{minted}{%
-    \captionsetup[listing]{skip=-1pt}
+    \captionsetup[listing]{skip=0pt,position=above}
 		\DeclareRobustCommand{\listingscaption}{\thectufitlistinglabel}%
 		\DeclareRobustCommand{\listoflistingscaption}{\thectufitlollabel}%
 		\usemintedstyle{vs}%
-		\setminted{bgcolor=backgroundgray,baselinestretch=1,xleftmargin=\fboxsep,xrightmargin=\fboxsep}%
+		\setminted{bgcolor=backgroundgray,baselinestretch=1,xleftmargin=0em,xrightmargin=0em,autogobble,stripall}%
 		\setmintedinline{bgcolor={}}
 	}{}%
 }
