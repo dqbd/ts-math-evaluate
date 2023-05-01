@@ -54,7 +54,7 @@ Programovací jazyk TypeScript představil ve verzi 4.1 šablonové literálové
   - `Array` and tuples
 - Type System of TypeScript (with examples / TypeChallenges)
 
-  - Conditional Types and Inferrence
+  - Conditional Types and Inference
   - Loops via Recursive Types
   - Equality Checks
   - Limitations (and how to bypass them)

@@ -175,9 +175,9 @@ type PowerAuxInt<
 
 \subsection{$n$-th root extraction}
 
-There are some cases where an operation is sufficiently complex enough that the type instantiation limit is reached, and TypeScript will prematurely abort type checking instead. One such example is the $n$-th root extraction of a number. The implementation uses the Newton-Raphson method.
+There are some cases where an operation is so complex that the type instantiation limit is reached, and TypeScript will prematurely abort type checking of the entire file. One such example is the $n$-th root extraction of a number. The implementation uses the Newton-Raphson method.
 
-The Newton-Raphson method is an iterative numerical method for estimating the roots of real-valued functions. Assuming the function $f(x)$ is derivable on $x \ge 0$ and an initial guess for root is $x_0$, then:
+The Newton-Raphson method \cite{gerlachAcceleratedConvergenceNewton1994} is an iterative numerical method for estimating the roots of real-valued functions. Assuming the function $f(x)$ is derivable on $x \ge 0$ and an initial guess for root is $x_0$, then:
 
 $$x_{k+1} = x_k - \frac{f(x_k)}{f'(x_k)}$$
 

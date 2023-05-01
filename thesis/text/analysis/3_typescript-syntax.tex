@@ -1,6 +1,6 @@
 \section{Typescript syntax}
 
-In TypeScript, types are typically annotated using \code{:[type annotation]} syntax, adding annotations to any of the symbols found in JavaScript, such as variables, function parameters and function return values, to add constraints to values. Type annotations in TypeScript can be categorised into primitive types, literal types, data structure types, union types, intersection types and type parameters. In the following sections, we will explore each of these types in more detail. The following listing \ref{lst:basic-annotation} shows a basic example of TypeScript annotations:
+In TypeScript, types are typically annotated using \code{:[type annotation]} syntax, adding annotations to various constructs in JavaScript, such as variables, function parameters and function return values, to add constraints to values. Type annotations in TypeScript can be categorised into primitive types, literal types, data structure types, union types, intersection types and type parameters. In the following sections, we will explore each of these types in more detail. The following Listing \ref{lst:basic-annotation} shows a basic example of TypeScript annotations:
 
 \begin{listing}[ht]
   \caption{Basic TypeScript annotation example}\label{lst:basic-annotation}
@@ -27,7 +27,7 @@ const greeting: string = formatUserGreeting(user, prefix);
 
 At runtime, every variable has a single concrete value, but in TypeScript, the variable has only a type. A useful mental model for understanding types is to think of the type as a set of permitted values \cite{vanderkamEffectiveTypeScript622019}, effectively describing the domain of the type.
 
-Developers can declare types directly in type annotations, but sometimes developers need to reuse the same type in multiple annotations. To avoid repeating the same declaration, we can use type aliases to refer to a type by a name. These type variables act as an alias, which can be used in place of the type itself. The listing \ref{lst:type-aliases} shows a refactored \code{formatUserGreeting} function of the previous listing \ref{lst:basic-annotation} using type aliases.
+Developers can declare types directly in type annotations, but sometimes developers need to reuse the same type in multiple annotations. To avoid repeating the same declaration, we can use type aliases to refer to a type by a name. These type variables act as an alias, which can be used in place of the type itself. The Listing \ref{lst:type-aliases} shows a refactored \code{formatUserGreeting} function of the previous Listing \ref{lst:basic-annotation} using type aliases.
 
 \begin{listing}[ht]
   \caption{Type aliases}\label{lst:type-aliases}
@@ -51,7 +51,7 @@ function formatUserGreeting(
 
 \subsection{Primitive Types}
 
-A primitive value is data that is not an object and has no methods or properties. These primitives are immutable. Thus, they cannot be altered. The TypeScript type system provides a comprehensive representation of these primitives, as seen in listing \ref{lst:primitive-types}:
+A primitive value is data that is not an object and has no methods or properties. These primitives are immutable. Thus, they cannot be altered. The TypeScript type system provides a comprehensive representation of these primitives, as seen in Listing \ref{lst:primitive-types}:
 
 \begin{listing}[ht]
   \caption{Primitive Types}\label{lst:primitive-types}
@@ -70,7 +70,7 @@ Some primitive values represent a singular data value, such as \code{null} or \c
 
 \subsection{Literal Types}
 
-Literal types are used to describe an exact value as a type. From the point of view of the type system, a literal type is a subset of one of the following primitive types: \code{string}, \code{number}, \code{bignumber} or \code{boolean}\footnote{Both \code{null} and \code{undefined} are literal types as well}, as seen in Listing \ref{lst:literal-types}.
+Literal types are used to describe an exact value as a type. From the point of view of the type system, a literal type is a subset of one of the following primitive types: \code{string}, \code{number}, \code{bignumber} or \code{boolean}\footnote{Both \code{null} and \code{undefined} are literal types as well}, as seen in Listing \ref{lst:literal-types}\footnote{The following listing uses union types, described in Section \ref{sec:union-intersection}}.
 
 \begin{listing}[ht]
   \caption{Literal Types}\label{lst:literal-types}
@@ -166,14 +166,13 @@ const Goose: DuckLike = {
 \end{minted}
 \end{listing}
 
-\subsection{Union and intersection types}
+\subsection{Union and intersection types}\label{sec:union-intersection}
 
 Revisiting the notion of types as sets of values, as seen in Listing \ref{lst:literal-types}, when attempting to assign a value not permitted by the literal type, a type error occurs. In TypeScript, a type is \say{assignable}, if it is either a \say{member of} the set of permitted values defined by the type (when describing relationships between a value and a type, or it is a \say{subset of} the sets (when describing relationships between two types).
 
-
 Sometimes, we need to describe a type, which is a combination of multiple types, combining two sets of values into a single set. This is achievable by using the union operator represented by the \code{|} symbol to describe a type that represents a value, which may be any of one of the combined types referred to as \say{union members} \cite{DocumentationEverydayTypes}. Essentially, \code{X | Y} can be read as a type for a value that can either be of type \code{X} or \code{Y}.
 
-Because behind a union type may be a value of any of the union member types, TypeScript will allow only operations which are valid for every union member. If we want to perform an operation which valid for some of the union members, we must perform type narrowing, which refines a broader type to a more specific narrow one, capturing a subset of values of the original broader type.
+Since a union type can contain a value from any of the member types, TypeScript permits only those operations that are valid for all member types within the union. If we want to perform an operation which valid for some of the union members, we must perform type narrowing, which refines a broader type to a more specific narrow one, capturing a subset of values of the original broader type.
 
 An example can be seen in Listing \ref{lst:union-types}, where the function \code{printUserId} can accept both a \code{string} or a \code{number} as an argument. To invoke \code{toUpperCase()}, a method valid only for values of \code{string} type, we must perform a check if the parameter is a \code{string}. Afterwards, TypeScript has the necessary information to infer that the type of the checked value must be necessary a \code{string} and permits the invocation of \code{toUpperCase()}.
 
@@ -189,8 +188,6 @@ function printUserId(id: string | number) {
 }
   \end{minted}
 \end{listing}
-
-\todo{Add description to namespaces}
 
 An intersection of types can be represented by the \code{\&} operator. Similarly to the union type, \code{X \& Y} can be read as a type for a value that can simultaneously belong to type \code{X} and \code{Y}. These intersection types are of particular interest when working with object types, as an intersection of two object types has all properties of both object types, as an object with both of the properties can be assigned to both of the intersection member types. For this particular reason, intersection types are commonly used to merge two object types, as seen in \ref{lst:intersection-types}\footnote{We can also use \code{extends} keyword to merge two interfaces}.
 
@@ -227,13 +224,11 @@ type Keys = keyof User
 \end{minted}
 \end{listing}
 
-\todo{indexed access type}
-
 \subsection{Special data types}
 
 When working with unions and intersections, we need to be able to describe a type, which can describe a union of all possible types or a type, which is created by intersecting two types with no related properties. We refer to these types as universal supertypes and universal subtypes, respectively. Universal supertypes, also known as top types, are types that are a superset of all other types and are used to represent any possible value. Whereas universal subtypes, also known as bottom types, are types that are a subset of all other types and are often used to describe a type that has no permitted values.
 
-TypeScript includes two top universal supertypes: \code{any} and \code{unknown}. In the case of \code{any}, every type is assignable to type \code{any} and type \code{any} is assignable to every type \cite{TopTypesAny}. \code{any} is acting as an escape hatch to opt out of type checking. This does have unintended consequences, as \code{any} is assignable to every type; it can be assigned to a different type without any warnings. This is especially problematic when dealing with external data as the return type of \code{JSON.parse()} is \code{any}. An example of assignability can be seen at Listing \ref{lst:any-assignability}.
+TypeScript includes two top universal supertypes: \code{any} and \code{unknown}. In the case of \code{any}, every type is assignable to type \code{any} and type \code{any} is assignable to every type \cite{TopTypesAny}. In general, \code{any} can be used as an escape hatch to opt out of type checking. This does have unintended consequences, as \code{any} is assignable to every type; it can be assigned to a different type without any warnings. This is especially problematic when dealing with external data as the return type of \code{JSON.parse()} is \code{any}. An example of assignability can be seen at Listing \ref{lst:any-assignability}.
 
 \begin{listing}[ht]
   \caption{Assignability of any}\label{lst:any-assignability}
@@ -321,6 +316,10 @@ enum Direction {
 }
 \end{minted}
 \end{listing}
+
+\subsection{Namespaces}
+
+\todo{Add description to namespaces}
 
 \subsection{Generic Types}
 
