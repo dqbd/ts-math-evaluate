@@ -319,7 +319,28 @@ enum Direction {
 
 \subsection{Namespaces}
 
-\todo{Add description to namespaces}
+In TypeScript, namespaces, formally known as internal modules, are used to organise code and prevent naming conflicts in the global scope. In order to create a namespace, the \code{namespace} keyword is used, followed by the identifier of the namespace. The code within the namespace, also called the scope of the namespace, is isolated from the global environment, as seen in Listing \ref{lst:namespace}. Only constructs explicitly marked as exported are accessible outside of the namespace, exposed as a single variable with the name of the namespace.
+
+\begin{listing}[ht]
+\caption{Namespace usage}\label{lst:namespace}
+\begin{minted}{TypeScript}
+namespace Example {
+  type Foo = "Foo"
+  const foo: Foo = "Foo"
+  
+  export type Bar = "Bar"
+  export const bar: Bar = "Bar"
+}
+
+// @ts-expect-error Not accessible
+const a = Example.foo 
+
+// Valid code
+const b = Example.bar
+\end{minted}
+\end{listing}
+
+One key benefit of namespaces is the ability to merge multiple namespaces across files. As long as the name of multiple namespaces is the same, the declarations will be merged into a single declaration. This feature can split large scopes into multiple files while exposing all of the properties as a single variable. 
 
 \subsection{Generic Types}
 
