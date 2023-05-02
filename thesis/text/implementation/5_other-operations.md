@@ -2,15 +2,9 @@
 
 ## Comparison
 
-Some operations require an additional type-level operation for comparing
-two numbers, such as the Euclidean division, for deciding whether to
-continue recursion. For that purpose, a type-level three-way comparison
-operator has been implemented, also known as the in the C++ programming
-language [@sutterConsistentComparison2017].
+Some operations require an additional type-level operation for comparing two numbers, such as the Euclidean division, for deciding whether to continue recursion. For that purpose, a type-level three-way comparison operator has been implemented, also known as the in the C++ programming language [@sutterConsistentComparison2017].
 
-The spaceship operator for comparing two numbers $x$ and $y$, denoted by
-$x <=> y$, is defined in equation
-[\[eq:spaceship-operator\]](#eq:spaceship-operator) as follows:
+The spaceship operator for comparing two numbers $x$ and $y$, denoted by $x <=> y$, is defined in equation [\[eq:spaceship-operator\]](#eq:spaceship-operator) as follows:
 
 $$\label{eq:spaceship-operator}
   x <=> y =
@@ -20,13 +14,7 @@ $$\label{eq:spaceship-operator}
     1  & \text{if } x > y
   \end{cases}$$
 
-It is possible to implement the operator entirely within the TypeScript
-type system by decomposing each number into a tuple of elements, where
-the size of the tuple is equal to the number itself. As seen in Listing
-[\[lst:type-level-comparison\]](#lst:type-level-comparison), the
-`CompareTuples` attempts to remove the first element of both tuples
-until one or both of the tuples are empty. The generic type returns the
-appropriate value depending on which tuple is empty first.
+It is possible to implement the operator entirely within the TypeScript type system by decomposing each number into a tuple of elements, where the size of the tuple is equal to the number itself. As seen in Listing [\[lst:type-level-comparison\]](#lst:type-level-comparison), the `CompareTuples` attempts to remove the first element of both tuples until one or both of the tuples are empty. The generic type returns the appropriate value depending on which tuple is empty first.
 
 <div class="listing">
 
@@ -46,18 +34,9 @@ type Compare<X extends number, Y extends number> =
 
 </div>
 
-As is the case for addition, subtraction and multiplication, it is
-desirable to precompute these values for every combination of digits and
-store them in a lookup table.
+As is the case for addition, subtraction and multiplication, it is desirable to precompute these values for every combination of digits and store them in a lookup table.
 
-The comparison of digit tuples is implemented by first ensuring the two
-tuples are of equal length by padding the shorter tuple with zeroes at
-the beginning. The first elements of both tuples are extracted into two
-type variables, `XHead` and `YHead`, and are compared using the lookup
-table. If the digits are equal, the recursion continues with the rest of
-the tuples, named `XRest` and `YRest`. Otherwise, the result of the last
-digit comparison is returned. The full implementation can be seen in
-Listing [\[lst:digit-tuple-comparison\]](#lst:digit-tuple-comparison).
+The comparison of digit tuples is implemented by first ensuring the two tuples are of equal length by padding the shorter tuple with zeroes at the beginning. The first elements of both tuples are extracted into two type variables, `XHead` and `YHead`, and are compared using the lookup table. If the digits are equal, the recursion continues with the rest of the tuples, named `XRest` and `YRest`. Otherwise, the result of the last digit comparison is returned. The full implementation can be seen in Listing [\[lst:digit-tuple-comparison\]](#lst:digit-tuple-comparison).
 
 <div class="listing">
 
@@ -79,12 +58,7 @@ type CompareArr<X extends Digit[], Y extends Digit[]> =
 
 ## Numeric rounding operations
 
-The library implements four operations performing numeric rounding.
-Truncation is the simplest of the four implementations, where the
-parsing of numbers into a structured object type is doing the heavy
-lifting. The truncation itself is done by replacing the fractional part
-of a number with an empty tuple, as seen in Listing
-[\[lst:truncation\]](#lst:truncation)
+The library implements four operations performing numeric rounding. Truncation is the simplest of the four implementations, where the parsing of numbers into a structured object type is doing the heavy lifting. The truncation itself is done by replacing the fractional part of a number with an empty tuple, as seen in Listing [\[lst:truncation\]](#lst:truncation)
 
 <div class="listing">
 
@@ -95,14 +69,7 @@ type Truncate<Number extends SignFloatNumber> =
 
 </div>
 
-Ceiling and flooring are more complex operations. In the case of the
-ceiling operation, the number is first truncated and then checked to see
-if the input number is greater than the truncated number. If that is the
-case, the truncated number is incremented by one and returned. This
-behaviour is done to obtain the same result when flooring a negative
-number. For flooring, the process is similar, but the truncated number
-is decremented by one if the original number is less than the truncated
-number. The implementation can be seen in [\[lst:floor\]](#lst:floor).
+Ceiling and flooring are more complex operations. In the case of the ceiling operation, the number is first truncated and then checked to see if the input number is greater than the truncated number. If that is the case, the truncated number is incremented by one and returned. This behaviour is done to obtain the same result when flooring a negative number. For flooring, the process is similar, but the truncated number is decremented by one if the original number is less than the truncated number. The implementation can be seen in [\[lst:floor\]](#lst:floor).
 
 <div class="listing">
 
@@ -121,12 +88,7 @@ type Floor<Number extends SignFloatNumber> =
 
 </div>
 
-Rounding is the most complex of the four rounding operations. The
-fractional part's first digit is checked to determine whether it is
-assignable to the union of rounding up digits ($\{ 5,6,7,8,9 \}$). If
-that is the case, the truncated number is incremented by one and
-returned. Otherwise, the truncated number is returned as is, seen in
-Listing [\[lst:round\]](#lst:round).
+Rounding is the most complex of the four rounding operations. The fractional part's first digit is checked to determine whether it is assignable to the union of rounding up digits ($\{ 5,6,7,8,9 \}$). If that is the case, the truncated number is incremented by one and returned. Otherwise, the truncated number is returned as is, seen in Listing [\[lst:round\]](#lst:round).
 
 <div class="listing">
 
@@ -152,15 +114,9 @@ type RoundSignFloatNumber<Number extends SignFloatNumber> =
 
 ## Exponentiation
 
-A naive implementation of exponentiation would be based on repeated
-multiplication. This is an inefficient approach, as the complexity of
-such an algorithm would be $O(M(x) \cdot 10^n) = O(n^2 \cdot 10^n)$,
-where $n$ is the number of digits and $M(x)$ is the complexity of
-multiplication algorithm, in this instance $O(n^2)$.
+A naive implementation of exponentiation would be based on repeated multiplication. This is an inefficient approach, as the complexity of such an algorithm would be $O(M(x) \cdot 10^n) = O(n^2 \cdot 10^n)$, where $n$ is the number of digits and $M(x)$ is the complexity of multiplication algorithm, in this instance $O(n^2)$.
 
-A more efficient exponentiation method is to perform binary
-exponentiation instead, as seen in equation
-[\[eq:exponentiation-by-squaring\]](#eq:exponentiation-by-squaring):
+A more efficient exponentiation method is to perform binary exponentiation instead, as seen in equation [\[eq:exponentiation-by-squaring\]](#eq:exponentiation-by-squaring):
 
 $$\label{eq:exponentiation-by-squaring}
   x^n =
@@ -171,16 +127,9 @@ $$\label{eq:exponentiation-by-squaring}
     (\frac{1}{x})^n             & \text{if } n < 0
   \end{cases}$$
 
-It can be shown that the complexity of the algorithm is
-$O(n^2 \cdot \log_2(10^n))$, a notable improvement over the naive
-approach.
+It can be shown that the complexity of the algorithm is $O(n^2 \cdot \log_2(10^n))$, a notable improvement over the naive approach.
 
-Parity checks done by `IsEventInt` as seen in Listing
-[\[lst:parity-check\]](#lst:parity-check) are done by checking the last
-digit of the exponent. Once again, the even digits are represented by a
-union type of number literal types. Notably, the conditional type is not
-a type itself. Developers need to write `true` and `false` types
-explicitly.
+Parity checks done by `IsEventInt` as seen in Listing [\[lst:parity-check\]](#lst:parity-check) are done by checking the last digit of the exponent. Once again, the even digits are represented by a union type of number literal types. Notably, the conditional type is not a type itself. Developers need to write `true` and `false` types explicitly.
 
 <div class="listing">
 
@@ -197,15 +146,7 @@ explicitly.
 
 </div>
 
-The implementation shown in Listing
-[\[lst:exponentiation-by-squaring-ts\]](#lst:exponentiation-by-squaring-ts)
-does require trimming of excess zeroes in the exponent to ensure the
-correctness of a fast assignability check for termination conditions.
-The implementation differs from the algorithm in Figure
-[\[fig:exponentiation-by-squaring\]](#fig:exponentiation-by-squaring) in
-that the `PowerAuxInt` includes an optional type argument `Y` used to
-convert the method to a tail-recursive generic type, bypassing the need
-for deferring the instantiation to avoid the depth limit.
+The implementation shown in Listing [\[lst:exponentiation-by-squaring-ts\]](#lst:exponentiation-by-squaring-ts) does require trimming of excess zeroes in the exponent to ensure the correctness of a fast assignability check for termination conditions. The implementation differs from the algorithm in Figure [\[fig:exponentiation-by-squaring\]](#fig:exponentiation-by-squaring) in that the `PowerAuxInt` includes an optional type argument `Y` used to convert the method to a tail-recursive generic type, bypassing the need for deferring the instantiation to avoid the depth limit.
 
 <div class="listing">
 
@@ -233,23 +174,13 @@ type PowerAuxInt<
 
 ## $n$-th root extraction
 
-There are some cases where an operation is so complex that the type
-instantiation limit is reached, and TypeScript will prematurely abort
-type checking of the entire file. One such example is the $n$-th root
-extraction of a number. The implementation uses the Newton-Raphson
-method.
+There are some cases where an operation is so complex that the type instantiation limit is reached, and TypeScript will prematurely abort type checking of the entire file. One such example is the $n$-th root extraction of a number. The implementation uses the Newton-Raphson method.
 
-The Newton-Raphson method [@gerlachAcceleratedConvergenceNewton1994] is
-an iterative numerical method for estimating the roots of real-valued
-functions. Assuming the function $f(x)$ is derivable on $x \ge 0$ and an
-initial guess for root is $x_0$, then:
+The Newton-Raphson method [@gerlachAcceleratedConvergenceNewton1994] is an iterative numerical method for estimating the roots of real-valued functions. Assuming the function $f(x)$ is derivable on $x \ge 0$ and an initial guess for root is $x_0$, then:
 
 $$x_{k+1} = x_k - \frac{f(x_k)}{f'(x_k)}$$
 
-Thus, to estimate the $n$-th root of a number, declared by the function
-$f(x) = x^n - \alpha$, where $\alpha$ is the target number to apply
-$n$-th root and $n$ is the degree of the root, the following definition
-for the next approximation is used:
+Thus, to estimate the $n$-th root of a number, declared by the function $f(x) = x^n - \alpha$, where $\alpha$ is the target number to apply $n$-th root and $n$ is the degree of the root, the following definition for the next approximation is used:
 
 $$\begin{split}
     x_{k+1} & = x_k - \frac{f(x_k)}{f'(x_k)}                                                                         \\
@@ -259,19 +190,9 @@ $$\begin{split}
             & = L \cdot x_k + R \cdot \frac{1}{x_k^{n-1}}                                                            \\
   \end{split}$$
 
-A naive implementation can be done by intimately mirroring the algorithm
-and nesting the generic types for readability, shown in Listing
-[\[lst:root-wrong\]](#lst:root-wrong). However, as it turns out,
-TypeScript will bail out due to the depth limit. Instead, to bypass the
-limit, the final implementation seen in Listing
-[\[lst:root-right\]](#lst:root-right) uses `infer` keyword to defer
-instantiation as much as possible, essentially treating `infer` as a way
-to assign intermediate values to variables.
+A naive implementation can be done by intimately mirroring the algorithm and nesting the generic types for readability, shown in Listing [\[lst:root-wrong\]](#lst:root-wrong). However, as it turns out, TypeScript will bail out due to the depth limit. Instead, to bypass the limit, the final implementation seen in Listing [\[lst:root-right\]](#lst:root-right) uses `infer` keyword to defer instantiation as much as possible, essentially treating `infer` as a way to assign intermediate values to variables.
 
-Even so, it is not desired for the algorithm to run indefinitely;
-instead, the iteration is cut off after seven iterations, as more
-iterations will cause the type checker to reach the instantiation limit
-when evaluating.
+Even so, it is not desired for the algorithm to run indefinitely; instead, the iteration is cut off after seven iterations, as more iterations will cause the type checker to reach the instantiation limit when evaluating.
 
 <div class="listing">
 

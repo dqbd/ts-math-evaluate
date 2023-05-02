@@ -1,12 +1,6 @@
 # Addition and Subtraction
 
-When representing the numbers as tuple lengths, some operations, such as
-addition and subtraction, can be easily implemented by spreading or
-inference, as seen in Listing
-[\[lst:tuple-addition\]](#lst:tuple-addition). In the case of the
-addition operation, a new tuple type is created by spreading the
-elements of both tuples into a new tuple, which is then used to obtain
-the length representing the result.
+When representing the numbers as tuple lengths, some operations, such as addition and subtraction, can be easily implemented by spreading or inference, as seen in Listing [\[lst:tuple-addition\]](#lst:tuple-addition). In the case of the addition operation, a new tuple type is created by spreading the elements of both tuples into a new tuple, which is then used to obtain the length representing the result.
 
 <div class="listing">
 
@@ -19,18 +13,7 @@ type Add<A extends number, B extends number> = [
 
 </div>
 
-The subtraction operation, assuming the first number is larger than the
-second one, is implemented with the idea that the tuple type of a first
-number contains all of the elements of the second number with a
-remainder. As seen in Listing
-[\[lst:tuple-subtraction\]](#lst:tuple-subtraction), the `Subtract`
-generic type accepts two type arguments, `A` and `B`, which represent
-the numbers to subtract. A conditional type is used to check if
-`ParseNumber<A>` is assignable to a tuple that contains the elements of
-`ParseNumber<B>` followed by a remainder of the `number[]` type,
-inferred in a new type named `Remainder`. If true, the length of the
-`Remainder` is returned as the result of the subtraction operation.
-Otherwise, the `never` type is returned instead.
+The subtraction operation, assuming the first number is larger than the second one, is implemented with the idea that the tuple type of a first number contains all of the elements of the second number with a remainder. As seen in Listing [\[lst:tuple-subtraction\]](#lst:tuple-subtraction), the `Subtract` generic type accepts two type arguments, `A` and `B`, which represent the numbers to subtract. A conditional type is used to check if `ParseNumber<A>` is assignable to a tuple that contains the elements of `ParseNumber<B>` followed by a remainder of the `number[]` type, inferred in a new type named `Remainder`. If true, the length of the `Remainder` is returned as the result of the subtraction operation. Otherwise, the `never` type is returned instead.
 
 <div class="listing">
 
@@ -48,31 +31,11 @@ type Subtract<
 
 </div>
 
-As described in the previous section, the final implementation of the
-addition operation based on object representation of numbers is the
-traditional schoolbook addition with carry. The algorithm adds the
-numbers digit by digit and keeps track of the carry as it moves from one
-digit to the next. This technique has a time complexity of $\Theta(n)$,
-where $n$ is the number of digits in the number being added.
+As described in the previous section, the final implementation of the addition operation based on object representation of numbers is the traditional schoolbook addition with carry. The algorithm adds the numbers digit by digit and keeps track of the carry as it moves from one digit to the next. This technique has a time complexity of $\Theta(n)$, where $n$ is the number of digits in the number being added.
 
-The core building block of the schoolbook addition and subtraction
-algorithm is the ability to obtain the next digit alongside the carry or
-borrow flag when performing the operation on single decimal digits. This
-can be purely done in the type system alone using tuple expansion and
-checking for the stringified length of the tuple, as seen in
-[\[lst:generated-operations\]](#lst:generated-operations), but to
-improve the performance and avoid unnecessary type instantiations, a
-lookup table is used to obtain the next digit and the carry flag
-instead. The subtraction operation is implemented similarly, where a
-two-dimensional lookup table of tuples is used to obtain the next digit
-and the borrow flag.
+The core building block of the schoolbook addition and subtraction algorithm is the ability to obtain the next digit alongside the carry or borrow flag when performing the operation on single decimal digits. This can be purely done in the type system alone using tuple expansion and checking for the stringified length of the tuple, as seen in [\[lst:generated-operations\]](#lst:generated-operations), but to improve the performance and avoid unnecessary type instantiations, a lookup table is used to obtain the next digit and the carry flag instead. The subtraction operation is implemented similarly, where a two-dimensional lookup table of tuples is used to obtain the next digit and the borrow flag.
 
-The lookup table is created by iterating over all possible combinations
-of two digits and storing the result of the addition and the carry flag
-in a two-dimensional map. To improve the performance even further, the
-lookup tables of both the addition and subtraction operations are
-generated as a built step in JavaScript and stored in a separate file,
-which is later imported into the type system.
+The lookup table is created by iterating over all possible combinations of two digits and storing the result of the addition and the carry flag in a two-dimensional map. To improve the performance even further, the lookup tables of both the addition and subtraction operations are generated as a built step in JavaScript and stored in a separate file, which is later imported into the type system.
 
 <div class="listing">
 
@@ -97,36 +60,13 @@ type AddMapCarry = {
 
 </div>
 
-The schoolbook addition algorithm, seen in Listing
-[\[lst:addition-algorithm\]](#lst:addition-algorithm), is implemented as
-three generic types. `AddWithCarry` accepts two digits named `Left` and
-`Right` and a carry flag as type arguments and is responsible for adding
-the two digits and propagating the carry flag to the next digit. It will
-first check if the `Carry` type is assignable to `true`, and if it is
-assignable, it will increment the `Left` digit. The `AddMapCarry` is
-used to obtain the result, and the `Or` generic type implements the
-binary disjunction operation to determine the carry flag in case of
-multiple additions due to `Carry` being true.
+The schoolbook addition algorithm, seen in Listing [\[lst:addition-algorithm\]](#lst:addition-algorithm), is implemented as three generic types. `AddWithCarry` accepts two digits named `Left` and `Right` and a carry flag as type arguments and is responsible for adding the two digits and propagating the carry flag to the next digit. It will first check if the `Carry` type is assignable to `true`, and if it is assignable, it will increment the `Left` digit. The `AddMapCarry` is used to obtain the result, and the `Or` generic type implements the binary disjunction operation to determine the carry flag in case of multiple additions due to `Carry` being true.
 
-`AddArr` is responsible for adding two tuples of digits. `AddArr` will
-attempt to extract the rightmost digit from both tuples and add them
-using `AddWithCarry`. The `AddArr` will be called recursively with the
-remaining digits and the carry flag from the previous addition until
-both of the tuples are empty. Note that both of the digit tuples must
-have the same length to prevent premature bailouts.
+`AddArr` is responsible for adding two tuples of digits. `AddArr` will attempt to extract the rightmost digit from both tuples and add them using `AddWithCarry`. The `AddArr` will be called recursively with the remaining digits and the carry flag from the previous addition until both of the tuples are empty. Note that both of the digit tuples must have the same length to prevent premature bailouts.
 
-Finally, `AddInt` will add two digit tuples by first padding them into
-tuples of the same length by prefixing them with zeroes and then calling
-`AddArr` to perform addition itself. If `Carry` is assignable to `true`,
-an extra `1` digit is prepended to the result.
+Finally, `AddInt` will add two digit tuples by first padding them into tuples of the same length by prefixing them with zeroes and then calling `AddArr` to perform addition itself. If `Carry` is assignable to `true`, an extra `1` digit is prepended to the result.
 
-These foundational blocks can be further chained to add support for
-fractional numbers and signed numbers. As seen in Listing
-[\[lst:addition-algorithm\]](#lst:addition-algorithm), `AddFloatNumber`
-will first extract the integer and fractional parts of a number,
-performing integer addition on both parts separately. The carry flag is
-propagated appropriately from the fractional part to the integer part by
-recursively calling `AddFloatNumber` to increment the result.
+These foundational blocks can be further chained to add support for fractional numbers and signed numbers. As seen in Listing [\[lst:addition-algorithm\]](#lst:addition-algorithm), `AddFloatNumber` will first extract the integer and fractional parts of a number, performing integer addition on both parts separately. The carry flag is propagated appropriately from the fractional part to the integer part by recursively calling `AddFloatNumber` to increment the result.
 
 <div class="listing">
 
@@ -166,15 +106,7 @@ B extends FloatNumber
 
 </div>
 
-When working with subtraction, underflows are resolved by implementing
-digit comparison. Similarly to addition and subtraction, the comparison
-operation is performed per digit, utilising an additional
-two-dimensional lookup table with all possible digit comparison results
-represented as a number from the following set: $\{ -1, 0, 1 \}$. Based
-on the comparison result, the operation can be decided by using a map
-object type with the comparison result as the key and the operation as
-the value, seen in Listing
-[\[lst:subtractor-switching\]](#lst:subtractor-switching).
+When working with subtraction, underflows are resolved by implementing digit comparison. Similarly to addition and subtraction, the comparison operation is performed per digit, utilising an additional two-dimensional lookup table with all possible digit comparison results represented as a number from the following set: $\{ -1, 0, 1 \}$. Based on the comparison result, the operation can be decided by using a map object type with the comparison result as the key and the operation as the value, seen in Listing [\[lst:subtractor-switching\]](#lst:subtractor-switching).
 
 <div class="listing">
 
@@ -188,10 +120,7 @@ type SubOperatorSwitch<A extends FloatNumber, B extends FloatNumber> = {
 
 </div>
 
-Finally, to simplify dealing with signed operations, an object type with
-all possible sign pairs can be used to determine whether to invoke
-addition or subtraction, as seen in Listing
-[\[lst:addition-signed\]](#lst:addition-signed).
+Finally, to simplify dealing with signed operations, an object type with all possible sign pairs can be used to determine whether to invoke addition or subtraction, as seen in Listing [\[lst:addition-signed\]](#lst:addition-signed).
 
 <div class="listing">
 
