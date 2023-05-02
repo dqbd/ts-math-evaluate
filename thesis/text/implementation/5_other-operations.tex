@@ -126,7 +126,7 @@ A more efficient exponentiation method is to perform binary exponentiation inste
 
 It can be shown that the complexity of the algorithm is $O(n^2 \cdot \log_2(10^n))$, a notable improvement over the naive approach.
 
-Parity checks done by \code{IsEventInt} as seen in Listing \ref{lst:parity-check} are done by checking the last digit of the exponent. Once again, the even digits are represented by a union type of number literal types. Notably, the conditional type is not a type itself. Developers need to write \code{true} and \code{false} types explicitly.
+Parity checks done by \code{IsEventInt} as seen in Listing \ref{lst:parity-check} are done by checking the last digit of the exponent. Once again, the even digits are represented by a union type of number literal types. Notably, the conditional type is not a type itself. Developers need to write the \code{true} and \code{false} types explicitly.
 
 \begin{listing}[ht]
   \begin{minted}{TypeScript}
@@ -169,7 +169,7 @@ type PowerAuxInt<
 
 \subsection{$n$-th root extraction}
 
-There are some cases where an operation is so complex that the type instantiation limit is reached, and TypeScript will prematurely abort type-checking of the entire file. One such example is the $n$-th root extraction of a number. The implementation uses the Newton-Raphson method.
+There are some cases where an operation is so complex that the type instantiation limit is reached, and TypeScript will prematurely abort the type-checking of the entire file. One such example is the $n$-th root extraction of a number. The implementation uses the Newton-Raphson method.
 
 The Newton-Raphson method \cite{gerlachAcceleratedConvergenceNewton1994} is an iterative numerical method for estimating the roots of real-valued functions. Assuming the function $f(x)$ is derivable on $x \ge 0$ and an initial guess for root is $x_0$, then:
 
@@ -189,7 +189,7 @@ Thus, to estimate the $n$-th root of a number, declared by the function $f(x) = 
   \end{split}
 \end{equation}
 
-A naive implementation can be done by intimately mirroring the algorithm and nesting the generic types for readability, shown in Listing \ref{lst:root-wrong}. However, as it turns out, TypeScript will bail out due to the depth limit. Instead, to bypass the limit, the final implementation seen in Listing \ref{lst:root-right} uses \code{infer} keyword to defer instantiation as much as possible, essentially treating \code{infer} as a way to assign intermediate values to variables.
+A naive implementation can be done by intimately mirroring the algorithm and nesting the generic types for readability, shown in Listing \ref{lst:root-wrong}. However, as it turns out, TypeScript will bail out due to the depth limit. Instead, to bypass the limit, the final implementation seen in Listing \ref{lst:root-right} uses the \code{infer} keyword to defer instantiation as much as possible, essentially treating \code{infer} as a way to assign intermediate values to variables.
 
 Even so, it is not desired for the algorithm to run indefinitely; instead, the iteration is cut off after seven iterations, as more iterations will cause the type checker to reach the instantiation limit when evaluating.
 

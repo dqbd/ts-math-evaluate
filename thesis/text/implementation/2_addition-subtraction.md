@@ -35,7 +35,7 @@ As described in the previous section, the final implementation of the addition o
 
 The core building block of the schoolbook addition and subtraction algorithm is the ability to obtain the next digit alongside the carry or borrow flag when performing the operation on single decimal digits. This can be purely done in the type system alone using tuple expansion and checking for the stringified length of the tuple, as seen in [\[lst:generated-operations\]](#lst:generated-operations), but to improve the performance and avoid unnecessary type instantiations, a lookup table is used to obtain the next digit and the carry flag instead. The subtraction operation is implemented similarly, where a two-dimensional lookup table of tuples is used to obtain the next digit and the borrow flag.
 
-The lookup table is created by iterating over all possible combinations of two digits and storing the result of the addition and the carry flag in a two-dimensional map. To improve the performance even further, the lookup tables of both the addition and subtraction operations are generated as a built step in JavaScript and stored in a separate file, which is later imported into the type system.
+The lookup table is created by iterating over all possible combinations of two digits and storing the result of the addition and the carry flag in a two-dimensional map. In order to improve the performance even further, the lookup tables of both the addition and subtraction operations are generated as a built step in JavaScript and stored in a separate file, which is later imported into the type system.
 
 <div class="listing">
 
@@ -60,7 +60,7 @@ type AddMapCarry = {
 
 </div>
 
-The schoolbook addition algorithm, seen in Listing [\[lst:addition-algorithm\]](#lst:addition-algorithm), is implemented as three generic types. `AddWithCarry` accepts two digits named `Left` and `Right` and a carry flag as type arguments and is responsible for adding the two digits and propagating the carry flag to the next digit. It will first check if the `Carry` type is assignable to `true`, and if it is assignable, it will increment the `Left` digit. The `AddMapCarry` is used to obtain the result, and the `Or` generic type implements the binary disjunction operation to determine the carry flag in case of multiple additions due to `Carry` being true.
+The schoolbook addition algorithm, seen in Listing [\[lst:addition-algorithm\]](#lst:addition-algorithm), is implemented as three generic types. `AddWithCarry` accepts two digits named `Left` and `Right` and a carry flag as type arguments and is responsible for adding the two digits and propagating the carry flag to the next digit. It will first check if the `Carry` type is assignable to `true`; if it is assignable, it will increment the `Left` digit. The `AddMapCarry` is used to obtain the result, and the `Or` generic type implements the binary disjunction operation to determine the carry flag in case of multiple additions due to `Carry` being true.
 
 `AddArr` is responsible for adding two tuples of digits. `AddArr` will attempt to extract the rightmost digit from both tuples and add them using `AddWithCarry`. The `AddArr` will be called recursively with the remaining digits and the carry flag from the previous addition until both of the tuples are empty. Note that both of the digit tuples must have the same length to prevent premature bailouts.
 

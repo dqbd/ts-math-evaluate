@@ -2,7 +2,7 @@
 
 As powerful as the type system in TypeScripts, there are certain limitations that need to be addressed when working with literal numerical types. Namely, although TypeScript type syntax includes number literal types, useful for representing specific numeric values, these types do not directly support mathematical operations, such as addition or subtraction. Due to these limitations, other methods of representing numbers are explored in this thesis.
 
-One approach to representing numbers in TypeScript is to use tuples types. As described in \ref{sec:typescript-data-structures}, tuple types allow developers to describe a fixed-length JavaScript array where each element can have a specific type. As it represents a JavaScript array, the type includes all of the properties and methods found in an array, including \code{length} property, which contains the actual number of elements in the tuple. This feature can be used to represent a number, as the length of the tuple can represent the number itself, as seen in Listing \ref{lst:tuple-representation}. The actual type of a member item in a tuple is irrelevant, as the type system only cares about the length of the tuple, but for clarity purposes, the literal type \code{0} can be used as the element type of a tuple.
+One approach to representing numbers in TypeScript is to use tuples types. As described in \ref{sec:typescript-data-structures}, tuple types allow developers to define a fixed-length JavaScript array where each element can have a specific type. As it represents a JavaScript array, the type includes all of the properties and methods found in an array, including the \code{length} property, which contains the actual number of elements in the tuple. This feature can be used to represent a number, as the length of the tuple can represent the number itself, as seen in Listing \ref{lst:tuple-representation}. The actual type of a member item in a tuple is irrelevant, as the type system only cares about the length of the tuple, but for clarity purposes, the literal type \code{0} can be used as the element type of a tuple.
 
 \begin{listing}[ht]
   \begin{minted}{TypeScript}
@@ -80,7 +80,7 @@ type SignFloatNumber<
   \caption{Interface representation of numbers}\label{lst:object-representation}
 \end{listing}
 
-Parsing a number type into digits can be done by recursive types, as seen in Listing \ref{lst:object-parse}. First, \code{ParseSignFloatNumber} attempts to infer the sign of the stringified number literal type into a new \code{TSign} type. Afterwards, \code{ParseFloatNumber} generic type attempts to split the stringified literal into an integer and a fractional part. Both parts are later parsed separately in \code{ParseNumber}, matching if each string contains only digits.
+Parsing a number type into digits can be done by recursive types, as seen in Listing \ref{lst:object-parse}. First, \code{ParseSignFloatNumber} attempts to infer the sign of the stringified number literal type into a new \code{TSign} type. Afterwards, the \code{ParseFloatNumber} generic type attempts to split the stringified literal into an integer and a fractional part. Both parts are later parsed separately in \code{ParseNumber}, matching if each string contains only digits.
 
 \begin{listing}[ht]
   \begin{minted}{TypeScript}

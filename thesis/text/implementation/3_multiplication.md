@@ -1,6 +1,6 @@
 # Multiplication
 
-A naive implementation of the multiplication algorithm can be created by repeatably adding the multiplicand when numbers are represented by tuple length, as seen in Listing [\[lst:naive-multiplication\]](#lst:naive-multiplication). `Multiply` generic type has two mandatory type parameters: `A` and `B` representing the multiplicand and multiplier respectively. The optional type parameter `Left` is used to track how many iterations are left before the recursion terminates. This method is considered ineffective, as the number of recursion calls is proportional to the size of the multiplicand, and the method can easily reach the instantiation depth limit with large multiplicands.
+A naive implementation of the multiplication algorithm can be created by repeatably adding the multiplicand when numbers are represented by tuple length, as seen in Listing [\[lst:naive-multiplication\]](#lst:naive-multiplication). `Multiply` generic type has two mandatory type parameters: `A` and `B` representing the multiplicand and multiplier, respectively. The optional type parameter `Left` is used to track how many iterations are left before the recursion terminates. This method is considered ineffective, as the number of recursion calls is proportional to the size of the multiplicand, and the method can easily reach the instantiation depth limit with large multiplicands.
 
 <div class="listing">
 

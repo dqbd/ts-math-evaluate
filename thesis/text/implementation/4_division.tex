@@ -6,7 +6,7 @@ The implementation of the division algorithm is split into two main parts: the E
   x = y\cdot q + r \qquad \text{if } 0 \le r < |b|
 \end{equation}
 
-The Euclidean algorithm finds the quotient and the remainder using repeated subtraction as seen in \ref{lst:euclidean-division}. The \code{DivisionResult} contains both the temporary quotient and remainder values passed to the next iteration. The \code{EuclideanDivision} generic type first checks if the remainder is greater than or equal to the divisor. If that is the case, the quotient is incremented by one using \code{AddInt} generic type and the remainder is subtracted by the divisor using \code{SubDigit}. The process is repeated until the remainder is less than the divisor, at which point the computed quotient and remainder are returned.
+The Euclidean algorithm finds the quotient and the remainder using repeated subtraction as seen in \ref{lst:euclidean-division}. The \code{DivisionResult} contains both the temporary quotient and remainder values passed to the next iteration. The \code{EuclideanDivision} generic type first checks if the remainder is greater than or equal to the divisor. If that is the case, the quotient is incremented by one using the \code{AddInt} generic type and the remainder is subtracted by the divisor using \code{SubDigit}. The process is repeated until the remainder is less than the divisor, at which point the computed quotient and remainder are returned.
 
 \begin{listing}[ht]
   \begin{minted}{TypeScript}
@@ -33,7 +33,7 @@ type EuclideanDivision<
   \caption{Euclidean division}\label{lst:euclidean-division}
 \end{listing}
 
-The long division algorithm, seen in \ref{lst:long-division} as \code{LongDivisionDigit} generic type, implemented in this thesis builds upon the foundation of the Euclidean division. In each iteration, the leftmost digit is popped from the dividend and pushed to the end of the accumulated remainder. Subsequently, pass the newly created tuple as the remainder for the Euclidean division, together with the divisor. The next invocation of \code{LongDivisionDigit} takes the resulting dividend, the divisor and the updated accumulator of \code{DivisionResult} type. The updated \code{DivisionResult} instance has the remainder copied and the quotient concatenated from the result of the Euclidean division. The process is repeated until all digits in the dividend have been used. Finally, the quotient and remainder are returned, with the leading zeros removed.
+The long division algorithm, seen in \ref{lst:long-division} as the \code{LongDivisionDigit} generic type, implemented in this thesis builds upon the foundation of the Euclidean division. In each iteration, the leftmost digit is popped from the dividend and pushed to the end of the accumulated remainder. Subsequently, pass the newly created tuple as the remainder for the Euclidean division, together with the divisor. The subsequent invocation of \code{LongDivisionDigit} takes the resulting dividend, the divisor and the updated accumulator of the \code{DivisionResult} type. The updated \code{DivisionResult} instance has the remainder copied and the quotient concatenated from the result of the Euclidean division. The process is repeated until all digits in the dividend have been used. Finally, the quotient and remainder are returned, with the leading zeros removed.
 
 \begin{listing}[ht]
   \begin{minted}{TypeScript}
@@ -75,4 +75,4 @@ When conducting division operations involving two numbers with fractional compon
 
 Since both the long division and Euclidean division algorithms exhibit greater complexity and are prone to deep recursion, it is likely that when used, the instantiation depth limit imposed by TypeScript will be exceeded. As a workaround, it is possible to defer the evaluation of a type by rephrasing it as a distributive conditional type. This workaround will be remarkably useful when multiple complex arithmetic operations are chained together, as the $n$-th root operation will exemplify.
 
-Modulo operation builds on top of the division, multiplication and subtraction algorithm by calculating the floor of the division result obtained when dividing the dividend by the divisor. Subsequently, the result is multiplied by the divisor and finally subtracted from the dividend to obtain the final result of the modulo operation.
+Modulo operation builds on top of the division, multiplication and subtraction algorithm by calculating the floor of the division result obtained when dividing the dividend by the divisor. Subsequently, the result is multiplied by the divisor and finally subtracted from the dividend to get the final result of the modulo operation.

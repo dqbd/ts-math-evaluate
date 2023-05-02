@@ -26,7 +26,7 @@ namespace Token {
   \caption{Lexer token namespace}\label{lst:lexer-token-namespace}
 \end{listing}
 
-The lexing itself is done by a generic type, which accepts a string literal type as a type argument and returns either a string enum as an error or an object type containing the matched token and the remaining unparsed input. As seen in Listing \code{lst:lexer-structure}, the \code{HandleToken} attempts to perform pattern matching on the first character of the input string literal type \code{T}. If succeeded, the matched token is returned wrapped in an object type defined by \code{LexResult} generic type, passing both the matched token and the remaining input to the next iteration of the \code{HandleToken} generic type. If the pattern matching fails, the \code{Error.Lexer} string enum is returned instead. This structure can be chained together to create a lexer for multiple token types, such as function keywords or numbers.
+The lexing itself is done by a generic type, which accepts a string literal type as a type argument and returns either a string enum as an error or an object type containing the matched token and the remaining unparsed input. As seen in Listing \code{lst:lexer-structure}, the \code{HandleToken} attempts to perform pattern matching on the first character of the input string literal type \code{T}. If succeeded, the matched token is returned wrapped in an object type defined by the \code{LexResult} generic type, passing both the matched token and the remaining input to the next iteration of the \code{HandleToken} generic type. If the pattern matching fails, the \code{Error.Lexer} string enum is returned instead. This structure can be chained together to create a lexer for multiple token types, such as function keywords or numbers.
 
 \begin{listing}[ht]
   \begin{minted}{TypeScript}
@@ -57,7 +57,7 @@ In order to explain the LL(1) parser, the following sections will describe the c
 
 A derivation can be visualised as a tree, also known as the derivation tree or parse tree. Each node of the tree represents a symbol in the string, and each edge represents a production rule application. The root of the tree is the start symbol of the grammar, and the leaves are the terminal symbols of the string.
 
-There are multiple ways to construct a derivation tree: either by replacing the leftmost non-terminal symbol with the righthand side of a production rule or by replacing the rightmost non-terminal symbol with the righthand side of a production rule. The former is known as the leftmost derivation, while the latter is known as the rightmost derivation. Finally, an ambiguous grammar is a grammar that can produce multiple derivation trees for the same string.
+There are multiple ways to construct a derivation tree: either by replacing the leftmost non-terminal symbol with the righthand side of a production rule or by replacing the rightmost non-terminal symbol with the righthand side of a production rule. The former is known as the leftmost derivation, while the latter is known as the rightmost derivation. Finally, ambiguous grammar is one that can produce multiple derivation trees for the same string.
 
 As an example, consider the given simplified grammar for mathematical expressions applied for the expression $3 + 4 * 5$. As can be seen in Figure \ref{fig:ambiguous-grammar}, the given grammar is ambiguous, as there are multiple possible derivation trees for the given input string.
 
