@@ -10,7 +10,7 @@ The rest of this chapter will discuss both the practicality of the created types
 
 \section{Practical usage}
 
-The TypeScript type system is powerful for static type checking and inference. However, it is not without its limitations. These advanced types are considered to be extreme and are generally not recommended to be used in production code, as they can severely impact the compilation time and the in-editor developer experience.
+The TypeScript type system is powerful for static type-checking and inference. However, it is not without its limitations. These advanced types are considered to be extreme and are generally not recommended to be used in production code, as they can severely impact the compilation time and the in-editor developer experience.
 
 Nevertheless, there are some possible practical use cases for these advanced types. Literal types are often used to describe a design system and accompanying design tokens. Namely, numeric literal types are used to describe the spacing and sizing of components. When the spacing is defined in other units, such as \code{rem} or \code{em}, developers often need to manually convert the values into pixels. A utility type can be introduced to convert values in \code{rem} or \code{em} units into pixels and reverse. This can be further expanded to allow more type transformations, such as converting a Tailwind CSS class name into a CSS string without any TypeScript editor plugins.
 

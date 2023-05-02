@@ -228,7 +228,7 @@ type Keys = keyof User
 
 When working with unions and intersections, it is often necessary to be able to describe a type, which can describe a union of all possible types or a type created by intersecting two types with no related properties. These types are referred to as universal supertypes and universal subtypes, respectively. Universal supertypes, also known as top types, are types that are a superset of all other types and are used to represent any possible value. Whereas universal subtypes, also known as bottom types, are types that are a subset of all other types and are often used to describe a type with no permitted values.
 
-TypeScript includes two top universal supertypes: \code{any} and \code{unknown}. In the case of \code{any}, every type is assignable to type \code{any} and type \code{any} is assignable to every type \cite{TopTypesAny}. Generally, \code{any} can be used as an escape hatch to opt out of type checking. This does have unintended consequences, as \code{any} is assignable to every type; it can be assigned to a different type without any warnings. This is especially problematic when dealing with external data as the return type of \code{JSON.parse()} is \code{any}. An example of assignability can be seen at Listing \ref{lst:any-assignability}.
+TypeScript includes two top universal supertypes: \code{any} and \code{unknown}. In the case of \code{any}, every type is assignable to type \code{any} and type \code{any} is assignable to every type \cite{TopTypesAny}. Generally, \code{any} can be used as an escape hatch to opt out of type-checking. This does have unintended consequences, as \code{any} is assignable to every type; it can be assigned to a different type without any warnings. This is especially problematic when dealing with external data as the return type of \code{JSON.parse()} is \code{any}. An example of assignability can be seen at Listing \ref{lst:any-assignability}.
 
 \begin{listing}[ht]
   \begin{minted}{TypeScript}
@@ -239,7 +239,7 @@ data = null
 data = true
 data = {}
 
-// Still valid code, opting out of type checking
+// Still valid code, opting out of type-checking
 const a: null = data
 const b: boolean = data
 const c: object = data
@@ -373,7 +373,7 @@ const b = numArr.pop()
 
 Generic types can be interpreted as functions in a meta-programming language found inside the TypeScript type system itself. The meta-programming language implements some of the key concepts found in the functional programming paradigm.
 
-Generic types are considered first-class citizens in the language, being able to be passed as arguments into other generic types, similar to functions in a functional programming language. Generic types are also pure and cannot have any side effects during type checking. Recursion is also used in the meta-programming language to break down complex problems into smaller ones and solve them independently.
+Generic types are considered first-class citizens in the language, being able to be passed as arguments into other generic types, similar to functions in a functional programming language. Generic types are also pure and cannot have any side effects during type-checking. Recursion is also used in the meta-programming language to break down complex problems into smaller ones and solve them independently.
 
 However, there is a notable omission: generic types cannot receive other generic types as type arguments \cite{TypeInferenceHigherorder}. Thus, higher-order functions are not permitted \footnote{There is a way to emulate the behaviour of \acrshort{hkt}s. Refer to Chapter \ref{sec:higher-kinded-types}}.
 

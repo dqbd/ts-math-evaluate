@@ -1,6 +1,6 @@
 \section{Performance testing}
 
-Advanced utility types do have a significant strain on type checking and can have a negative impact on the developer experience with worse latency of language services and longer build times when building with \code{tsc}. The performance test suite has been created to measure the impact of various implemented math operations on type-checking performance.
+Advanced utility types do have a significant strain on type-checking and can have a negative impact on the developer experience with worse latency of language services and longer build times when building with \code{tsc}. The performance test suite has been created to measure the impact of various implemented math operations on type-checking performance.
 
 Two metrics are measured in the performance test suite: the \say{check time} obtained from extended diagnostics when compiling via \code{tsc} and the number of type instantiations performed when evaluating utility types. These metrics can be obtained from the \code{tsc} \acrshort{cli} with the \code{--extendedDiagnostics} flag. However, the TypeScript API does expose an internal \code{performance} singleton, which, combined with internal \code{extendedDiagnostics} flag and Compiler \acrshort{api}, can be used to obtain the same metrics programmatically, as seen in Listing \ref{lst:performance-metrics}.
 
@@ -26,7 +26,7 @@ performance.disable()
 
 Together with \code{ts-morph} library \cite{sherretTsmorph2023} and the insights from the Compiler \acrshort{api}, a benchmarking tool was created, found in \code{scripts/bench.ts}. \code{ts-morph} is a wrapper around the Compiler \acrshort{api} that provides convenient methods for setup, navigation and manipulation of the TypeScript \acrshort{ast}. The benchmarking tool accepts a path to a benchmarking file and parses the file into an \acrshort{ast}. Each test case of a benchmark file is denoted as an exported type alias, which is read by the benchmarking tool. The tool then creates a new separate valid TypeScript code for each test case, containing just the benchmark type alias, omitting all other unnecessary types and constructs. The evaluation of a test case follows the same logic as described in Listing \ref{lst:performance-metrics}. The tool performs multiple measurement iterations, and both the mean and variance are calculated for each metric. At the time of writing, the benchmarking tool performs twelve iterations in total, with two iterations being warmup iterations. The idea of warmup iterations is to increase the likelihood of the JavaScript engine deciding to optimise the interpreted code.
 
-In order to measure the impact of the library on type checking, some mathematical operations were selected for benchmarking: \code{Add}, \code{Multiply}, \code{Divide} and \code{Root}, ordered by the increasing computational complexity. As shown in Figure \ref{fig:instantiation-count}, the number of type instantiations proportionally increases with the digit length. As expected, \code{Root}, the most complex operations of the selected few, creates an order of magnitude more type instantiations than other operations.
+In order to measure the impact of the library on type-checking, some mathematical operations were selected for benchmarking: \code{Add}, \code{Multiply}, \code{Divide} and \code{Root}, ordered by the increasing computational complexity. As shown in Figure \ref{fig:instantiation-count}, the number of type instantiations proportionally increases with the digit length. As expected, \code{Root}, the most complex operations of the selected few, creates an order of magnitude more type instantiations than other operations.
 
 \begin{figure}[ht]
   \centering
@@ -40,7 +40,7 @@ However, when comparing the actual time spent by the type checker, there does no
 \begin{figure}[ht]
   \centering
   \resizebox{\textwidth}{!}{\input{text/testing/check-time.pgf}}
-  \caption{Comparison of time spent type checking between selected operations}
+  \caption{Comparison of time spent type-checking between selected operations}
   \label{fig:check-time}
 \end{figure}
 
