@@ -14,4 +14,6 @@ export { Round } from "./math/round"
 export { Truncate } from "./math/truncate"
 export { Factorial } from "./math/factorial"
 
+export { Evaluate } from "./expression"
+
 export default {}

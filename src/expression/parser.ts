@@ -144,9 +144,15 @@ export namespace RecursiveParser {
         : Error.Parser
       : Error.Parser
     : T["head"] extends
-        | Token.EOF | Token.Factorial | Token.Multiply
-        | Token.Divide | Token.Modulo | Token.Plus
-        | Token.Minus | Token.RightBracket | Token.Comma
+        | Token.EOF
+        | Token.Factorial
+        | Token.Multiply
+        | Token.Divide
+        | Token.Modulo
+        | Token.Plus
+        | Token.Minus
+        | Token.RightBracket
+        | Token.Comma
     ? T
     : Error.Parser
 
@@ -323,9 +329,9 @@ export namespace RecursiveParser {
       : Error.Parser
     : Error.Parser
 
-  export type Parse<T extends Token._[]> = START<
-    Parser<[...T, Token.EOF]>
-  > extends infer T extends Parser
-    ? T["return"]
+  export type Parse<T> = T extends Token._[]
+    ? START<Parser<[...T, Token.EOF]>> extends infer T extends Parser
+      ? T["return"]
+      : never
     : never
 }
