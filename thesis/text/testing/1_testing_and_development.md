@@ -2,7 +2,7 @@
 
 During the development of the type-level mathematical expression evaluator, several invaluable tools were discovered and utilised that significantly contributed to the implementation. This section is devoted to discussing these tools and their impact on the overall development process.
 
-The core of the development experience is underpinned by TypeScript Standalone Server, also known as `tsserver`. `tsserver` encapsulates both the compiler and the accompanying language services for use in editors and [ide]{acronym-label="ide" acronym-form="singular+abbrv"}s, communicating via [lsp]{acronym-label="lsp" acronym-form="singular+abbrv"} to add support for code completion, auto-importing, symbol renaming etc. `tsserver` also provides the ability to see the inferred types of any symbol by hovering on top the symbol, as seen in Figure [1](#fig:tsserver-hover). This service is invaluable when developing a type-level library, as it allows the developer to break down complex types into smaller pieces, achieving better readability.
+The core of the development experience is underpinned by TypeScript Standalone Server, also known as `tsserver`. `tsserver` encapsulates both the compiler and the accompanying language services for use in editors and [ide]{acronym-label="ide" acronym-form="singular+abbrv"}s, communicating via [lsp]{acronym-label="lsp" acronym-form="singular+abbrv"} to add support for code completion, auto-importing, symbol renaming etc. `tsserver` also provides the ability to see the inferred types of any symbol by hovering on top the symbol, as seen in Figure [1](#fig:tsserver-hover). This service is invaluable when developing a type-level library allowing the developer to break down complex types into smaller pieces, achieving better readability.
 
 <div id="fig:tsserver-hover" class="figure">
 
@@ -16,7 +16,7 @@ Inferred type on hover in [vscode]{acronym-label="vscode" acronym-form="singular
 
 </div>
 
-Another critical tool used when developing the implementation is `vscode-twoslash-plugin` extension [@theroxVscodetwoslashqueries2023]. In order to avoid hovering the mouse over a symbol to see the inferred type, developers can write the `// ^?` comment, with the caret pointing to the targeted symbol. The plugin will then display an inlay hint with the inferred type of the selected symbol, as seen in Figure [2](#fig:twoslash-plugin).
+Another critical tool used when developing the implementation is the `vscode-twoslash-plugin` extension [@theroxVscodetwoslashqueries2023]. In order to avoid hovering the mouse over a symbol to see the inferred type, developers can write the `// ^?` comment, with the caret pointing to the targeted symbol. The plugin will then display an inlay hint with the inferred type of the selected symbol, as seen in Figure [2](#fig:twoslash-plugin).
 
 <div id="fig:twoslash-plugin" class="figure">
 

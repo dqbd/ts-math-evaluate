@@ -2,7 +2,7 @@
 
 During the development of the type-level mathematical expression evaluator, several invaluable tools were discovered and utilised that significantly contributed to the implementation. This section is devoted to discussing these tools and their impact on the overall development process.
 
-The core of the development experience is underpinned by TypeScript Standalone Server, also known as \code{tsserver}. \code{tsserver} encapsulates both the compiler and the accompanying language services for use in editors and \acrshort{ide}s, communicating via \acrshort{lsp} to add support for code completion, auto-importing, symbol renaming etc. \code{tsserver} also provides the ability to see the inferred types of any symbol by hovering on top the symbol, as seen in Figure \ref{fig:tsserver-hover}. This service is invaluable when developing a type-level library, as it allows the developer to break down complex types into smaller pieces, achieving better readability.
+The core of the development experience is underpinned by TypeScript Standalone Server, also known as \code{tsserver}. \code{tsserver} encapsulates both the compiler and the accompanying language services for use in editors and \acrshort{ide}s, communicating via \acrshort{lsp} to add support for code completion, auto-importing, symbol renaming etc. \code{tsserver} also provides the ability to see the inferred types of any symbol by hovering on top the symbol, as seen in Figure \ref{fig:tsserver-hover}. This service is invaluable when developing a type-level library allowing the developer to break down complex types into smaller pieces, achieving better readability.
 
 \begin{figure}[ht]
   \centering
@@ -11,7 +11,7 @@ The core of the development experience is underpinned by TypeScript Standalone S
   \label{fig:tsserver-hover}
 \end{figure}
 
-Another critical tool used when developing the implementation is \code{vscode-twoslash-plugin} extension \cite{theroxVscodetwoslashqueries2023}. In order to avoid hovering the mouse over a symbol to see the inferred type, developers can write the \vcode{// ^?} comment, with the caret pointing to the targeted symbol. The plugin will then display an inlay hint with the inferred type of the selected symbol, as seen in Figure \ref{fig:twoslash-plugin}.
+Another critical tool used when developing the implementation is the \code{vscode-twoslash-plugin} extension \cite{theroxVscodetwoslashqueries2023}. In order to avoid hovering the mouse over a symbol to see the inferred type, developers can write the \vcode{// ^?} comment, with the caret pointing to the targeted symbol. The plugin will then display an inlay hint with the inferred type of the selected symbol, as seen in Figure \ref{fig:twoslash-plugin}.
 
 \begin{figure}[ht]
   \centering
