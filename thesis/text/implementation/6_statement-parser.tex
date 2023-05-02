@@ -208,7 +208,7 @@ The final grammar used for this thesis can be seen in Figure \ref{fig:math-gramm
   \label{table:associativity-grammar}
 \end{table}
 
-A custom code generation tool has been developed to generate a parser running entirely in the TypeScript type system from the provided LL(1) grammar, using the aforementioned algorithm for creating the parsing table and appropriate recursive descent parser. The interface of a parser is defined as a generic type \code{Parser}, accepting a tuple of lexer tokens and a possible output \acrshort{ast} node type as type parameters, seen in Listing \ref{lst:parser-interface}. The generic type returns an object type, with an additional \code{head} property for simplifying the matching of the current lookahead token needed by the LL(1) parser. \code{ConsumeParser} is a generic type for consuming a token from the input stream and returning a new object type with the rest of the token stream.
+A custom code generation tool has been developed to generate a parser running entirely in the TypeScript type system from the provided LL(1) grammar, using the aforementioned algorithm for creating the parsing table and appropriate recursive descent parser. The interface of a parser is defined as a generic type \code{Parser}, accepting a tuple of lexer tokens and a possible output \acrshort{ast} node type as type parameters, seen in Listing \ref{lst:parser-interface}. The generic type returns an object type with an additional \code{head} property for simplifying the matching of the current lookahead token needed by the LL(1) parser. \code{ConsumeParser} is a generic type for consuming a token from the input stream and returning a new object type with the rest of the token stream.
 
 \begin{listing}[ht]
   \begin{minted}{TypeScript}
