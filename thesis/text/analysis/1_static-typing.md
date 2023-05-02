@@ -26,7 +26,7 @@ Flow is a static type checker for JavaScript [@chaudhuriFastPreciseType2017; @Fl
 
 One of the primary goals of Flow is to provide type soundness, the ability to catch every error that might happen in runtime at compile-time, no matter how likely it is to happen. A valid Flow code can provide developers with some guarantees about the type a value has in runtime, at the expense of catching errors, which are unlikely to happen in runtime.
 
-Both Flow and TypeScript are similar regarding features as of the time of writing. Most of the type-safety differences between Flow and TypeScript have been addressed with the newer versions of TypeScript, even though a type system is a specific non-goal by the TypeScript team [@TypeScriptDesignGoals]. However, developers must opt-in to these features by setting `"strict"` to `"true"` in `tsconfig.json`, whereas these features are enabled by default in Flow.
+Both Flow and TypeScript are similar regarding features as of the time of writing. Most of the type-safety differences between Flow and TypeScript have been addressed with the newer versions of TypeScript, even though a "provably correct" type system is a specific non-goal by the TypeScript team [@TypeScriptDesignGoals]. However, developers must opt-in to these features by setting `"strict"` to `"true"` in `tsconfig.json`, whereas these features are enabled by default in Flow.
 
 ## TypeScript
 

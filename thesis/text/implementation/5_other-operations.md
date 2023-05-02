@@ -2,7 +2,7 @@
 
 ## Comparison
 
-Some operations require an additional type-level operation for comparing two numbers, such as the Euclidean division, for deciding whether to continue recursion. For that purpose, a type-level three-way comparison operator has been implemented, also known as the in the C++ programming language [@sutterConsistentComparison2017].
+Some operations require an additional type-level operation for comparing two numbers, such as the Euclidean division, for deciding whether to continue recursion. For that purpose, a type-level three-way comparison operator has been implemented, also known as the "spaceship operator" in the C++ programming language [@sutterConsistentComparison2017].
 
 The spaceship operator for comparing two numbers $x$ and $y$, denoted by $x <=> y$, is defined in equation [\[eq:spaceship-operator\]](#eq:spaceship-operator) as follows:
 

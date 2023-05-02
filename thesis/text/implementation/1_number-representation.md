@@ -1,6 +1,6 @@
 # Type representation of numbers
 
-As powerful as the type system in TypeScripts, there are certain limitations that need to be addressed when working with literal numerical types. Namely, although TypeScript type syntax includes literal number types, useful for representing specific numeric values, these types do not directly support mathematical operations, such as addition or subtraction. Due to these limitations, other methods of representing numbers are explored in this thesis.
+As powerful as the type system in TypeScripts, there are certain limitations that need to be addressed when working with literal numerical types. Namely, although TypeScript type syntax includes number literal types, useful for representing specific numeric values, these types do not directly support mathematical operations, such as addition or subtraction. Due to these limitations, other methods of representing numbers are explored in this thesis.
 
 One approach to representing numbers in TypeScript is to use tuples types. As described in [\[sec:typescript-data-structures\]](#sec:typescript-data-structures), tuple types allow developers to describe a fixed-length JavaScript array where each element can have a specific type. As it represents a JavaScript array, the type includes all of the properties and methods found in an array, including `length` property, which contains the actual number of elements in the tuple. This feature can be used to represent a number, as the length of the tuple can represent the number itself, as seen in Listing [\[lst:tuple-representation\]](#lst:tuple-representation). The actual type of a member item in a tuple is irrelevant, as the type system only cares about the length of the tuple, but for clarity purposes, the literal type `0` can be used as the element type of a tuple.
 
@@ -19,7 +19,7 @@ type ZeroValue = Four['length']
 
 </div>
 
-However, manually describing a tuple is tedious. Recursion can be employed to parse a literal number type to a tuple type, as seen in [\[lst:tuple-parse\]](#lst:tuple-parse). The `ParseNumber<Value>` generic type accepts a mandatory type argument `Value` that should be the length of the final tuple and an optional type argument `Acc` used to preserve the state of the recursion.
+However, manually describing a tuple is tedious. Recursion can be employed to parse a number literal type to a tuple type, as seen in [\[lst:tuple-parse\]](#lst:tuple-parse). The `ParseNumber<Value>` generic type accepts a mandatory type argument `Value` that should be the length of the final tuple and an optional type argument `Acc` used to preserve the state of the recursion.
 
 First, a check is performed to see if the length of `Acc` is equal to the `Value` by checking the assignability of types. If that is the case, the tuple type found in `Acc` is returned. Otherwise, the list is extended with a new `0` element being prepended, and the function is called recursively. The function is called recursively until the length of `Acc` is assignable to `Value`.
 
@@ -34,7 +34,7 @@ type ParseNumber<
 
 </div>
 
-It is possible to improve the number of recursions to create a tuple by expanding by a whole digit instead of by single increments. As seen in Listing [\[lst:tuple-parse-digit\]](#lst:tuple-parse-digit), where `ParsedNumber2` will first perform stringification of the literal number type `T` and infer the first digit recursively. The accumulator type parameter `Rest` is first expanded ten times by the `ExpandArrayTenTimes` generic type, and then the parsed digit is spread into `Rest` as well. The recursion is performed until the stringified number is empty and the final `Rest` type is returned.
+It is possible to improve the number of recursions to create a tuple by expanding by a whole digit instead of by single increments. As seen in Listing [\[lst:tuple-parse-digit\]](#lst:tuple-parse-digit), where `ParsedNumber2` will first perform stringification of the number literal type `T` and infer the first digit recursively. The accumulator type parameter `Rest` is first expanded ten times by the `ExpandArrayTenTimes` generic type, and then the parsed digit is spread into `Rest` as well. The recursion is performed until the stringified number is empty and the final `Rest` type is returned.
 
 <div class="listing">
 

@@ -1,6 +1,6 @@
 \section{Type representation of numbers}
 
-As powerful as the type system in TypeScripts, there are certain limitations that need to be addressed when working with literal numerical types. Namely, although TypeScript type syntax includes literal number types, useful for representing specific numeric values, these types do not directly support mathematical operations, such as addition or subtraction. Due to these limitations, other methods of representing numbers are explored in this thesis.
+As powerful as the type system in TypeScripts, there are certain limitations that need to be addressed when working with literal numerical types. Namely, although TypeScript type syntax includes number literal types, useful for representing specific numeric values, these types do not directly support mathematical operations, such as addition or subtraction. Due to these limitations, other methods of representing numbers are explored in this thesis.
 
 One approach to representing numbers in TypeScript is to use tuples types. As described in \ref{sec:typescript-data-structures}, tuple types allow developers to describe a fixed-length JavaScript array where each element can have a specific type. As it represents a JavaScript array, the type includes all of the properties and methods found in an array, including \code{length} property, which contains the actual number of elements in the tuple. This feature can be used to represent a number, as the length of the tuple can represent the number itself, as seen in Listing \ref{lst:tuple-representation}. The actual type of a member item in a tuple is irrelevant, as the type system only cares about the length of the tuple, but for clarity purposes, the literal type \code{0} can be used as the element type of a tuple.
 
@@ -18,7 +18,7 @@ type ZeroValue = Four['length']
   \caption{Tuple representation of a number}\label{lst:tuple-representation}
 \end{listing}
 
-However, manually describing a tuple is tedious. Recursion can be employed to parse a literal number type to a tuple type, as seen in \ref{lst:tuple-parse}. The \code{ParseNumber<Value>} generic type accepts a mandatory type argument \code{Value} that should be the length of the final tuple and an optional type argument \code{Acc} used to preserve the state of the recursion.
+However, manually describing a tuple is tedious. Recursion can be employed to parse a number literal type to a tuple type, as seen in \ref{lst:tuple-parse}. The \code{ParseNumber<Value>} generic type accepts a mandatory type argument \code{Value} that should be the length of the final tuple and an optional type argument \code{Acc} used to preserve the state of the recursion.
 
 First, a check is performed to see if the length of \code{Acc} is equal to the \code{Value} by checking the assignability of types. If that is the case, the tuple type found in \code{Acc} is returned. Otherwise, the list is extended with a new \code{0} element being prepended, and the function is called recursively. The function is called recursively until the length of \code{Acc} is assignable to \code{Value}.
 
@@ -29,10 +29,10 @@ type ParseNumber<
   Acc extends Array<0> = []
 > = Acc["length"] extends Value ? Acc : ParseNumber<Value, [0, ...Acc]>
 \end{minted}
-  \caption{Parse a literal number type to a tuple type}\label{lst:tuple-parse}
+  \caption{Parse a number literal type to a tuple type}\label{lst:tuple-parse}
 \end{listing}
 
-It is possible to improve the number of recursions to create a tuple by expanding by a whole digit instead of by single increments. As seen in Listing \ref{lst:tuple-parse-digit}, where \code{ParsedNumber2} will first perform stringification of the literal number type \code{T} and infer the first digit recursively. The accumulator type parameter \code{Rest} is first expanded ten times by the \code{ExpandArrayTenTimes} generic type, and then the parsed digit is spread into \code{Rest} as well. The recursion is performed until the stringified number is empty and the final \code{Rest} type is returned.
+It is possible to improve the number of recursions to create a tuple by expanding by a whole digit instead of by single increments. As seen in Listing \ref{lst:tuple-parse-digit}, where \code{ParsedNumber2} will first perform stringification of the number literal type \code{T} and infer the first digit recursively. The accumulator type parameter \code{Rest} is first expanded ten times by the \code{ExpandArrayTenTimes} generic type, and then the parsed digit is spread into \code{Rest} as well. The recursion is performed until the stringified number is empty and the final \code{Rest} type is returned.
 
 \begin{listing}[ht]
   \begin{minted}{TypeScript}

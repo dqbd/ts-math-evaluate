@@ -2,7 +2,7 @@
 
 Advanced utility types do have a significant strain on type checking and can have a negative impact on the developer experience with worse latency of language services and longer build times when building with `tsc`. The performance test suite has been created to measure the impact of various implemented math operations on type-checking performance.
 
-Two metrics are measured in the performance test suite: the obtained from extended diagnostics when compiling via `tsc` and the number of type instantiations performed when evaluating utility types. These metrics can be obtained from the `tsc` [cli]{acronym-label="cli" acronym-form="singular+abbrv"} with the `--extendedDiagnostics` flag. However, the TypeScript API does expose an internal `performance` singleton, which, combined with internal `extendedDiagnostics` flag and Compiler [api]{acronym-label="api" acronym-form="singular+abbrv"}, can be used to obtain the same metrics programmatically, as seen in Listing [\[lst:performance-metrics\]](#lst:performance-metrics).
+Two metrics are measured in the performance test suite: the "check time" obtained from extended diagnostics when compiling via `tsc` and the number of type instantiations performed when evaluating utility types. These metrics can be obtained from the `tsc` [cli]{acronym-label="cli" acronym-form="singular+abbrv"} with the `--extendedDiagnostics` flag. However, the TypeScript API does expose an internal `performance` singleton, which, combined with internal `extendedDiagnostics` flag and Compiler [api]{acronym-label="api" acronym-form="singular+abbrv"}, can be used to obtain the same metrics programmatically, as seen in Listing [\[lst:performance-metrics\]](#lst:performance-metrics).
 
 <div class="listing">
 
