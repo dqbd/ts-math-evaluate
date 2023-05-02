@@ -3,10 +3,10 @@
 JavaScript is a dynamically typed programming language where users do
 not need to assign types to a variable or a function, and the type is
 inferred automatically by the JavaScript engine at runtime. This feature
-lowers the barrier of entry to writing JavaScript code allowing
+lowers the barrier of entry to writing JavaScript code, allowing
 developers to prototype and write code quickly. It can plausibly be one
 of the possible growth drivers of JavaScript in the last decade, making
-it the most commonly used programming language according to the 2022
+it the most commonly used programming language, according to the 2022
 Stack Overflow Developer Survey [@StackOverflowDeveloper].
 
 However, dynamic typing has its drawbacks. It is harder to detect
@@ -14,17 +14,19 @@ trivial errors in the code without running it beforehand, and it is more
 difficult to refactor the code without breaking it, which often leads to
 poor software quality [@schumacherConceptsProgrammingLanguages2015].
 Proponents of static typing insist that static types allow developers to
-spot potential bugs and mistakes earlier during development and that it
-allows for better tooling, such as more rich code completion and
-refactoring tools.
+spot potential bugs and mistakes earlier during development and that
+static typing allows for better tooling, such as richer code completion
+and better refactoring tools.
 
-There is an upcoming TC39 proposal for adding type annotations, broadly
-inspired by TypeScript syntax [@ECMAScriptProposalType2023]. These
-annotations are only useful for build-time tooling as they are ignored
-in runtime. The proposal suggests that these annotations should be
-erased by an additional compilation step. Even though users can already
-provide static types using JSDoc right now, the syntax is not as clean
-as the proposed TypeScript-like syntax.
+There is an upcoming [tc39]{acronym-label="tc39"
+acronym-form="singular+abbrv"} proposal for adding type annotations in
+JavaScript, broadly inspired by the TypeScript syntax
+[@ECMAScriptProposalType2023]. These annotations are only useful for
+build-time tooling as they are ignored in runtime. The proposal suggests
+that these annotations should be erased by an additional compilation
+step. Even though users can already provide static types using JSDoc
+right now, the syntax is not as clean as the proposed TypeScript-like
+syntax.
 
 Regardless, many projects aim to introduce static typing to JavaScript,
 such as Flow or TypeScript, or alternative languages which compile back
@@ -36,9 +38,9 @@ Elm is a functional programming language designed specifically for
 building web applications [@ElmDelightfulLanguage]. The language
 compiles to JavaScript and has a strong static Hindley-Milner-based type
 system, which allows inferring types more often and reliably. Elm does
-not provide any escape hatches such as `any` in TypeScript. Thus it is
+not provide any escape hatches, such as `any` in TypeScript. Thus it is
 harder to write unsafe code, as the types must be valid for the code to
-be compiled.
+be successfully compiled.
 
 Elm also includes a lot of quality-of-life improvements and benefits,
 for instance: enforced purity of functions, out-of-the-box immutability,
@@ -48,14 +50,14 @@ references or its own virtual DOM implementation for efficient rendering
 of interactive user interfaces. Notably, the Elm Architecture, where the
 application code is organised into three parts: model, update and view
 [@ElmArchitectureIntroduction], has greatly inspired other libraries and
-frameworks like Redux [@PriorArtRedux2022].
+frameworks such as Redux [@PriorArtRedux2022].
 
 ## ReScript
 
 ReScript is a programming language built on top of the OCaml toolchain.
 Unlike Flow or TypeScript, ReScript is not a superset of JavaScript.
-Instead, the language compiles to JavaScript. ReScript was created as a
-spin-off from the Reason programming language and accompanying
+Instead, the language compiles into JavaScript. ReScript was created as
+a spin-off from the Reason programming language and accompanying
 BuckleScript compiler, aiming to vertically integrate and streamline the
 adoption barrier caused by the need to be familiar with multiple
 unrelated tools and toolchains [@BuckleScriptReasonRebranding].
@@ -64,9 +66,9 @@ The language aims to be more sound with more powerful type inference
 than TypeScript, borrowing the Hindler-Milner type system from OCaml
 implementation
 [@EfficientInsightfulGeneralization; @HistoryReScript2022]. Thus, most
-of the time, the types can be inferred automatically without the need to
-annotate them explicitly, whereas TypeScript utilises bidirectional type
-checking [@ReconstructingTypeScriptPart].
+of the time, the types can be inferred automatically without annotating
+them explicitly, whereas TypeScript utilises bidirectional type checking
+[@ReconstructingTypeScriptPart].
 
 ## Flow
 
@@ -74,8 +76,8 @@ Flow is a static type checker for JavaScript
 [@chaudhuriFastPreciseType2017; @Flow2023], which allows developers to
 annotate their code with static types. Flow is developed by Meta and is
 internally used in production by Facebook, Instagram and React Native.
-Type annotations in Flow are fully erasable, which means that the type
-annotations can be fully removed from the Flow code to emit valid
+Type annotations in Flow are fully erasable, meaning that the type
+annotations are fully removed from the Flow code in order to emit valid
 JavaScript code. The checking of these types occurs at compile-time
 before removal in build-time. Flow is also a superset of JavaScript,
 which means any JavaScript code is a valid Flow code.
@@ -87,10 +89,10 @@ can provide developers with some guarantees about the type a value has
 in runtime, at the expense of catching errors, which are unlikely to
 happen in runtime.
 
-Both Flow and TypeScript are similar regarding features at the time of
-writing. Most of the type-safety differences between Flow and TypeScript
-have been addressed with the newer versions of TypeScript, even though a
-type system is a specific non-goal by the TypeScript team
+Both Flow and TypeScript are similar regarding features as of the time
+of writing. Most of the type-safety differences between Flow and
+TypeScript have been addressed with the newer versions of TypeScript,
+even though a type system is a specific non-goal by the TypeScript team
 [@TypeScriptDesignGoals]. However, developers must opt-in to these
 features by setting `"strict"` to `"true"` in `tsconfig.json`, whereas
 these features are enabled by default in Flow.
@@ -99,7 +101,7 @@ these features are enabled by default in Flow.
 
 TypeScript is a statically typed programming language developed and
 maintained by Microsoft [@TypeScriptJavaScriptSyntax]. It is a language
-that transpiles to JavaScript and adds static type checking to
+that transpiles into JavaScript and adds static type checking to
 JavaScript [@DocumentationTypeScriptJavaScript]. Unlike Elm or ReScript,
 TypeScript is a syntactical superset of JavaScript, which means that any
 valid JavaScript code can be a valid TypeScript code[^1]. Similar to

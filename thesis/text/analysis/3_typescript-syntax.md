@@ -123,7 +123,7 @@ const Invalid: Literal = "bar"
 
 </div>
 
-## Types for data structures {#sec:typescript-data-structures}
+## Types for data structures
 
 TypeScript also allows annotating data structures such as objects and
 arrays with four possible types, depending on the enumerability of items
@@ -235,7 +235,7 @@ const Goose: DuckLike = {
 
 </div>
 
-## Union and intersection types {#sec:union-intersection}
+## Union and intersection types
 
 Revisiting the concept of types as sets of values, as seen in Listing
 [\[lst:literal-types\]](#lst:literal-types), assigning a value

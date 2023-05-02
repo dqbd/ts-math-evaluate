@@ -3,10 +3,10 @@
 The TypeScript project is made of two major parts available to
 developers:
 
--   `tsc`: the TypeScript Compiler, which is responsible for both type
-    checking and outputting valid JavaScript files,
+-   `tsc`: The TypeScript Compiler, which is responsible for both
+    type-checking and outputting valid JavaScript files,
 
--   `tsserver`: the TypeScript Standalone Server, which encapsulates the
+-   `tsserver`: The TypeScript Standalone Server, which encapsulates the
     TypeScript Compiler and language services for use in editors and
     [ide]{acronym-label="ide" acronym-form="singular+abbrv"}s
     [@StandaloneServerTsserver].
