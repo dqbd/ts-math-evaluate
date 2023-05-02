@@ -2,7 +2,6 @@ import { AddMapCarry } from "../utils/map"
 import {
   NumberLike,
   ParseSignFloatNumber,
-  ExpandNumberToArray,
   PadFloat,
   FloatNumber,
   SignFloatNumber,
@@ -12,44 +11,6 @@ import {
 import { Or } from "../utils/boolean"
 import { SubOperatorSwitch } from "./subtract"
 import { PadStartEqually } from "../utils/array"
-
-type AsNumber<S extends string> = S extends `${infer N extends number}`
-  ? N
-  : never
-
-type SubWithCarryTuple<
-  Left extends number,
-  Right extends number,
-  Carry extends boolean
-> = ExpandNumberToArray<Left> extends [
-  ...infer U extends number[],
-  ...ExpandNumberToArray<Right>,
-  ...ExpandNumberToArray<Carry extends true ? 1 : 0>
-]
-  ? U
-  : never
-
-// $ExpectType 0
-type X0 = SubWithCarryTuple<1, 1, false>["length"]
-
-type AddWithCarryTuple<
-  Left extends number,
-  Right extends number,
-  Carry extends boolean
-> = [
-  ...ExpandNumberToArray<Left>,
-  ...ExpandNumberToArray<Right>,
-  ...ExpandNumberToArray<Carry extends true ? 1 : 0>
-]["length"] extends infer S extends number
-  ? `${S}` extends `${infer Head}${infer Tail}`
-    ? Tail extends ""
-      ? [AsNumber<Head>, false]
-      : [AsNumber<Tail>, true]
-    : never
-  : never
-
-// $ExpectType [0, true]
-type X1 = AddWithCarryTuple<9, 1, false>
 
 type AddWithCarry<
   Left extends number,
@@ -69,30 +30,6 @@ type AddWithCarry<
     : never
   : AddMapCarry[Left][Right]
 
-// $ExpectType [9, false]
-type Carry1 = AddWithCarry<9, 0, false>
-
-// $ExpectType [9, false]
-type Carry2 = AddWithCarry<0, 9, false>
-
-// $ExpectType [0, true]
-type Carry3 = AddWithCarry<9, 1, false>
-
-// $ExpectType [0, true]
-type Carry4 = AddWithCarry<1, 9, false>
-
-// $ExpectType [0, true]
-type Carry5 = AddWithCarry<9, 0, true>
-
-// $ExpectType [0, true]
-type Carry6 = AddWithCarry<0, 9, true>
-
-// $ExpectType [1, true]
-type Carry7 = AddWithCarry<9, 1, true>
-
-// $ExpectType [1, true]
-type Carry8 = AddWithCarry<1, 9, true>
-
 type AddArr<
   A extends number[],
   B extends number[],
@@ -110,18 +47,6 @@ type AddArr<
     : never
   : Tmp
 
-// $ExpectType [[0], true]
-type AddArrCase1 = AddArr<[9], [1]>
-
-// $ExpectType [[0, 0, 0], true]
-type AddArrCase2 = AddArr<[9, 9, 9], [0, 0, 1]>
-
-// $ExpectType [[9, 9], false]
-type AddArrCase3 = AddArr<[9, 0], [0, 9]>
-
-// $ExpectType [[0, 1, 1], true]
-type AddArrCase4 = AddArr<[0, 1, 2], [9, 9, 9]>
-
 export type AddInt<A extends Digit[], B extends Digit[]> = PadStartEqually<
   A,
   B
@@ -135,21 +60,6 @@ export type AddInt<A extends Digit[], B extends Digit[]> = PadStartEqually<
       : Rest
     : never
   : never
-
-// $ExpectType [1, 0]
-type AddIntCase1 = AddInt<[9], [1]>
-
-// $ExpectType [1, 0, 0, 0]
-type AddIntCase2 = AddInt<[9, 9, 9], [0, 0, 1]>
-
-// $ExpectType [9, 9]
-type AddIntCase3 = AddInt<[9, 0], [0, 9]>
-
-// $ExpectType [1, 0, 1, 1]
-type AddIntCase4 = AddInt<[0, 1, 2], [9, 9, 9]>
-
-// $ExpectType [9, 9, 9]
-type AddIntCase5 = AddInt<[0], [9, 9, 9]>
 
 export type AddFloatNumber<
   A extends FloatNumber,

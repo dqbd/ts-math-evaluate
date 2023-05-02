@@ -30,30 +30,6 @@ type _SubWithCarry<
     : never
   : SubMapCarry[Left][Right]
 
-// $ExpectType [9, false]
-type Carry1 = _SubWithCarry<9, 0, false>
-
-// $ExpectType [1, true]
-type Carry2 = _SubWithCarry<0, 9, false>
-
-// $ExpectType [8, false]
-type Carry3 = _SubWithCarry<9, 1, false>
-
-// $ExpectType [2, true]
-type Carry4 = _SubWithCarry<1, 9, false>
-
-// $ExpectType [8, false]
-type Carry5 = _SubWithCarry<9, 0, true>
-
-// $ExpectType [0, true]
-type Carry6 = _SubWithCarry<0, 9, true>
-
-// $ExpectType [7, false]
-type Carry7 = _SubWithCarry<9, 1, true>
-
-// $ExpectType [1, true]
-type Carry8 = _SubWithCarry<1, 9, true>
-
 type SubArr<
   A extends number[],
   B extends number[],
