@@ -1,5 +1,11 @@
 # ts-math-evaluate
 
+## 0.0.5
+
+### Patch Changes
+
+- 0e8662a: Consolidate cleanup changes
+
 ## 0.0.4
 
 ### Patch Changes
