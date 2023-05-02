@@ -9,3 +9,7 @@ Type-level math expression evaluator for TypeScript.
 ```bash
 npm install ts-math-evaluate
 ```
+
+## Usage
+
+For documentation, please visit [https://ts-math-evaluate.vercel.app/](https://ts-math-evaluate.vercel.app/).

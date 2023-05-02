@@ -128,9 +128,18 @@ export type SubSignFloatNumber<
   }
 }[A["sign"]][B["sign"]]
 
-export type Subtract<A extends NumberLike, B extends NumberLike> = [
-  ParseSignFloatNumber<A>,
-  ParseSignFloatNumber<B>
+/**
+ * Subtract two numbers
+ * @param Left Left operand
+ * @param Right Right operand
+ *
+ * ```
+ * type Example = Subtract<"123", "456">
+ * ```
+ */
+export type Subtract<Left extends NumberLike, Right extends NumberLike> = [
+  ParseSignFloatNumber<Left>,
+  ParseSignFloatNumber<Right>
 ] extends [infer X extends SignFloatNumber, infer Y extends SignFloatNumber]
   ? StringifySignFloat<SubSignFloatNumber<X, Y>>
   : never

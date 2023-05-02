@@ -9,10 +9,16 @@ import {
   StringifySignFloat,
 } from "../utils/parse"
 
-
-
-export type Ceil<Value extends NumberLike> =
-  ParseSignFloatNumber<Value> extends infer Number extends SignFloatNumber
+/**
+ * Round a number up to the nearest integer
+ * @param T The number to ceil
+ *
+ * ```
+ * type Example = Ceil<"3.14">
+ * ```
+ */
+export type Ceil<T extends NumberLike> =
+  ParseSignFloatNumber<T> extends infer Number extends SignFloatNumber
     ? TruncateSignFloatNumber<Number> extends infer TrucateNumber extends SignFloatNumber
       ? CompareSignNumbers<Number, TrucateNumber> extends 1
         ? StringifySignFloat<

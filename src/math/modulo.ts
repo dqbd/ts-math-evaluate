@@ -22,6 +22,15 @@ export type ModSignFloatNumber<
     >
   : never
 
+/**
+ * Get the remainder of a division operation
+ * @param X The dividend
+ * @param Y The divisor
+ *
+ * ```
+ * type Example = Modulo<"3.14", "2">
+ * ```
+ */
 export type Modulo<
   X extends NumberLike,
   Y extends NumberLike

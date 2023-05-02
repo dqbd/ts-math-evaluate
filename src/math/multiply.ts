@@ -120,9 +120,18 @@ export type MultiplySignFloat<
   MultiplyFloat<X["float"], Y["float"]>
 >
 
-export type Multiply<X extends NumberLike, Y extends NumberLike> = [
-  ParseSignFloatNumber<X>,
-  ParseSignFloatNumber<Y>
+/**
+ * Multiply two numbers
+ * @param Left Left operand
+ * @param Right Right operand
+ * 
+ * ```
+ * type Example = Multiply<"5", "2">
+ * ```
+ */
+export type Multiply<Left extends NumberLike, Right extends NumberLike> = [
+  ParseSignFloatNumber<Left>,
+  ParseSignFloatNumber<Right>
 ] extends [infer X extends SignFloatNumber, infer Y extends SignFloatNumber]
   ? StringifySignFloat<MultiplySignFloat<X, Y>>
   : never

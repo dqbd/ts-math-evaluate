@@ -107,6 +107,15 @@ export type AddSignFloatNumber<
   }
 }[A["sign"]][B["sign"]]
 
+/**
+ * Add two numbers
+ * @param Left Left operand
+ * @param Right Right operand
+ * 
+ * ```
+ * type Example = Add<"123", "456">
+ * ```
+ */
 export type Add<Left extends NumberLike, Right extends NumberLike> = [
   ParseSignFloatNumber<Left>,
   ParseSignFloatNumber<Right>

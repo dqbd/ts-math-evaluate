@@ -60,6 +60,15 @@ type RootDigit<
     : never
   : never
 
+/**
+ * Calculate the n-th root of a number
+ * @param X The number to calculate the n-th root of
+ * @param N The degree of the root
+ *
+ * ```
+ * type Example = Root<"27", "3">
+ * ```
+ */
 export type Root<
   X extends NumberLike,
   N extends NumberLike

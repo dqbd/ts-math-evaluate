@@ -19,7 +19,15 @@ export type FloorSignFloatNumber<Number extends SignFloatNumber> =
       : TrucateNumber
     : never
 
-export type Floor<Value extends NumberLike> =
-  ParseSignFloatNumber<Value> extends infer Number extends SignFloatNumber
+/**
+ * Round a number down to the nearest integer
+ * @param T The number to floor
+ *
+ * ```
+ * type Example = Floor<"3.14">
+ * ```
+ */
+export type Floor<T extends NumberLike> =
+  ParseSignFloatNumber<T> extends infer Number extends SignFloatNumber
     ? StringifySignFloat<FloorSignFloatNumber<Number>>
     : never

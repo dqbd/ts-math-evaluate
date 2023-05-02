@@ -46,6 +46,15 @@ export type PowerSignFloatNumbers<
     : PowerAuxInt<X, N["float"]["int"]>
   : never
 
+/**
+ * Calculate the power of a number
+ * @param X The base number
+ * @param Y The exponent
+ * 
+ * ```
+ * type Example = Power<"2", "3">
+ * ```
+ */
 export type Power<
   X extends NumberLike,
   Y extends NumberLike

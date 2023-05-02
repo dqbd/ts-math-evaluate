@@ -11,6 +11,7 @@
   "scripts": {
     "test": "eslint --ext .js,.ts src",
     "build": "tsup --entry src/index.ts --entry src/hotscript.ts --format cjs,esm --dts",
+    "build:docs": "typedoc --out docs src/index.ts",
     "publish": "yarn run build && changeset publish"
   },
   "main": "./dist/index.js",
@@ -54,6 +55,7 @@
     "ts-expect": "^1.3.0",
     "ts-morph": "^17.0.1",
     "tsup": "^6.7.0",
+    "typedoc": "^0.24.6",
     "typescript": "^4.9.3"
   }
 }

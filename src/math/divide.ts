@@ -122,11 +122,20 @@ export type DivideSignFloatNumber<
   ? SignFloatNumber<MultiplySign<A["sign"], B["sign"]>, DivideInt<AInt, BInt>>
   : never
 
+/**
+ * Divide two numbers
+ * @param Dividend The dividend
+ * @param Divisor The divisor
+ * 
+ * ```
+ * type Example = Divide<"5", "2">
+ * ```
+ */
 export type Divide<
-  X extends NumberLike,
-  Y extends NumberLike
-> = ParseSignFloatNumber<X> extends infer A extends SignFloatNumber
-  ? ParseSignFloatNumber<Y> extends infer B extends SignFloatNumber
+  Dividend extends NumberLike,
+  Divisor extends NumberLike
+> = ParseSignFloatNumber<Dividend> extends infer A extends SignFloatNumber
+  ? ParseSignFloatNumber<Divisor> extends infer B extends SignFloatNumber
     ? StringifySignFloat<DivideSignFloatNumber<A, B>>
     : never
   : never

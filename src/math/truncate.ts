@@ -9,7 +9,15 @@ import {
 export type TruncateSignFloatNumber<Number extends SignFloatNumber> =
   SignFloatNumber<Number["sign"], FloatNumber<Number["float"]["int"], []>>
 
-export type Truncate<Value extends NumberLike> =
-  ParseSignFloatNumber<Value> extends infer Number extends SignFloatNumber
+/**
+ * Truncate a number to the nearest integer
+ * @param T The number to truncate
+ *
+ * ```
+ * type Example = Truncate<"3.14">
+ * ```
+ */
+export type Truncate<T extends NumberLike> =
+  ParseSignFloatNumber<T> extends infer Number extends SignFloatNumber
     ? StringifySignFloat<TruncateSignFloatNumber<Number>>
     : never

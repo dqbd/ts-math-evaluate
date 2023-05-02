@@ -21,8 +21,16 @@ type FactorialInt<
     : FactorialInt<SubDigit<Trimmed, [1]>, MultiplyInt<Memory, Trimmed>>
   : never
 
-export type Factorial<X extends NumberLike> =
-  ParseSignFloatNumber<X> extends infer Number extends SignFloatNumber
+/**
+ * Calculate the factorial of a number
+ * @param T The number to calculate the factorial of
+ * 
+ * ```
+ * type Example = Factorial<"5">
+ * ```
+ */
+export type Factorial<T extends NumberLike> =
+  ParseSignFloatNumber<T> extends infer Number extends SignFloatNumber
     ? Number["sign"] extends "+"
       ? Number["float"]["frac"]["length"] extends 0
         ? StringifySignFloat<

@@ -21,8 +21,16 @@ type RoundSignFloatNumber<Number extends SignFloatNumber> =
       : SignFloatNumber<Number["sign"], FloatNumber<Number["float"]["int"], []>>
     : Number
 
-export type Round<Value extends NumberLike> =
-  ParseSignFloatNumber<Value> extends infer Number extends SignFloatNumber
+/**
+ * Round a number to the nearest integer
+ * @param T The number to round
+ *
+ * ```
+ * type Example = Round<"3.14">
+ * ```
+ */
+export type Round<T extends NumberLike> =
+  ParseSignFloatNumber<T> extends infer Number extends SignFloatNumber
     ? RoundSignFloatNumber<Number> extends infer RoundNumber extends SignFloatNumber
       ? StringifySignFloat<RoundNumber>
       : never

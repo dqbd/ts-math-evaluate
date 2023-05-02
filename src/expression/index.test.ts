@@ -1,7 +1,8 @@
 import { Evaluate } from "."
 
-// $ExpectType "0.3619047620"
-type ExpressionCase1 = Evaluate<"3.1 + 2.5 * (1 - 5.6) / 4.2">
+// $ExpectType "2.3619047620"
+type ExpressionCase1 =
+  Evaluate<"3.1 + 2.5 * (1 - 5.6) / 4.2 + truncate(root(4, 2))! * -floor(1.5) + abs(-1) + ceil(root(4, 2))">
 
 // $ExpectType "-32"
 type ExpressionCase2 = Evaluate<"-64 + 10 * 0 + 32">
