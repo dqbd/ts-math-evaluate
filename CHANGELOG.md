@@ -1,5 +1,11 @@
 # ts-math-evaluate
 
+## 0.0.6
+
+### Patch Changes
+
+- d865757: README update
+
 ## 0.0.5
 
 ### Patch Changes
