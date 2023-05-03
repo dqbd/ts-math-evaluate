@@ -1,8 +1,6 @@
-\section{Other operations}
+\section{Comparison}
 
-\subsection{Comparison}
-
-Some operations require an additional type-level operation for comparing two numbers, such as the Euclidean division, for deciding whether to continue recursion. For that purpose, a type-level three-way comparison operator has been implemented, also known as the \say{spaceship operator} in the C++ programming language \cite{sutterConsistentComparison2017}.
+Some operations, such as the Euclidean division, require an additional type-level operation for comparing two numbers. In the case of the Euclidean division, a comparison is needed to decide whether to continue or halt the recursion. For that purpose, a type-level three-way comparison operator has been implemented, also known as the \say{spaceship operator} in the C++ programming language \cite{sutterConsistentComparison2017}.
 
 The spaceship operator for comparing two numbers $x$ and $y$, denoted by $x <=> y$, is defined in equation \ref{eq:spaceship-operator} as follows:
 
@@ -36,7 +34,7 @@ type Compare<X extends number, Y extends number> =
 
 As is the case for addition, subtraction and multiplication, it is desirable to precompute these values for every combination of digits and store them in a lookup table.
 
-The comparison of digit tuples is implemented by first ensuring the two tuples are of equal length by padding the shorter tuple with zeroes at the beginning. The first elements of both tuples are extracted into two type variables, \code{XHead} and \code{YHead}, and are compared using the lookup table. If the digits are equal, the recursion continues with the rest of the tuples, named \code{XRest} and \code{YRest}. Otherwise, the result of the last digit comparison is returned. The full implementation can be seen in Listing \ref{lst:digit-tuple-comparison}.
+The comparison of digit tuples is implemented by first ensuring the two tuples are of equal length by left-padding the shorter tuple with zeroes. The first elements of both tuples are extracted into two type variables, \code{XHead} and \code{YHead}, and are compared using the lookup table. If the digits are equal, the recursion continues with the rest of the tuples, named \code{XRest} and \code{YRest}. Otherwise, the result of the last digit comparison is returned. The full implementation can be seen in Listing \ref{lst:digit-tuple-comparison}.
 
 \begin{listing}[ht]
   \begin{minted}{TypeScript}
@@ -55,7 +53,7 @@ type CompareArr<X extends Digit[], Y extends Digit[]> =
   \caption{Digit tuple comparison}\label{lst:digit-tuple-comparison}
 \end{listing}
 
-\subsection{Numeric rounding operations}
+\section{Numeric rounding operations}
 
 The library implements four operations performing numeric rounding. Truncation is the simplest of the four implementations, where the parsing of numbers into a structured object type is doing the heavy lifting. The truncation itself is done by replacing the fractional part of a number with an empty tuple, as seen in Listing \ref{lst:truncation}
 
@@ -67,7 +65,7 @@ type Truncate<Number extends SignFloatNumber> =
   \caption{Truncation function}\label{lst:truncation}
 \end{listing}
 
-Ceiling and flooring are more complex operations. In the case of the ceiling operation, the number is first truncated and then checked to see if the input number is greater than the truncated number. If that is the case, the truncated number is incremented by one and returned. This behaviour is done to obtain the same result when flooring a negative number. For flooring, the process is similar, but the truncated number is decremented by one if the original number is less than the truncated number. The implementation can be seen in \ref{lst:floor}.
+Ceiling and flooring are more complex operations. In the case of the ceiling operation, the number is first truncated and then checked to see if the input number is greater than the truncated number. If that is the case, the truncated number is incremented by one and returned. Otherwise, the truncated number is returned as-is. This behaviour is done to obtain the correct result when performing ceiling on a negative number. For flooring, the process is similar, but the truncated number is decremented by one if the original number is less than the truncated number. The implementation can be seen in \ref{lst:floor}.
 
 \begin{listing}[ht]
   \begin{minted}{TypeScript}
@@ -85,7 +83,7 @@ type Floor<Number extends SignFloatNumber> =
   \caption{Floor function}\label{lst:floor}
 \end{listing}
 
-Rounding is the most complex of the four rounding operations. The fractional part's first digit is checked to determine whether it is assignable to the union of rounding up digits ($\{ 5,6,7,8,9 \}$). If that is the case, the truncated number is incremented by one and returned. Otherwise, the truncated number is returned as is, seen in Listing \ref{lst:round}.
+Rounding is the most complex of the four rounding operations. The first digit of the fractional part is checked to determine whether it is assignable to the union of rounding up digits ($\{ 5,6,7,8,9 \}$). If that is the case, the truncated number is incremented by one and returned. Otherwise, the truncated number is returned as is, seen in Listing \ref{lst:round}.
 
 \begin{listing}[ht]
   \begin{minted}{TypeScript}
@@ -108,7 +106,7 @@ type RoundSignFloatNumber<Number extends SignFloatNumber> =
   \caption{Round function}\label{lst:round}
 \end{listing}
 
-\subsection{Exponentiation}
+\section{Exponentiation}
 
 A naive implementation of exponentiation would be based on repeated multiplication. This is an inefficient approach, as the complexity of such an algorithm would be $O(M(x) \cdot 10^n) = O(n^2 \cdot 10^n)$, where $n$ is the number of digits and $M(x)$ is the complexity of multiplication algorithm, in this instance $O(n^2)$.
 
@@ -126,7 +124,7 @@ A more efficient exponentiation method is to perform binary exponentiation inste
 
 It can be shown that the complexity of the algorithm is $O(n^2 \cdot \log_2(10^n))$, a notable improvement over the naive approach.
 
-Parity checks done by \code{IsEventInt} as seen in Listing \ref{lst:parity-check} are done by checking the last digit of the exponent. Once again, the even digits are represented by a union type of number literal types. Notably, the conditional type is not a type itself. Developers need to write the \code{true} and \code{false} types explicitly.
+Parity checks done by \code{IsEventInt} as seen in Listing \ref{lst:parity-check} are performed by checking the last digit of the exponent. The even digits are represented by a union type of number literal types. Notably, the conditional type is not a type itself. Developers still need to write the \code{true} and \code{false} literal types explicitly.
 
 \begin{listing}[ht]
   \begin{minted}{TypeScript}
@@ -142,7 +140,7 @@ Parity checks done by \code{IsEventInt} as seen in Listing \ref{lst:parity-check
   \caption{Parity check of digits}\label{lst:parity-check}
 \end{listing}
 
-The implementation shown in Listing \ref{lst:exponentiation-by-squaring-ts} does require trimming of excess zeroes in the exponent to ensure the correctness of a fast assignability check for termination conditions. The implementation differs from the algorithm in Figure \ref{fig:exponentiation-by-squaring} in that the \code{PowerAuxInt} includes an optional type argument \code{Y} used to convert the method to a tail-recursive generic type, bypassing the need for deferring the instantiation to avoid the depth limit.
+The implementation shown in Listing \ref{lst:exponentiation-by-squaring-ts} does require trimming of excess zeroes in the exponent to ensure the correctness of a fast assignability check for termination conditions. The implementation differs from the algorithm in equation \ref{eq:exponentiation-by-squaring} in that the \code{PowerAuxInt} includes an optional type argument \code{Y} used to convert the method into a tail-recursive generic type, bypassing the need for deferring the instantiation to avoid the instantiation depth limitation.
 
 \begin{listing}[ht]
   \begin{minted}{TypeScript}
@@ -167,7 +165,7 @@ type PowerAuxInt<
   \caption{Auxilary exponentiation by squaring}\label{lst:exponentiation-by-squaring-ts}
 \end{listing}
 
-\subsection{$n$-th root extraction}
+\section{$n$-th root extraction}\label{sec:root-extraction}
 
 There are some cases where an operation is so complex that the type instantiation limit is reached, and TypeScript will prematurely abort the type-checking of the entire file. One such example is the $n$-th root extraction of a number. The implementation uses the Newton-Raphson method.
 
@@ -189,7 +187,7 @@ Thus, to estimate the $n$-th root of a number, declared by the function $f(x) = 
   \end{split}
 \end{equation}
 
-A naive implementation can be done by intimately mirroring the algorithm and nesting the generic types for readability, shown in Listing \ref{lst:root-wrong}. However, as it turns out, TypeScript will bail out due to the depth limit. Instead, to bypass the limit, the final implementation seen in Listing \ref{lst:root-right} uses the \code{infer} keyword to defer instantiation as much as possible, essentially treating \code{infer} as a way to assign intermediate values to variables.
+A naive implementation can be done by intimately mirroring the algorithm and nesting the generic types for readability, shown in Listing \ref{lst:root-wrong}. However, as it turns out, TypeScript will bail out from type-checking due to the instantiation depth limitatation. Instead, to bypass the limit, the final implementation, as seen in Listing \ref{lst:root-right}, uses the \code{infer} keyword to defer instantiation of types as much as possible, essentially treating \code{infer} as a way to assign intermediate values to type variables.
 
 Even so, it is not desired for the algorithm to run indefinitely; instead, the iteration is cut off after seven iterations, as more iterations will cause the type checker to reach the instantiation limit when evaluating.
 

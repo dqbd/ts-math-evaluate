@@ -37,7 +37,7 @@ type MultiplyInt<
 
 With the core building block for integer multiplication, extending the algorithm to floating-point numbers and signed numbers is straightforward.
 
-The \code{MultiplyFloat} generic type, as seen in Listing \ref{lst:float-multiplication}, converts the floating point number to an integer by concatenating the integer part of a number with the fractional part, preserving the precision, number of digits in the fractional part, as the length of a tuple. The precision is encoded as a tuple because the precision of the multiplication is the sum of the multiplicand and multiplier precisions. This can be done by spreading the tuples representing the precisions instead of calling expensive per-digit addition recursive types.
+The \code{MultiplyFloat} generic type, as seen in Listing \ref{lst:float-multiplication}, converts the floating point number to an integer by concatenating the integer part of a number with the fractional part, preserving the precision, number of digits in the fractional part, as the length of a tuple. The precision is encoded as a tuple because the precision of the multiplication is the sum of the multiplicand and multiplier precisions. This can be done by spreading the tuples representing the precisions instead of instantiating per-digit addition recursive types.
 
 \begin{listing}[ht]
   \begin{minted}{TypeScript}
@@ -63,7 +63,7 @@ type MultiplyFloat<
   \caption{Float multiplication}\label{lst:float-multiplication}
 \end{listing}
 
-The result of the integer multiplication is then converted back to a floating-point number by shifting the integer part right, as seen in Listing \ref{lst:integer-to-float}. This is done by iteratively taking the elements from the tuple representing the precision, acting as a counter, and prepending the rightmost digit of the integer part to the fractional part. The recursion terminates when the precision tuple is empty.
+The result of the integer multiplication is then converted back to a floating-point number by shifting the integer part to the right, as seen in Listing \ref{lst:integer-to-float}. This is done by iteratively taking the elements from the tuple representing the precision, now acting as a counter, and prepending the fractional part with the rightmost digit of the integer part. The recursion terminates when the precision tuple is empty.
 
 \begin{listing}[ht]
   \begin{minted}{TypeScript}

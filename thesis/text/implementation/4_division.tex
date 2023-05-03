@@ -33,7 +33,7 @@ type EuclideanDivision<
   \caption{Euclidean division}\label{lst:euclidean-division}
 \end{listing}
 
-The long division algorithm, seen in \ref{lst:long-division} as the \code{LongDivisionDigit} generic type, implemented in this thesis builds upon the foundation of the Euclidean division. In each iteration, the leftmost digit is popped from the dividend and pushed to the end of the accumulated remainder. Subsequently, pass the newly created tuple as the remainder for the Euclidean division, together with the divisor. The subsequent invocation of \code{LongDivisionDigit} takes the resulting dividend, the divisor and the updated accumulator of the \code{DivisionResult} type. The updated \code{DivisionResult} instance has the remainder copied and the quotient concatenated from the result of the Euclidean division. The process is repeated until all digits in the dividend have been used. Finally, the quotient and remainder are returned, with the leading zeros removed.
+The long division algorithm, seen in \ref{lst:long-division} as the \code{LongDivisionDigit} generic type, builds upon the foundation of the Euclidean division. In each iteration, the leftmost digit is popped from the dividend and pushed to the end of the accumulated remainder. Subsequently, the newly created tuple and the divisor are passed as the remainder for the Euclidean division. The next recursive instantiation of \code{LongDivisionDigit} accepts the resulting dividend, the divisor and the updated accumulator of the \code{DivisionResult} type. The updated \code{DivisionResult} instance found in the accumulator has the remainder copied and the quotient concatenated from the result of the Euclidean division. The process is repeated until all digits in the dividend have been used, rendering the \code{Dividend} tuple empty. Finally, the quotient and remainder are returned, with the leading zeros removed.
 
 \begin{listing}[ht]
   \begin{minted}{TypeScript}
@@ -63,7 +63,7 @@ type LongDivisionDigit<
   \caption{Long division}\label{lst:long-division}
 \end{listing}
 
-When conducting division operations involving two numbers with fractional components, the digit tuples of fractional parts are padded with zeroes to ensure equal lengths for both tuples. Afterwards, the fractional part is concatenated behind the integer part, creating an integer number compatible with the long division algorithm. Further digit shifting is not necessary, as the orders of magnitude get cancelled out during the division process, and the division itself will return a \code{FloatNumber}. An example of how the numbers are processed can be seen in \ref{fig:long-division-preprocessing}:
+When conducting division operations involving two numbers with fractional components, the digit tuples of fractional parts are right-padded with zeroes to ensure equal lengths for both tuples. Afterwards, the fractional part is concatenated behind the integer part, creating an integer number compatible with the long division algorithm. Further digit shifting is not necessary, as the orders of magnitude get cancelled out during the division process, and the division itself will return a \code{FloatNumber}. An example of how the numbers are processed can be seen in equation \ref{fig:long-division-preprocessing}:
 
 \begin{equation}\label{fig:long-division-preprocessing}
   \begin{array}{r@{\quad=\quad}r@{\quad=\quad}l}
@@ -73,6 +73,16 @@ When conducting division operations involving two numbers with fractional compon
   \end{array}
 \end{equation}
 
-Since both the long division and Euclidean division algorithms exhibit greater complexity and are prone to deep recursion, it is likely that when used, the instantiation depth limit imposed by TypeScript will be exceeded. As a workaround, it is possible to defer the evaluation of a type by rephrasing it as a distributive conditional type. This workaround will be remarkably useful when multiple complex arithmetic operations are chained together, as the $n$-th root operation will exemplify.
+Since both the long division and Euclidean division algorithms exhibit greater complexity and are prone to deep recursion, it is likely that when used, the instantiation depth limit imposed by TypeScript will be exceeded. As a workaround, it is possible to defer the evaluation of a type by rephrasing it as a distributive conditional type. This workaround will be remarkably useful when multiple complex arithmetic operations are chained together, as the $n$-th root operation will exemplify in Section \ref{sec:root-extraction}.
 
-Modulo operation builds on top of the division, multiplication and subtraction algorithm by calculating the floor of the division result obtained when dividing the dividend by the divisor. Subsequently, the result is multiplied by the divisor and finally subtracted from the dividend to get the final result of the modulo operation.
+Modulo operation builds on top of the division, multiplication and subtraction algorithm by calculating the floor of the division result obtained when dividing the dividend by the divisor. Subsequently, the result is multiplied back by the divisor and finally subtracted from the dividend to get the final result of the modulo operation. The implementation of the modulo operation can be seen in Listing \ref{lst:modulo}.
+
+\begin{listing}[ht]
+  \begin{minted}{TypeScript}
+export type Modulo<X extends SignFloatNumber, Y extends SignFloatNumber> =
+  DivideSignFloatNumber<X, Y> extends infer Divided extends SignFloatNumber
+    ? SubSignFloatNumber<X, MultiplySignFloat<Y, FloorSignFloatNumber<Divided>>>
+    : never
+  \end{minted}
+  \caption{Modulo operation}\label{lst:modulo}
+\end{listing}
