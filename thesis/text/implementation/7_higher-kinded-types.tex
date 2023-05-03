@@ -1,6 +1,6 @@
 \section{Higher-kinded types}\label{sec:higher-kinded-types}
 
-\acrfull{hkt}, also known as higher-order types, are a powerful type system language feature that enables describing expressive generic types by allowing accepting other generic types as type arguments. To demonstrate, consider the following Listing \ref{lst:duplicate-generic-types}. As can be seen, all three generic types do essentially the same type instantiation, only with different type constructors.
+\acrfull{hkt}, also known as higher-order types, are a powerful type system language feature that enables describing expressive generic types by allowing accepting other generic types as type arguments. To demonstrate, consider the following Listing \ref{lst:duplicate-generic-types}. As it can be seen, all three generic types do essentially the same type instantiation, only with different type constructors.
 
 \begin{listing}[ht]
   \begin{minted}{TypeScript}
@@ -47,13 +47,13 @@ type MapValuesWith<O, Type extends URI> = Kind<Type, O>
 
 This method is historically used in libraries for typed functional programming such as \code{fp-ts} \cite{GcantiFptsFunctional}. Unfortunately, this method requires a central registry of URIs that are used to identify the appropriate type constructor and extendability based on module augmentation is limited.
 
-The other possible method for implementing \acrshort{hkt}s is by utilising the properties of type unification with \code{this}. This method is thoroughly used in HOTscript \cite{vergnaudHigherOrderTypeScriptHOTScript2023}, and a simplified implementation can be seen in Listing \ref{lst:emulating-hkt}.
+The other possible method for implementing \acrshort{hkt}s is by utilising the properties of type intersection with \code{this}. The interface \code{Fn} provides a generic template for a callable function. Each such callable function must extend from \code{Fn} and depend on \code{this["input"]} to instantiate the type of \code{output} key. The \code{Call} generic type accepts such a function as a type parameter \code{Function} alongside the input as \code{Input} type parameter. Finally, the type constructor of \code{Call} will intersect the provided \code{Function} with the object type wrapping the \code{Input} type parameter, essentially providing the function with the desired arguments. The created \code{output} key can be extracted using indexed access types. This method is thoroughly used in HOTscript \cite{vergnaudHigherOrderTypeScriptHOTScript2023}, and a simplified implementation can be seen in Listing \ref{lst:emulating-hkt}.
 
 \begin{listing}[ht]
   \begin{minted}{TypeScript}
 interface Fn { input: unknown; output: unknown; }
 
-type Call<fn extends Fn, input> = (fn & { input: input })["output"];
+type Call<Function extends Fn, Input> = (Function & { input: Input })["output"];
 
 interface Foo extends Fn {
   output: this["input"] extends infer O extends string ? `Foo<${O}>` : never;
@@ -71,7 +71,7 @@ type MapValuesWith<O, Wrap extends Fn> = {
   [K in keyof O]: Call<Wrap, O[K]>
 }
 \end{minted}
-  \caption{Type unification for emulating \acrshort{hkt}s}\label{lst:emulating-hkt}
+  \caption{Type intersection for emulating \acrshort{hkt}s}\label{lst:emulating-hkt}
 \end{listing}
 
 The most popular implementation of the latter method, HOTScript, exposes most of the core functionality of the library as a public-facing API. Thus, an additional public-facing API for mathematical operations has been exposed for users of HOTScript, extending the library with an advanced mathematical expression evaluator implemented in this work.

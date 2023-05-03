@@ -8,7 +8,7 @@ The generic types for mathematical operations are well suited for simple express
 
 The lexical analyser (lexer) is responsible for dividing the input string literal type into a sequence of meaningful units called tokens. The goal of a lexer is to remove whitespaces and inconsistencies to simplify the input stream, which is helpful for later stages of parsing. One such example is the parsing of numbers: consuming a single number token is easier than parsing each digit of a number, which can unnecessarily complicate the design of a parser.
 
-The following section will provide an in-depth look into the handwritten lexer implementation. Namespaces have been used to describe the object types representing tokens, ensuring proper isolation between different type aliases and preventing naming clashes without the need to resort to prefixing. An example can be seen in \ref{lst:lexer-token-namespace}, where \code{Plus} and \code{Minus} are type aliases for the object types, whereas \vcode{_} is a union type for when a placeholder for a token is needed. Also, instead of utilising the \code{never} type for errors, a string enum is used to prevent unintended matches when performing assignability checks, as \code{never} is a subtype of all types.
+The following section will provide an in-depth look into the handwritten lexer implementation. Namespaces have been used to isolate and contain the object types representing tokens, ensuring proper isolation between different type aliases and preventing naming clashes without the need to resort to prefixing. An example can be seen in \ref{lst:lexer-token-namespace}, where \code{Plus} and \code{Minus} are type aliases for the object types, whereas \vcode{_} is a union type for when a placeholder for a token is needed. Also, instead of utilising the \code{never} type for errors, a string enum is used to prevent unintended matches when performing assignability checks, as \code{never} is a subtype of all types.
 
 \begin{listing}[ht]
   \begin{minted}{TypeScript}
@@ -26,7 +26,7 @@ namespace Token {
   \caption{Lexer token namespace}\label{lst:lexer-token-namespace}
 \end{listing}
 
-The lexing itself is done by a generic type, which accepts a string literal type as a type argument and returns either a string enum as an error or an object type containing the matched token and the remaining unparsed input. As seen in Listing \code{lst:lexer-structure}, the \code{HandleToken} attempts to perform pattern matching on the first character of the input string literal type \code{T}. If succeeded, the matched token is returned wrapped in an object type defined by the \code{LexResult} generic type, passing both the matched token and the remaining input to the next iteration of the \code{HandleToken} generic type. If the pattern matching fails, the \code{Error.Lexer} string enum is returned instead. This structure can be chained together to create a lexer for multiple token types, such as function keywords or numbers.
+The lexing itself is done by a generic type, which accepts a string literal type as a type argument and returns either a string enum as an error or an object type containing the matched token and the remaining unparsed input. As seen in Listing \ref{lst:lexer-structure}, the \code{HandleToken} attempts to perform pattern matching on the first character of the input string literal type \code{T}. If succeeded, the matched token, wrapped in an object type constructed by the \code{LexResult} generic type, is returned, passing both the matched token and the remaining input to the next recursive instantiation of the \code{HandleToken} generic type. If the pattern matching fails, the \code{Error.Lexer} string enum is returned instead. This structure can be chained together to create a lexer for multiple token types, such as function keywords or numbers.
 
 \begin{listing}[ht]
   \begin{minted}{TypeScript}
@@ -44,16 +44,16 @@ type HandleToken<T extends string> =
     : Error.Lexer
   : Error.Lexer
 \end{minted}
-  \caption{Lexer Structure}\label{lst:lexer-structure}
+  \caption{Lexer structure}\label{lst:lexer-structure}
 \end{listing}
 
 \subsection{Parser}
 
-Infix notation is the most common way of writing mathematical expressions and is more intuitive for humans to read and write. However, it is not ideal for computers due to the complexity of parsing algorithms, which must adequately evaluate parentheses and operator precedence rules. Postfix notation addresses the shortcomings of infix notation by explicitly stating the order of computation, making the evaluation unambiguous.
+Infix notation is the most common way of writing mathematical expressions and is more intuitive for humans to read and write. However, it is not ideal for computers due to the complexity of parsing algorithms, which must adequately evaluate parentheses and operator precedence rules. Other notations, such as the postfix notation, address the shortcomings of infix notation by explicitly stating the order of computation, making the evaluation unambiguous.
 
 Various methods exist for converting an expression in infix notation. However, this thesis focuses on implementing a top-down LL(1) parser for mathematical expression. The main reason for choosing the LL(1) parser is the extendibility and suitability for supporting other LL(1) grammar more readily. Some other common parsers were considered for this thesis, including the Shunting-Yard algorithm, using two stacks for operators and output operands, and the Pratt parser, a recursive descent parsing algorithm utilising a precedence table for extendability.
 
-In order to explain the LL(1) parser, the following sections will describe the core concepts of grammar and parsing. Grammar is a set of rules that defines the syntax of a language. The grammar $G = (\Sigma, N, R, S)$ consists of a set of terminals $\Sigma$, a set of non-terminals $N$, a set of production rules $R$ and a start symbol $S$. Terminals are the basic unit of the language, while non-terminals are placeholders for other terminals and non-terminals. Production rules define how non-terminals can be expanded into a sequence of other non-terminals and terminals, while the start symbol defines the starting non-terminal. The parsing itself will create a derivation, which is a sequence of production rules applications transforming a string of symbols, usually starting from the start symbol of the grammar.
+In order to explain the LL(1) parser, the following sections will describe the core concepts of grammar and parsing. Grammar is a set of rules that defines the syntax of a language. The grammar $G = (\Sigma, N, R, S)$ consists of a set of terminals $\Sigma$, a set of non-terminals $N$, a set of production rules $R$ and a start symbol $S$. Terminals are the basic unit of the grammar, while non-terminals are placeholders for other terminals and non-terminals. Production rules define how non-terminals can be expanded into a sequence of other non-terminals and terminals, while the start symbol defines the starting non-terminal. The parsing itself will create a derivation, which is a sequence of production rules applications transforming a string of symbols, starting from the start symbol of the grammar.
 
 A derivation can be visualised as a tree, also known as the derivation tree or parse tree. Each node of the tree represents a symbol in the string, and each edge represents a production rule application. The root of the tree is the start symbol of the grammar, and the leaves are the terminal symbols of the string.
 
@@ -129,7 +129,7 @@ When designing a LL(1) grammar for mathematical expressions, operator precedence
   \label{table:associativity}
 \end{table}
 
-The final grammar used for this thesis can be seen in Figure \ref{fig:math-grammar}. The operator precedence rules are baked into the grammar itself, where the non-terminals representing the higher precedence operations are expanded later. The associativity of operators has been taken into consideration as well by changing the position of the non-terminal from the lefthand side, essentially switching from left recursion to right recursion and vice versa. An example can be seen in \ref{table:associativity-grammar}, where both the previous context-free grammar and the appropriately modified LL(1) version of the grammar is shown to demonstrate the difference between these two examples.
+The final grammar used for this thesis can be seen in Figure \ref{fig:math-grammar}. The operator precedence rules are baked into the grammar itself, where the non-terminals representing the higher precedence operations are expanded later. The associativity of operators has been taken into consideration as well by changing the position of the non-terminal from the left side to the right side, essentially switching from left recursion to right recursion and vice versa. An example can be seen in Table \ref{table:associativity-grammar}, where both the previous context-free grammar and the appropriately modified LL(1) version of the grammar is shown to demonstrate the difference between these two examples.
 
 \begin{figure}[ht]
   \begin{multicols}{2}
@@ -230,7 +230,7 @@ type ConsumeParser<
   \caption{Core parser interface}\label{lst:parser-interface}
 \end{listing}
 
-With the following building blocks, it is possible to write a recursive descent parser based on the obtained parser table. An example can be seen in Listing \ref{lst:pow-parser}, where a non-terminal \code{POW} and \code{POWx} are transformed into generic types accepting a type instance of \code{Parser} as the type parameter. The generic type attempts to match a lexer token by performing an assignability check. If succeeded, either the token can be consumed by using \code{ConsumeParser}, yielding a new parser to work with, or the parser can be passed on to the next generic type. The \code{ReturnParser} generic type reassigns the AST node, essentially acting as a way to return a value from a generic type.
+With the following building blocks, it is possible to write a recursive descent parser based on the obtained parser table. An example can be seen in Listing \ref{lst:pow-parser}, where a non-terminal \code{POW} and \code{POWx} are transformed into generic types accepting a type instance of \code{Parser} as the type parameter. The generic type attempts to match a lexer token by performing an assignability check. If succeeded, either the token can be consumed by using \code{ConsumeParser}, yielding a new parser to work with, or the parser can be passed on to the next generic type. The \code{ReturnParser} generic type reassigns the AST node, essentially acting as a way to return a new \acrshort{ast} node.
 
 \begin{listing}[ht]
   \begin{minted}{TypeScript}
