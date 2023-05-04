@@ -199,7 +199,7 @@ Thus, to estimate the $n$-th root of a number, declared by the function $f(x) = 
   \end{split}
 \end{equation}
 
-A naive implementation can be done by intimately mirroring the algorithm and nesting the generic types for readability, shown in Listing \ref{lst:root-wrong}. However, as it turns out, TypeScript will bail out from type-checking due to the instantiation depth limitatation. Instead, to bypass the limit, the final implementation, as seen in Listing \ref{lst:root-right}, uses the \code{infer} keyword to defer instantiation of types as much as possible, essentially treating \code{infer} as a way to assign intermediate values to type variables.
+A naive implementation can be done by intimately mirroring the algorithm and nesting the generic types for readability, shown in Listing \ref{lst:root-wrong}. However, as it turns out, TypeScript will prematurely stop type-checking due to the instantiation depth limitatation. Instead, to bypass the limit, the final implementation, as seen in Listing \ref{lst:root-right}, uses the \code{infer} keyword to defer instantiation of types as much as possible, essentially treating \code{infer} as a way to assign intermediate values to type variables.
 
 Even so, it is not desired for the algorithm to run indefinitely; instead, the iteration is cut off after seven iterations, as more iterations will cause the type checker to reach the instantiation limit when evaluating.
 

@@ -1,8 +1,8 @@
 \section{Testing and development}
 
-During the development of the type-level mathematical expression evaluator, several invaluable tools were discovered and utilised that significantly contributed to the implementation. This section is devoted to discussing these tools and their impact on the overall development process.
+During the development of the type-level mathematical expression evaluator, several invaluable tools were utilised that significantly contributed to the implementation. This section is devoted to discussing these tools and their impact on the overall development process.
 
-The core of the development experience is underpinned by TypeScript Standalone Server, also known as \code{tsserver}. \code{tsserver} encapsulates both the compiler and the accompanying language services for use in editors and \acrshort{ide}s, communicating via \acrshort{lsp} to add support for code completion, auto-importing, symbol renaming, for example. \code{tsserver} also provides the ability to see the inferred types of any symbol by hovering on top of the symbol, as seen in Figure \ref{fig:tsserver-hover}. This service is invaluable when developing a type-level library allowing the developer to break down complex types into smaller pieces, achieving better readability.
+The core of the development experience is underpinned by TypeScript Standalone Server, also known as \code{tsserver}. \code{tsserver} encapsulates both the compiler and the accompanying language services for use in editors and \acrshort{ide}s, communicating via \acrshort{lsp} to add support for code completion, auto-importing, symbol renaming, to name a few. \code{tsserver} also provides the ability to see the inferred types of any symbol by hovering on top of the symbol, as seen in Figure \ref{fig:tsserver-hover}. This service is invaluable when developing a type-level library allowing the developer to break down complex types into smaller pieces, achieving better readability.
 
 \begin{figure}[ht]
   \centering
