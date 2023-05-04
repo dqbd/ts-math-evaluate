@@ -1,6 +1,6 @@
 \section{Addition and Subtraction}
 
-When representing the numbers as tuple lengths, some operations, such as addition and subtraction, can be implemented by spreading or inference. In the case of the addition operation, as seen in Listing \ref{lst:tuple-addition}, a new tuple type is created by spreading the elements of both tuples into a new tuple, which is then used to obtain the length representing the result.
+When representing the numbers as tuple lengths, some operations, such as addition and subtraction, can be implemented by spreading or inference. In the case of the addition operation, as seen in Listing \ref{lst:tuple-addition}, a new tuple type is created by spreading the elements of both tuples into a~new tuple, which is then used to obtain the length representing the result.
 
 \begin{listing}[ht]
   \begin{minted}{TypeScript}
@@ -31,7 +31,7 @@ type Subtract<
 
 The final implementation of the addition operation based on object representation of numbers uses the traditional schoolbook addition with carry. The algorithm adds the numbers digit by digit and keeps track of the carry as it moves from one digit to the next. This technique has a time complexity of $\Theta(n)$, where $n$ is the number of digits in the number taking part in the addition.
 
-The core building block of the schoolbook addition and subtraction algorithm is the ability to obtain the next digit alongside the carry or borrow flag when performing the operation on pairs of decimal digits. This can be done purely in the type system alone using tuple expansion and checking for the stringified length of the tuple, as seen in Listing \ref{lst:generated-operations}, but to improve the performance and avoid unnecessary type instantiations, a lookup table is used to obtain the next digit and the carry flag instead. The subtraction operation is implemented similarly, where a two-dimensional lookup table of tuples is used to obtain the next digit and the borrow flag.
+The core building block of the schoolbook addition and subtraction algorithm is the ability to obtain the next digit alongside the carry or borrow flag when performing the operation on pairs of decimal digits. This can be done purely in the type system alone using tuple expansion and checking for the stringified length of the tuple, as seen in Listing \ref{lst:generated-operations}, but to improve the performance and avoid unnecessary type instantiations, a lookup table is used to obtain the next digit and the carry flag instead. The subtraction operation is implemented similarly, where a~two-dimensional lookup table of tuples is used to obtain the next digit and the borrow flag.
 
 The lookup table is created by iterating over all possible combinations of two digits and storing the result of the operation and the carry or borrow flag in a two-dimensional map. In order to improve the performance even further, the lookup tables of both the addition and subtraction operations are generated as a build step in JavaScript and stored in a separate file, which is later imported into the code.
 

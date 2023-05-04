@@ -174,11 +174,11 @@ const Goose: DuckLike = {
 
 Revisiting the concept of types as sets of values, as seen in Listing \ref{lst:literal-types}, assigning a value disallowed by the literal type will result in a type error. In TypeScript, a type is considered \say{assignable} if it is either a \say{member of} the set of permitted values defined by the type (when describing relationships between a value and a type) or a \say{subset of} the set (when describing relationships between two types).
 
-When there is a requirement to describe a type that encompasses multiple types, combining multiple sets of permitted values into a single set, union types can be utilised. Union types are defined by the union operator represented by the \code{|} symbol, separating the types that are being combined, referred to as \say{union members} \cite{DocumentationEverydayTypes}. Essentially, \code{X | Y} can be read as a type for a value that can either be of type \code{X} or \code{Y}.
+When there is a requirement to describe a type that encompasses multiple types, combining multiple sets of permitted values into a single set, union types can be utilised. Union types are defined by the union operator represented by the \code{|} symbol, separating the types that are being combined, referred to as \say{union members} \cite{DocumentationEverydayTypes}. Essentially, \code{X | Y} can be read as a type for a~value that can either be of type \code{X} or \code{Y}.
 
 Since a union type can contain a value from any of the member types, TypeScript permits only those operations that are valid for all member types within the union. If an operation is only valid for some of the union member types, type narrowing must be performed. Type narrowing is a process of refining a broader type to a more specific narrow one, capturing a subset of values of the original broader type.
 
-An example of type narrowing can be seen in Listing \ref{lst:union-types}, where the function \code{printUserId} can accept both a \code{string} or a \code{number} as an argument. In order to invoke \code{toUpperCase()}, a method valid only for values of \code{string} type, it is necessary to check if the argument is assignable to a \code{string} type. Afterwards, TypeScript has the necessary information to infer that the type of the checked value must be of a \code{string} type and permits the invocation of \code{toUpperCase()}.
+An example of type narrowing can be seen in Listing \ref{lst:union-types}, where the function \code{printUserId} can accept both a \code{string} or a \code{number} as an argument. In order to invoke \code{toUpperCase()}, a method valid only for values of \code{string} type, it is necessary to check if the argument is assignable to a~\code{string} type. Afterwards, TypeScript has the necessary information to infer that the type of the checked value must be of a \code{string} type and permits the invocation of \code{toUpperCase()}.
 
 \begin{listing}[ht]
   \begin{minted}{TypeScript}
@@ -272,9 +272,9 @@ const c: object = data
   \caption{Assignability of unknown}\label{lst:unknown-assignability}
 \end{listing}
 
-Finally, \code{never} is a bottom type, acting as a subtype of all other types, representing a value that should never occur. In the context of the theory of mathematical logic, \code{never} acts as a logical contradiction, describing a value that may never exist. No other type can be assigned to \code{never} nor \code{never} can be assigned to any other type. \code{never} can be found when attempting to intersect two types that have no properties in common, such as \code{string \& number}.
+Finally, \code{never} is a bottom type, acting as a subtype of all other types, representing a value that should never occur. In the context of the theory of mathematical logic, \code{never} acts as a~logical contradiction, describing a value that may never exist. No other type can be assigned to \code{never} nor \code{never} can be assigned to any other type. \code{never} can be found when attempting to intersect two types that have no properties in common, such as \code{string \& number}.
 
-\code{void} is a specific type used to signify a function which does not return a value. There is a notable difference between the usage of \code{void} when used for describing a type of a function with \code{void} return type and when used in the function declaration, as seen in Listing \ref{lst:void-return-type}. The former is used to describe a situation when an implementation of a \say{void function} does return a value but should be ignored. The latter does enforce that a function should not return a value at all.
+\code{void} is a specific type used to signify a function which does not return a value. There is a~notable difference between the usage of \code{void} when used for describing a type of a function with \code{void} return type and when used in the function declaration, as seen in Listing \ref{lst:void-return-type}. The former is used to describe a situation when an implementation of a \say{void function} does return a value but should be ignored. The latter does enforce that a function should not return a value at all.
 
 \begin{listing}[ht]
   \begin{minted}{TypeScript}
@@ -331,7 +331,7 @@ enum Direction {
 
 In TypeScript, namespaces, formally known as internal modules, are used to organise code and prevent naming conflicts in the global scope. In order to create a namespace, the \code{namespace} keyword is used, followed by the identifier of the namespace. The code within the namespace, also known as the scope of the namespace, is isolated from the global environment, as seen in Listing \ref{lst:namespace}. Only constructs explicitly marked as exported are accessible outside of the namespace, exposed as a single variable with the namespace identifier as its name.
 
-One key benefit of namespaces is the ability to merge multiple namespaces across files. As long as the names of multiple namespaces are the same, the declarations will be merged into a single declaration. This feature can split large scopes into multiple files while exposing all of the properties as a single variable.
+One key benefit of namespaces is the ability to merge multiple namespaces across files. As long as the names of multiple namespaces are the same, the declarations will be merged into a~single declaration. This feature can split large scopes into multiple files while exposing all of the properties as a single variable.
 
 \clearpage
 
@@ -492,7 +492,7 @@ type Optional<T> = {
   \caption{Mapped types}\label{lst:mapped-types}
 \end{listing}
 
-Introduced in TypeScript 4.1 \cite{AnnouncingTypeScript4.1}, the \code{as} keyword can be used to re-map keys in mapped types, allowing developers to create, transform or filter out keys when creating a new type. An example is shown in Listing \ref{lst:mapped-as}, where the \code{Omit<T, Key>} creates a new object type based on type \code{T} while omitting properties which are assignable to \code{Key}.
+Introduced in TypeScript 4.1 \cite{AnnouncingTypeScript4.1}, the \code{as} keyword can be used to re-map keys in mapped types, allowing developers to create, transform or filter out keys when creating a new type. An~example is shown in Listing \ref{lst:mapped-as}, where the \code{Omit<T, Key>} creates a new object type based on type \code{T} while omitting properties which are assignable to \code{Key}.
 
 \begin{listing}[ht]
   \begin{minted}{TypeScript}
@@ -568,7 +568,7 @@ type FilterCorrect<Haystack extends string[], Needle extends string> =
 
 Finally, template literal types are based on the string literal types, allowing string interpolation and manipulation within the TypeScript type system. In the context of this thesis, template literal types are used to create a parser of mathematical expressions. However, template literal types can be also utilised to create fully typed string-based \acrfull{dsl}.
 
-Similar to the syntax of JavaScript template literal strings, backticks are used to create a new template literal type. When used with a string literal type, a template literal will create a new string literal type by concatenation \cite{DocumentationTemplateLiteral}. For example, the type \code{\`{}Hello \$\{"World"\}\`{}} will create a new string literal type \code{"Hello World"}.
+Similar to the syntax of JavaScript template literal strings, backticks are used to create a~new template literal type. When used with a string literal type, a template literal will create a new string literal type by concatenation \cite{DocumentationTemplateLiteral}. For example, the type \code{\`{}Hello \$\{"World"\}\`{}} will create a new string literal type \code{"Hello World"}.
 
 Template literal types can be used with primitive types as well, the only limitation being that the primitive type must be stringifiable. That includes all of the primitive types except the \code{symbol} type. When created, these types are a subset of the \code{string} type and can be used as a validation mechanism matching a string of an expected format. For instance, the type \code{\`{}localhost:\$\{number\}\`{}} will create a new string literal type that will match a string of the format \code{localhost:PORT}, where \code{PORT} is a number.
 
@@ -587,7 +587,7 @@ type Style = `${Variants}-${Weights}`
 
 \clearpage
 
-Ultimately, inference in template literal types can be used to perform pattern matching within string literals with the combination of conditional types and the \code{infer} keyword. As shown in Listing \ref{lst:pattern-matching-template-literal}, a generic type \code{SplitString} is presented, which splits a string literal type into a tuple of substrings with a space as the delimiter. The aim is to perform pattern matching on a string with the inferred types \code{Head} and \code{Rest} as a result of the matching. \code{Head} contains the first character, and \code{Rest} contains the rest of the split string, separated by a space character. Type constraints are also applied for the inferred types to ensure the types are assignable to \code{string}\footnote{Albeit unnecessarily, as TypeScript automatically applies the \code{string} type constraint in this instance}. Both of the inferred types are used to create a new tuple type, with \code{Head} being the first element of the tuple and \code{Rest} used in a recursive call to split the rest of the string.
+Ultimately, inference in template literal types can be used to perform pattern matching within string literals with the combination of conditional types and the \code{infer} keyword. As shown in Listing \ref{lst:pattern-matching-template-literal}, a generic type \code{SplitString} is presented, which splits a string literal type into a~tuple of substrings with a space as the delimiter. The aim is to perform pattern matching on a~string with the inferred types \code{Head} and \code{Rest} as a result of the matching. \code{Head} contains the first character, and \code{Rest} contains the rest of the split string, separated by a space character. Type constraints are also applied for the inferred types to ensure the types are assignable to \code{string}\footnote{Albeit unnecessarily, as TypeScript automatically applies the \code{string} type constraint in this instance}. Both of the inferred types are used to create a new tuple type, with \code{Head} being the first element of the tuple and \code{Rest} used in a recursive call to split the rest of the string.
 
 \begin{listing}[ht]
   \begin{minted}{TypeScript}

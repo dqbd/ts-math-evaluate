@@ -42,7 +42,7 @@
 }
 \DeclareOption{english}{
 	\AtBeginDocument{\selectlanguage{english}}
-	\PassOptionsToPackage{czech,main=english}{babel}
+	\PassOptionsToPackage{english,main=english}{babel}
 	\def\@ctufitlang{E}
 }
 \DeclareOption{slovak}{
