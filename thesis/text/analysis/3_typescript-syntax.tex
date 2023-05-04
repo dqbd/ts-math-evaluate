@@ -272,7 +272,7 @@ const c: object = data
   \caption{Assignability of unknown}\label{lst:unknown-assignability}
 \end{listing}
 
-Finally, \code{never} is a bottom type, acting as a subtype of all other types, representing a value that should never occur. In the context of the theory of mathematical logic, \code{never} acts as a~logical contradiction, describing a value that may never exist. No other type can be assigned to \code{never} nor \code{never} can be assigned to any other type. \code{never} can be found when attempting to intersect two types that have no properties in common, such as \code{string \& number}.
+Finally, \code{never} is a bottom type, acting as a subtype of all other types, representing a value that should never occur. In the context of the theory of mathematical logic, \code{never} acts as a~logical contradiction, describing a value that may never exist, whereas in terms of set theory, \code{never} represents an empty set of values. No other type can be assigned to \code{never} nor \code{never} can be assigned to any other type. \code{never} can be found when attempting to intersect two types that have no properties in common, such as \code{string \& number}. The \code{never} type can also represent an empty union, which will be important when discussing conditional types in Section \ref{sec:conditional-types}.
 
 \code{void} is a specific type used to signify a function which does not return a value. There is a~notable difference between the usage of \code{void} when used for describing a type of a function with \code{void} return type and when used in the function declaration, as seen in Listing \ref{lst:void-return-type}. The former is used to describe a situation when an implementation of a \say{void function} does return a value but should be ignored. The latter does enforce that a function should not return a value at all.
 
@@ -295,7 +295,7 @@ function fn2(): void {
 
 \code{enum} type is a distinct type for describing a set of named constants. Instead of using individual variables for each constant, an \code{enum} provides an organised way to express a collection of related values. \code{enum} is one of the few TypeScript features introducing an additional code added to the compiler output, and enums refer to real objects at runtime.
 
-An \code{enum} type consists of members and their corresponding initialisers for the runtime value of the member. There are two types of enums in TypeScript: numeric enums and string-based enums. 
+An \code{enum} type consists of members and their corresponding initialisers for the runtime value of the member. There are two types of enums in TypeScript: numeric and string-based enums.
 
 \clearpage
 
@@ -313,7 +313,7 @@ enum Direction {
   \caption{Numeric enums}\label{lst:numeric-enums}
 \end{listing}
 
-String-based enums are similar to numeric enums, but each member is assigned a string value instead of a numeric value. Each member thus must have an initialiser with a string literal, as seen in Listing \ref{lst:string-based-enums}. The key benefit of string-based enums is that they tend to preserve their semantic value when serialising, which is especially helpful when debugging, as the values of numeric enums tend to be opaque. 
+String-based enums are similar to numeric enums, but each member is assigned a string value instead of a numeric value. Each member thus must have an initialiser with a string literal, as seen in Listing \ref{lst:string-based-enums}. The key benefit of string-based enums is that they tend to preserve their semantic value when serialising, which is especially helpful when debugging, as the values of numeric enums tend to be opaque.
 
 \begin{listing}[ht]
   \begin{minted}{TypeScript}
@@ -418,7 +418,7 @@ As intended, the generic \code{getLength} function will no longer accept arbitra
 
 \clearpage
 
-\subsection{Conditional types}
+\subsection{Conditional types}\label{sec:conditional-types}
 
 Within the TypeScript meta-language, developers can write conditions and branching logic using conditional types. Conditional types follow a syntax similar to the conditional ternary operators with overloading the \code{extends} keyword: \code{Input extends Expect ? A : B}. This can be read as \say{If type \code{Input} is assignable to type \code{Expect}, then the type resolves to type \code{A}, otherwise to type \code{B}.} An example can be seen in Listing \ref{lst:conditional-types}, where the \code{IsString<T>} type will resolve to \code{true} if the type argument \code{T} is assignable to \code{string} and to \code{false} otherwise.
 
@@ -429,7 +429,7 @@ type IsString<T> = T extends string ? true : false
   \caption{Conditional types}\label{lst:conditional-types}
 \end{listing}
 
-The \code{infer} keyword can be used to deduce and extract a specific type within the scope of conditional types, essentially acting as a way to perform pattern matching. With \code{infer}, a new generic type variable is introduced, which can be later used within the true branch of the conditional type, as seen in the implementation of the \code{ReturnType<T>} utility type in Listing \ref{lst:infer}. The \code{ReturnType<T>} type will resolve to the return type of the type argument \code{T}.
+The \code{infer} keyword can be used to deduce and extract a specific type within the scope of conditional types, essentially acting as a way to perform pattern matching. With \code{infer}, a~new generic type variable is introduced, which can be later used within the true branch of the conditional type, as seen in the implementation of the \code{ReturnType<T>} utility type in Listing \ref{lst:infer}. The \code{ReturnType<T>} type will resolve to the return type of the type argument \code{T}.
 
 \begin{listing}[ht]
   \begin{minted}{TypeScript}
@@ -443,14 +443,14 @@ Since TypeScript 4.7 \cite{AnnouncingTypeScript4.7}, an additional type constrai
 \begin{listing}[ht]
   \begin{minted}{TypeScript}
 type FirstIfString<T> =
-  T extends [infer S extends string, ...unknown[]]
-    ? S
-    : never;
-
-// is equivalent to 
-type FirstIfString<T> =
   T extends [infer S, ...unknown[]]
     ? S extends string ? S : never
+    : never;
+
+// is equivalent to...
+type FirstIfString<T> =
+  T extends [infer S extends string, ...unknown[]]
+    ? S
     : never;
 \end{minted}
   \caption{Type constraints within infer}\label{lst:infer-constraint}
@@ -461,16 +461,25 @@ When a union type is provided within the conditional type, the conditional type 
 \begin{listing}[ht]
   \begin{minted}{TypeScript}
 type ToArray<Type> = Type extends any ? Type[] : never;
-
-// $ExpectType string[] | number[]
-type A = ToArray<string | number> 
+type A = ToArray<string | number> // $ExpectType string[] | number[]
 
 type ToArrayNonDist<Type> = [Type] extends [any] ? Type[] : never;
-
-// $ExpectType (string | number)[]
-type B = ToArrayNonDist<string | number> 
+type B = ToArrayNonDist<string | number> // $ExpectType (string | number)[]
 \end{minted}
   \caption{Distributing union types}\label{lst:distribute}
+\end{listing}
+
+There is a caveat when checking for assignability of \code{never}. As \code{never} can also denote an empty union, the conditional type will attempt to distribute the empty union and because there are no types to distribute over, the entire conditional type resolves to \code{never}, as seen in Listing \ref{lst:never-check}. Wrapping the type argument in a tuple will prevent undesired union type distribution.
+
+\begin{listing}[ht]
+\begin{minted}{TypeScript}
+type IsNeverInvalid<T> = T extends never ? true : false
+type Invalid = IsNever<never> // $ExpectType never
+
+type IsNeverValid<T> = [T] extends [never] ? true : false
+type Valid = IsNever<never> // $ExpectType true
+\end{minted}
+\caption{Assignability check of \code{never}}\label{lst:never-check}
 \end{listing}
 
 \subsection{Mapped types}\label{sec:mapped-types}
@@ -481,24 +490,17 @@ Mapping modifiers can also be specified to affect the mutability or optionality 
 
 \begin{listing}[ht]
   \begin{minted}{TypeScript}
-type ToBoolean<T> = {
-  [K in keyof T]: boolean
-}
-
-type Optional<T> = {
-  [K in keyof T]+?: T[K]
-}
+type ToBoolean<T> = { [K in keyof T]: boolean }
+type Optional<T> = { [K in keyof T]+?: T[K] }
 \end{minted}
   \caption{Mapped types}\label{lst:mapped-types}
 \end{listing}
 
 Introduced in TypeScript 4.1 \cite{AnnouncingTypeScript4.1}, the \code{as} keyword can be used to re-map keys in mapped types, allowing developers to create, transform or filter out keys when creating a new type. An~example is shown in Listing \ref{lst:mapped-as}, where the \code{Omit<T, Key>} creates a new object type based on type \code{T} while omitting properties which are assignable to \code{Key}.
 
-\begin{listing}[ht]
+\begin{listing}[ht!]
   \begin{minted}{TypeScript}
-type Omit<T, Key> = {
-  [K in keyof T as Exclude<K, Key>]: T[K]
-}
+type Omit<T, Key> = { [K in keyof T as Exclude<K, Key>]: T[K] }
 \end{minted}
   \caption{Using as in mapped types}\label{lst:mapped-as}
 \end{listing}

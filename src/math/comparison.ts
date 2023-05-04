@@ -59,3 +59,10 @@ export type IsEvenInt<X extends Digit[]> = X extends [
     ? true
     : false
   : false
+
+export type IsNotZero<X extends SignFloatNumber> = CompareSignNumbers<
+  X,
+  SignFloatNumber<X["sign"], FloatNumber<[0], []>>
+> extends 0
+  ? false
+  : true

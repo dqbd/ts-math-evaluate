@@ -11,3 +11,5 @@ type PowCase4 = Power<"2", "1"> // $ExpectType "2"
 type PowCase5 = Power<"2.5", "3"> // $ExpectType "15.625"
 
 type PowCase6 = Power<"2", "1.0000"> // $ExpectType "2"
+
+type PowCase7 = Power<"2", "1.5000"> // $ExpectType never

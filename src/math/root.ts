@@ -43,19 +43,14 @@ type RootDigitIter<
 
 type RootDigit<
   Alpha extends SignFloatNumber,
-  N extends Digit[]
-> = SignFloatNumber<
-  "+",
-  FloatNumber<N, []>
-> extends infer N extends SignFloatNumber
-  ? SubSignFloatNumber<
-      N,
-      OneSignFloatNumber
-    > extends infer NSubOne extends SignFloatNumber
-    ? DivideSignFloatNumber<NSubOne, N> extends infer L extends SignFloatNumber
-      ? DivideSignFloatNumber<Alpha, N> extends infer R extends SignFloatNumber
-        ? RootDigitIter<NSubOne, L, R>
-        : never
+  N extends SignFloatNumber
+> = SubSignFloatNumber<
+  N,
+  OneSignFloatNumber
+> extends infer NSubOne extends SignFloatNumber
+  ? DivideSignFloatNumber<NSubOne, N> extends infer L extends SignFloatNumber
+    ? DivideSignFloatNumber<Alpha, N> extends infer R extends SignFloatNumber
+      ? RootDigitIter<NSubOne, L, R>
       : never
     : never
   : never
@@ -74,6 +69,6 @@ export type Root<
   N extends NumberLike
 > = ParseSignFloatNumber<X> extends infer XNumber extends SignFloatNumber
   ? ParseSignFloatNumber<N> extends infer Root extends SignFloatNumber
-    ? StringifySignFloat<RootDigit<XNumber, Root["float"]["int"]>>
+    ? StringifySignFloat<RootDigit<XNumber, Root>>
     : never
   : never

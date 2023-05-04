@@ -50,7 +50,7 @@ export type PowerSignFloatNumbers<
  * Calculate the power of a number
  * @param X The base number
  * @param Y The exponent
- * 
+ *
  * ```
  * type Example = Power<"2", "3">
  * ```

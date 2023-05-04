@@ -2,7 +2,7 @@ import { RecursiveParser } from "./parser"
 import { Lexer } from "./lexer"
 import { Evaluator } from "./evaluator"
 
-// $ExpectType "0.3619047620"
+// $ExpectType "0.361904762"
 type EvaluateCase1 = Evaluator.Evaluate<
   RecursiveParser.Parse<Lexer.Parse<"3.1 + 2.5 * (1 - 5.6) / 4.2">>
 >

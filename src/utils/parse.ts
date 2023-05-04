@@ -3,6 +3,8 @@ import {
   PadEndEqually,
   PadStart,
   PadStartEqually,
+  TrimEnd,
+  TrimStart,
 } from "./array"
 
 export type NumberLike = string | number
@@ -54,8 +56,10 @@ export type JoinDigit<T extends number[]> = T extends [
 
 export type StringifyFloat<T> = T extends infer Number extends FloatNumber
   ? Number["frac"]["length"] extends 0
-    ? `${JoinDigit<Number["int"]>}`
-    : `${JoinDigit<Number["int"]>}.${JoinDigit<Number["frac"]>}`
+    ? `${JoinDigit<TrimStart<Number["int"]>>}`
+    : `${JoinDigit<TrimStart<Number["int"]>>}.${JoinDigit<
+        TrimEnd<Number["frac"]>
+      >}`
   : never
 
 export type StringifySignFloat<T> =

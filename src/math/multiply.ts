@@ -5,10 +5,13 @@ import {
   ExpandNumberToArray,
   FloatNumber,
   NumberLike,
+  ParseFloatNumber,
   ParseSignFloatNumber,
   SignFloatNumber,
   StringifySignFloat,
 } from "../utils/parse"
+import { Or } from "../utils/boolean"
+import { IsNever } from "../utils/never"
 
 type NextMultiplyCarry<
   NextMulCarry extends Digit,
@@ -98,17 +101,19 @@ type CompressIntFloat<X extends IntFloat> = Compress<
   ? FloatNumber<Int, Frac>
   : never
 
-type MultiplyFloat<
-  X extends FloatNumber,
-  Y extends FloatNumber
-> = ExpandIntFloat<X> extends infer A extends IntFloat
-  ? ExpandIntFloat<Y> extends infer B extends IntFloat
-    ? CompressIntFloat<
-        IntFloat<
-          MultiplyInt<A["mantissa"], B["mantissa"]>,
-          [...A["precision"], ...B["precision"]]
+type MultiplyFloat<X extends FloatNumber, Y extends FloatNumber> = Or<
+  IsNever<X>,
+  IsNever<Y>
+> extends false
+  ? ExpandIntFloat<X> extends infer A extends IntFloat
+    ? ExpandIntFloat<Y> extends infer B extends IntFloat
+      ? CompressIntFloat<
+          IntFloat<
+            MultiplyInt<A["mantissa"], B["mantissa"]>,
+            [...A["precision"], ...B["precision"]]
+          >
         >
-      >
+      : never
     : never
   : never
 
@@ -124,7 +129,7 @@ export type MultiplySignFloat<
  * Multiply two numbers
  * @param Left Left operand
  * @param Right Right operand
- * 
+ *
  * ```
  * type Example = Multiply<"5", "2">
  * ```

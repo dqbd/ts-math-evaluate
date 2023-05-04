@@ -80,8 +80,10 @@ Modulo operation builds on top of the division, multiplication and subtraction a
 \begin{listing}[ht]
   \begin{minted}{TypeScript}
 export type Modulo<X extends SignFloatNumber, Y extends SignFloatNumber> =
-  DivideSignFloatNumber<X, Y> extends infer Divided extends SignFloatNumber
-    ? SubSignFloatNumber<X, MultiplySignFloat<Y, FloorSignFloatNumber<Divided>>>
+  IsNotZero<Y> extends true
+    ? DivideSignFloatNumber<X, Y> extends infer Divided extends SignFloatNumber
+      ? SubSignFloatNumber<X, MultiplySignFloat<Y, FloorSignFloatNumber<Divided>>>
+      : never
     : never
   \end{minted}
   \caption{Modulo operation}\label{lst:modulo}

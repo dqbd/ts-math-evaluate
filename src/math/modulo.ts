@@ -8,18 +8,21 @@ import {
   SignFloatNumber,
   StringifySignFloat,
 } from "../utils/parse"
+import { IsNotZero } from "./comparison"
 
 export type ModSignFloatNumber<
   XNumber extends SignFloatNumber,
   YNumber extends SignFloatNumber
-> = DivideSignFloatNumber<
-  XNumber,
-  YNumber
-> extends infer Divided extends SignFloatNumber
-  ? SubSignFloatNumber<
+> = IsNotZero<YNumber> extends true
+  ? DivideSignFloatNumber<
       XNumber,
-      MultiplySignFloat<YNumber, FloorSignFloatNumber<Divided>>
-    >
+      YNumber
+    > extends infer Divided extends SignFloatNumber
+    ? SubSignFloatNumber<
+        XNumber,
+        MultiplySignFloat<YNumber, FloorSignFloatNumber<Divided>>
+      >
+    : never
   : never
 
 /**
