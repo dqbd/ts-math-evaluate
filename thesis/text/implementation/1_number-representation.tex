@@ -55,7 +55,7 @@ type ParseNumber2<
   \caption{Parse by digit expansion}\label{lst:tuple-parse-digit}
 \end{listing}
 
-Even though this method of representing numbers is reasonably simple, it does come at a~performance cost, as the length of the tuple must be equal to the represented number itself. As such, the checking time of the addition and subtraction operations grows as the number is larger. This issue alone poses a significant problem, primarily when representing large numbers, as TypeScript has an upper limit on the number of elements in a tuple to avoid performance degradation. As of writing, the limit is set to 10\,000 elements\cite{ImplementationCheckerTs2023}, which is only enough for representing integer numbers no greater than 10\,000.
+Even though this method of representing numbers is reasonably simple, it does come at a~performance cost, as the length of the tuple must be equal to the represented number itself. As such, the checking time of the addition and subtraction operations grows as the number is larger. This issue alone poses a significant problem, primarily when representing large numbers, as TypeScript has an upper limit on the number of elements in a tuple to avoid performance degradation. As of writing, the limit is set to 10\,000 elements \cite{ImplementationCheckerTs2023}, which is only enough for representing integer numbers no greater than 10\,000.
 
 \clearpage
 
