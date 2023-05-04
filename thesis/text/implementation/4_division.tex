@@ -6,7 +6,7 @@ The implementation of the division algorithm is split into two main parts: the E
   x = y\cdot q + r \qquad \text{if } 0 \le r < |b|
 \end{equation}
 
-The Euclidean algorithm finds the quotient and the remainder using repeated subtraction as seen in \ref{lst:euclidean-division}. The \code{DivisionResult} contains both the temporary quotient and remainder values passed to the next iteration. The \code{EuclideanDivision} generic type first checks if the remainder is greater than or equal to the divisor. If that is the case, the quotient is incremented by one using the \code{AddInt} generic type and the remainder is subtracted by the divisor using \code{SubDigit}. The process is repeated until the remainder is less than the divisor, at which point the computed quotient and remainder are returned.
+The Euclidean algorithm finds the quotient and the remainder using repeated subtraction as seen in Listing \ref{lst:euclidean-division}. The \code{DivisionResult} contains both the temporary quotient and remainder values passed to the next iteration. The \code{EuclideanDivision} generic type first checks if the remainder is greater than or equal to the divisor. If that is the case, the quotient is incremented by one using the \code{AddInt} generic type and the remainder is subtracted by the divisor using \code{SubDigit}. The process is repeated until the remainder is less than the divisor, at which point the computed quotient and remainder are returned.
 
 \begin{listing}[ht]
   \begin{minted}{TypeScript}
