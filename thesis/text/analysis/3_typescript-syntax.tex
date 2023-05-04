@@ -536,7 +536,7 @@ type FromEntries<Entries, Accumulator = {}> =
   \caption{Reduce example}\label{lst:reduce-type}
 \end{listing}
 
-First, an optional generic type parameter \code{Accumulator} is defined, with an initial type value of \vcode{{}}. For every tuple in a list, an object type containing the current key-value pair with \vcode{{ [K in Key]: Value }} is created and merged with the accumulator using the \vcode{&} operator. The merged object type is subsequently passed as the accumulator to the next iteration. Finally, the accumulator is returned when the list is empty, serving as the final object type.
+First, an optional generic type parameter \code{Accumulator} is defined, with an initial type value of \vcode{{}}. For every tuple in a list, an object type containing the wrapped current key-value pair with \vcode{{ [K in Key]: Value }} is created and merged with the accumulator using the \vcode{&} operator. The merged object type is subsequently passed as the accumulator to the next iteration. Finally, the accumulator is returned when the list is empty, serving as the final object type.
 
 There are some limitations regarding recursive types. To prevent infinite recursion, TypeScript limits the instantiation depth to ensure a consistent and performant developer experience. As of writing, the limit is set to 100 depth levels for recursion types \cite{ImplementationCheckerTs2023}. Thanks to the tail-recursion elimination optimisation, the limit is set to 1000 depth levels for tail-optimised recursion types. Thus, it is desired to use tail recursion whenever possible.
 
@@ -578,13 +578,14 @@ The distributive nature of union types applies to template literal strings as we
   \begin{minted}{TypeScript}
 type Variants = "primary" | "secondary"
 type Weights = 100 | 200 | 300
-
 type Style = `${Variants}-${Weights}`
 //   ^? | "primary-100" | "primary-200" | "primary-300" 
 //      | "secondary-100" | "secondary-200" | "secondary-300"
 \end{minted}
   \caption{Distributive nature of unions in template literal types}\label{lst:union-template-literal}
 \end{listing}
+
+\clearpage
 
 Ultimately, inference in template literal types can be used to perform pattern matching within string literals with the combination of conditional types and the \code{infer} keyword. As shown in Listing \ref{lst:pattern-matching-template-literal}, a generic type \code{SplitString} is presented, which splits a string literal type into a tuple of substrings with a space as the delimiter. The aim is to perform pattern matching on a string with the inferred types \code{Head} and \code{Rest} as a result of the matching. \code{Head} contains the first character, and \code{Rest} contains the rest of the split string, separated by a space character. Type constraints are also applied for the inferred types to ensure the types are assignable to \code{string}\footnote{Albeit unnecessarily, as TypeScript automatically applies the \code{string} type constraint in this instance}. Both of the inferred types are used to create a new tuple type, with \code{Head} being the first element of the tuple and \code{Rest} used in a recursive call to split the rest of the string.
 

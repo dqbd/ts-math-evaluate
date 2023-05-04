@@ -35,7 +35,7 @@ In order to measure the impact of the library on type-checking, some mathematica
   \label{fig:instantiation-count}
 \end{figure}
 
-However, when comparing the actual time spent by the type checker, there does not seem to be a strong indication of performance degradation when comparing check times between \code{Add}, \code{Multiply} and \code{Divide}. Only the \code{Root} operation does seem to have a significant negative impact on the type-checking performance. This requires further investigation out of the scope of this thesis. However, there does seem to be a significant performance hit when the number of type instantiations is in the magnitude of millions. For full benchmarking results, refer to the Table \ref{tab:appendix:add}, Table \ref{tab:appendix:multiply}, Table \ref{tab:appendix:divide}, and Table \ref{tab:appendix:root}.
+However, when comparing the actual time spent by the type checker, there does not seem to be a strong indication of performance degradation when comparing check times between \code{Add}, \code{Multiply} and \code{Divide}. Only the \code{Root} operation does seem to have a significant negative impact on the type-checking performance. This requires further investigation out of the scope of this thesis. However, there does seem to be a significant performance hit when the number of type instantiations is in the magnitude of millions. For full benchmarking results, refer to the tables found in the Section \ref{appendix:performance}.
 
 \begin{figure}[ht]
   \centering

@@ -59,6 +59,8 @@ A derivation can be visualised as a tree, also known as the derivation tree or p
 
 There are multiple ways to construct a derivation tree: either by replacing the leftmost non-terminal symbol with the righthand side of a production rule or by replacing the rightmost non-terminal symbol with the righthand side of a production rule. The former is known as the leftmost derivation, while the latter is known as the rightmost derivation. Finally, ambiguous grammar is one that can produce multiple derivation trees for the same string.
 
+\clearpage
+
 As an example, consider the given simplified grammar for mathematical expressions applied for the expression $3 + 4 * 5$. As can be seen in Figure \ref{fig:ambiguous-grammar}, the given grammar is ambiguous, as there are multiple possible derivation trees for the given input string.
 
 \begin{figure}[ht]
@@ -113,6 +115,8 @@ Given both the FIRST($\alpha$) and FOLLOW($A$) sets, a parsing table can be cons
 
 When designing a LL(1) grammar for mathematical expressions, operator precedence must be taken into consideration, as the expression found in the input string literal type is written in the infix notation. Left or right associativity is a key constraint as well, with exponentiation being an operator with right associativity instead of left associativity as the other operators. The precedence and associativity rules for the operators can be seen in Table \ref{table:associativity}.
 
+\clearpage
+
 \begin{table}[ht]
   \centering
   \begin{tabular}{c|l|l}
@@ -133,7 +137,7 @@ The final grammar used for this thesis can be seen in Figure \ref{fig:math-gramm
 
 \begin{figure}[ht]
   \begin{multicols}{2}
-    \begin{enumerate}
+    \begin{enumerate}[itemsep=0.25\baselineskip,parsep=0.25\baselineskip]
       \item \code{START} $\rightarrow$ \code{ADD} .
 
       \item \code{ADD} $\rightarrow$ \code{MUL} \code{ADDx} .
@@ -168,8 +172,7 @@ The final grammar used for this thesis can be seen in Figure \ref{fig:math-gramm
   \label{fig:math-grammar}
 \end{figure}
 
-
-\begin{table}[h]
+\begin{table}[ht]
   \centering
   \begin{tabular}{l|l}
     \hline
@@ -208,24 +211,21 @@ The final grammar used for this thesis can be seen in Figure \ref{fig:math-gramm
   \label{table:associativity-grammar}
 \end{table}
 
+\clearpage 
+
 A custom code generation tool has been developed to generate a parser running entirely in the TypeScript type system from the provided LL(1) grammar, using the aforementioned algorithm for creating the parsing table and appropriate recursive descent parser. The interface of a parser is defined as a generic type \code{Parser}, accepting a tuple of lexer tokens and a possible output \acrshort{ast} node type as type parameters, seen in Listing \ref{lst:parser-interface}. The generic type returns an object type with an additional \code{head} property for simplifying the matching of the current lookahead token needed by the LL(1) parser. \code{ConsumeParser} is a generic type for consuming a token from the input stream and returning a new object type with the rest of the token stream.
 
 \begin{listing}[ht]
   \begin{minted}{TypeScript}
 interface Parser<T extends Token._[] = Token._[], A extends AST._ = AST._> {
-  tokens: T
-  head: T[0]
-  return: A
+  tokens: T; head: T[0]; return: A
 }
 
-type ConsumeParser<
-    Match extends Token._,
-    TParser extends Parser
-  > = TParser["head"] extends Match
-    ? TParser["tokens"] extends [Token._, ...infer Rest extends Token._[]]
-      ? Parser<Rest, TParser["return"]>
-      : []
-    : Error.Parser
+type ConsumeParser<Match extends Token._, TParser extends Parser> = 
+  TParser["head"] extends Match
+  ? TParser["tokens"] extends [Token._, ...infer Rest extends Token._[]]
+    ? Parser<Rest, TParser["return"]> : []
+  : Error.Parser
 \end{minted}
   \caption{Core parser interface}\label{lst:parser-interface}
 \end{listing}
@@ -241,23 +241,22 @@ type POWx<T extends Parser> = T["head"] extends Token.Power
       : Error.Parser
     : Error.Parser
   : T["head"] extends
-      | Token.EOF | Token.Factorial | Token.Multiply
-      | Token.Divide | Token.Modulo | Token.Plus
-      | Token.Minus | Token.RightBracket | Token.Comma
-  ? T
-  : Error.Parser
+      | Token.EOF | Token.Factorial | Token.Multiply | Token.RightBracket 
+      | Token.Divide | Token.Modulo | Token.Plus | Token.Minus | Token.Comma
+    ? T : Error.Parser
 
 type POW<T extends Parser> = T["head"] extends
   | Token.UnaryFunction | Token.BinaryFunction | Token.LeftBracket | Token.Number
   ? TERM<T> extends infer T extends Parser
     ? POWx<T> extends infer T extends Parser
-      ? T
-      : Error.Parser
+      ? T : Error.Parser
     : Error.Parser
   : Error.Parser
 \end{minted}
   \caption{Implementation of exponentiation parser}\label{lst:pow-parser}
 \end{listing}
+
+\clearpage
 
 \subsection{Evaluator}
 

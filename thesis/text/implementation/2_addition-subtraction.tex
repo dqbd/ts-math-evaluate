@@ -63,46 +63,7 @@ The schoolbook addition algorithm, seen in Listing \ref{lst:addition-algorithm},
 
 Finally, \code{AddInt} will add two digit tuples by first padding them into tuples of the same length by prefixing them with zeroes and then calling \code{AddArr} to perform addition itself. If \code{Carry} is assignable to \code{true}, an extra \code{1} digit is prepended to the result.
 
-These foundational blocks can be further chained to add support for fractional numbers and signed numbers. As seen in Listing \ref{lst:addition-float}, \code{AddFloatNumber} will first extract the integer and fractional parts of a number, performing integer addition on both parts separately. The carry flag is propagated appropriately from the fractional part to the integer part by recursively calling \code{AddFloatNumber} with \vcode{[1]} to increment the result.
-
-\begin{listing}[ht!]
-  \begin{minted}{TypeScript}
-type AddFloatNumber<
-A extends FloatNumber,
-B extends FloatNumber
-> = PadFloat<A, B> extends [
-  FloatNumber<infer IntA, infer FracA>,
-  FloatNumber<infer IntB, infer FracB>
-]
-? AddArr<FracA, FracB> extends [
-    infer FracResult extends Digit[],
-    infer FracCarry extends boolean
-  ]
-  ? AddArr<IntA, IntB> extends [
-      infer IntResult extends Digit[],
-      infer IntCarry extends boolean
-    ]
-    ? IntCarry extends true
-      ? FracCarry extends true
-        ? AddFloatNumber<
-            FloatNumber<[1, ...IntResult], FracResult>,
-            FloatNumber<[1], []>
-          >
-        : FloatNumber<[1, ...IntResult], FracResult>
-      : FracCarry extends true
-      ? AddFloatNumber<
-          FloatNumber<IntResult, FracResult>,
-          FloatNumber<[1], []>
-        >
-      : FloatNumber<IntResult, FracResult>
-    : never
-  : never
-: never
-\end{minted}
-  \caption{Floating point addition}\label{lst:addition-float}
-\end{listing}
-
-When working with subtraction, underflows are resolved by implementing digit-wise comparison. Similarly to addition and subtraction, the comparison operation is performed per digit, utilising an additional two-dimensional lookup table with all possible digit comparison results represented as a number from the following set: $\{ -1, 0, 1 \}$. Based on the comparison result, the operation can be decided by using a map object type with the comparison result as the key and the operation as the value, seen in Listing \ref{lst:subtractor-switching}.
+\clearpage
 
 \begin{listing}[ht!]
   \begin{minted}{TypeScript}
@@ -158,6 +119,12 @@ export type AddInt<A extends Digit[], B extends Digit[]> = PadStartEqually<
   \caption{Addition algorithm}\label{lst:addition-algorithm}
 \end{listing}
 
+\clearpage
+
+These foundational blocks can be further chained to add support for fractional numbers and signed numbers. As seen in Listing \ref{lst:addition-float}, \code{AddFloatNumber} will first extract the integer and fractional parts of a number, performing integer addition on both parts separately. The carry flag is propagated appropriately from the fractional part to the integer part by recursively calling \code{AddFloatNumber} with \vcode{[1]} to increment the result.
+
+When working with subtraction, underflows are resolved by implementing digit-wise comparison. Similarly to addition and subtraction, the comparison operation is performed per digit, utilising an additional two-dimensional lookup table with all possible digit comparison results represented as a number from the following set: $\{ -1, 0, 1 \}$. Based on the comparison result, the operation can be decided by using a map object type with the comparison result as the key and the operation as the value, seen in Listing \ref{lst:subtractor-switching}.
+
 \begin{listing}[ht!]
   \begin{minted}{TypeScript}
 type SubOperatorSwitch<A extends FloatNumber, B extends FloatNumber> = {
@@ -188,4 +155,53 @@ type AddSignFloatNumber<
 }[A["sign"]][B["sign"]]
 \end{minted}
   \caption{Signed number addition and subtraction}\label{lst:addition-signed}
+\end{listing}
+
+\begin{listing}[ht!]
+  \begin{minted}{TypeScript}
+type AddFloatNumber<
+  A extends FloatNumber,
+  B extends FloatNumber
+> = PadFloat<A, B> extends [
+  FloatNumber<
+    infer IntA, 
+    infer FracA
+  >,
+  FloatNumber<
+    infer IntB,
+    infer FracB
+  >
+]
+? AddArr<FracA, FracB> extends [
+    infer FracResult extends Digit[],
+    infer FracCarry extends boolean
+  ]
+  ? AddArr<IntA, IntB> extends [
+      infer IntResult extends Digit[],
+      infer IntCarry extends boolean
+    ]
+    ? IntCarry extends true
+      ? FracCarry extends true
+        ? AddFloatNumber<
+            FloatNumber<
+              [1, ...IntResult], 
+              FracResult
+            >,
+            FloatNumber<[1], []>
+          >
+        : FloatNumber<
+            [1, ...IntResult], 
+            FracResult
+          >
+      : FracCarry extends true
+      ? AddFloatNumber<
+          FloatNumber<IntResult, FracResult>,
+          FloatNumber<[1], []>
+        >
+      : FloatNumber<IntResult, FracResult>
+    : never
+  : never
+: never
+\end{minted}
+  \caption{Floating point addition}\label{lst:addition-float}
 \end{listing}

@@ -18,14 +18,12 @@ Because of this reason, the library implements the long multiplication method in
 \begin{listing}[ht]
   \begin{minted}{TypeScript}
 type MultiplyInt<
-  X extends Digit[],
-  Y extends Digit[],
+  X extends Digit[], Y extends Digit[],
   Tmp extends { result: Digit[]; offset: Digit[] } = { result: [0]; offset: [] }
 > = Y extends [...infer Rest extends Digit[], infer Single extends Digit]
   ? MultiplySingleInt<X, Single> extends infer SingleResult extends Digit[]
     ? AddInt<
-        Tmp["result"],
-        [...SingleResult, ...Tmp["offset"]]
+        Tmp["result"], [...SingleResult, ...Tmp["offset"]]
       > extends infer Result extends Digit[]
       ? MultiplyInt<X, Rest, { result: Result; offset: [0, ...Tmp["offset"]] }>
       : never
@@ -38,6 +36,8 @@ type MultiplyInt<
 With the core building block for integer multiplication, extending the algorithm to floating-point numbers and signed numbers is straightforward.
 
 The \code{MultiplyFloat} generic type, as seen in Listing \ref{lst:float-multiplication}, converts the floating point number to an integer by concatenating the integer part of a number with the fractional part, preserving the precision, number of digits in the fractional part, as the length of a tuple. The precision is encoded as a tuple because the precision of the multiplication is the sum of the multiplicand and multiplier precisions. This can be done by spreading the tuples representing the precisions instead of instantiating per-digit addition recursive types.
+
+\clearpage
 
 \begin{listing}[ht]
   \begin{minted}{TypeScript}

@@ -1,3 +1,5 @@
+\clearpage 
+
 \section{Comparison}
 
 Some operations, such as the Euclidean division, require an additional type-level operation for comparing two numbers. In the case of the Euclidean division, a comparison is needed to decide whether to continue or halt the recursion. For that purpose, a type-level three-way comparison operator has been implemented, also known as the \say{spaceship operator} in the C++ programming language \cite{sutterConsistentComparison2017}.
@@ -19,15 +21,18 @@ It is possible to implement the operator entirely within the TypeScript type sys
   \begin{minted}{TypeScript}
 type CompareTuples<X extends Array<0>, Y extends Array<0>> =
   X extends [0, ...infer XRest extends Array<0>]
-  ? Y extends [0, ...infer YRest extends Array<0>]
-  ? CompareTuples<XRest, YRest>
-  : 1
-  : Y extends [0, ...Array<0>]
-  ? -1
-  : 0
+    ? Y extends [0, ...infer YRest extends Array<0>]
+      ? CompareTuples<XRest, YRest>
+      : 1
+    : Y extends [0, ...Array<0>]
+      ? -1
+      : 0
 
 type Compare<X extends number, Y extends number> =
-  CompareTuples<ParseNumber<X>, ParseNumber<Y>>
+  CompareTuples<
+    ParseNumber<X>, 
+    ParseNumber<Y>
+  >
 \end{minted}
   \caption{Type-level comparison operation of single digit}\label{lst:type-level-comparison}
 \end{listing}
@@ -60,7 +65,10 @@ The library implements four operations performing numeric rounding. Truncation i
 \begin{listing}[ht]
   \begin{minted}{TypeScript}
 type Truncate<Number extends SignFloatNumber> =
-  SignFloatNumber<Number["sign"], FloatNumber<Number["float"]["int"], []>>
+  SignFloatNumber<
+    Number["sign"], 
+    FloatNumber<Number["float"]["int"], []>
+  >
 \end{minted}
   \caption{Truncation function}\label{lst:truncation}
 \end{listing}
@@ -83,6 +91,8 @@ type Floor<Number extends SignFloatNumber> =
   \caption{Floor function}\label{lst:floor}
 \end{listing}
 
+\clearpage
+
 Rounding is the most complex of the four rounding operations. The first digit of the fractional part is checked to determine whether it is assignable to the union of rounding up digits ($\{ 5,6,7,8,9 \}$). If that is the case, the truncated number is incremented by one and returned. Otherwise, the truncated number is returned as is, seen in Listing \ref{lst:round}.
 
 \begin{listing}[ht]
@@ -97,10 +107,7 @@ type RoundSignFloatNumber<Number extends SignFloatNumber> =
           FloatNumber<[1], []>
         >
       >
-    : SignFloatNumber<
-        Number["sign"], 
-        FloatNumber<Number["float"]["int"], []>
-      >
+    : SignFloatNumber<Number["sign"], FloatNumber<Number["float"]["int"], []>>
   : Number
 \end{minted}
   \caption{Round function}\label{lst:round}
@@ -108,9 +115,7 @@ type RoundSignFloatNumber<Number extends SignFloatNumber> =
 
 \section{Exponentiation}
 
-A naive implementation of exponentiation would be based on repeated multiplication. This is an inefficient approach, as the complexity of such an algorithm would be $O(M(x) \cdot 10^n) = O(n^2 \cdot 10^n)$, where $n$ is the number of digits and $M(x)$ is the complexity of multiplication algorithm, in this instance $O(n^2)$.
-
-A more efficient exponentiation method is to perform binary exponentiation instead, as seen in equation \ref{eq:exponentiation-by-squaring}:
+A naive implementation of exponentiation would be based on repeated multiplication. This is an inefficient approach, as the complexity of such an algorithm would be $O(M(x) \cdot 10^n) = O(n^2 \cdot 10^n)$, where $n$ is the number of digits and $M(x)$ is the complexity of multiplication algorithm, in this instance $O(n^2)$. A more efficient exponentiation method is to perform binary exponentiation instead, as seen in equation \ref{eq:exponentiation-by-squaring}:
 
 \begin{equation}\label{eq:exponentiation-by-squaring}
   x^n =
@@ -126,39 +131,44 @@ It can be shown that the complexity of the algorithm is $O(n^2 \cdot \log_2(10^n
 
 Parity checks done by \code{IsEventInt} as seen in Listing \ref{lst:parity-check} are performed by checking the last digit of the exponent. The even digits are represented by a union type of number literal types. Notably, the conditional type is not a type itself. Developers still need to write the \code{true} and \code{false} literal types explicitly.
 
-\begin{listing}[ht]
+\begin{listing}[ht!]
   \begin{minted}{TypeScript}
-  type IsEvenInt<X extends Digit[]> = X extends [
-    ...Digit[],
-    infer Tail extends Digit
-  ]
-    ? Tail extends 0 | 2 | 4 | 6 | 8
-      ? true
+  type IsEvenInt<X extends Digit[]> = 
+    X extends [...Digit[], infer Tail extends Digit]
+      ? Tail extends 0 | 2 | 4 | 6 | 8 ? true : false
       : false
-    : false
   \end{minted}
   \caption{Parity check of digits}\label{lst:parity-check}
 \end{listing}
 
-The implementation shown in Listing \ref{lst:exponentiation-by-squaring-ts} does require trimming of excess zeroes in the exponent to ensure the correctness of a fast assignability check for termination conditions. The implementation differs from the algorithm in equation \ref{eq:exponentiation-by-squaring} in that the \code{PowerAuxInt} includes an optional type argument \code{Y} used to convert the method into a tail-recursive generic type, bypassing the need for deferring the instantiation to avoid the instantiation depth limitation.
+The final implementation shown in Listing \ref{lst:exponentiation-by-squaring-ts} does require trimming of excess zeroes in the exponent to ensure the correctness of a fast assignability check for termination conditions. The implementation also differs from the algorithm in equation \ref{eq:exponentiation-by-squaring} in that the \code{PowerAuxInt} includes an optional type argument \code{Y} used to convert the method into a tail-recursive generic type, bypassing the need for deferring the instantiation to avoid the instantiation depth limitation.
 
 \begin{listing}[ht]
   \begin{minted}{TypeScript}
 type PowerAuxInt<
   X extends SignFloatNumber,
   N extends Digit[],
-  Y extends SignFloatNumber = SignFloatNumber<"+", FloatNumber<[1], []>>
+  Y extends SignFloatNumber = SignFloatNumber<
+    "+", 
+    FloatNumber<[1], []>
+  >
 > = TrimEnd<N> extends [0]
   ? Y
   : IsEvenInt<N> extends true
   ? PowerAuxInt<
       MultiplySignFloat<X, X>,
-      LongDivisionDigit<N, [2]>["quotient"],
+      LongDivisionDigit<
+        N, 
+        [2]
+      >["quotient"],
       Y
     >
   : PowerAuxInt<
       MultiplySignFloat<X, X>,
-      LongDivisionDigit<SubDigit<N, [1]>, [2]>["quotient"],
+      LongDivisionDigit<
+        SubDigit<N, [1]>, 
+        [2]
+      >["quotient"],
       MultiplySignFloat<X, Y>
     >
 \end{minted}
@@ -174,6 +184,8 @@ The Newton-Raphson method \cite{gerlachAcceleratedConvergenceNewton1994} is an i
 \begin{equation}
   x_{k+1} = x_k - \frac{f(x_k)}{f'(x_k)}
 \end{equation}
+
+\clearpage
 
 Thus, to estimate the $n$-th root of a number, declared by the function $f(x) = x^n - \alpha$, where $\alpha$ is the target number to apply $n$-th root and $n$ is the degree of the root, the following definition for the next approximation is used:
 
