@@ -1,5 +1,5 @@
 import { AddInt } from "./add"
-import { CompareDigits } from "./comparison"
+import { CompareDigits, CompareSignNumbers } from "./comparison"
 import { MultiplySign } from "./multiply"
 import { SubDigit } from "./subtract"
 import { PadEndEqually, TrimStart } from "../utils/array"
@@ -115,10 +115,15 @@ export type DivideFloatNumber<
 export type DivideSignFloatNumber<
   A extends SignFloatNumber,
   B extends SignFloatNumber
-> = PadFloatForDivide<A["float"], B["float"]> extends [
-  infer AInt extends Digit[],
-  infer BInt extends Digit[]
-]
+> = CompareSignNumbers<
+  B,
+  SignFloatNumber<B["sign"], FloatNumber<[0], []>>
+> extends 0
+  ? never
+  : PadFloatForDivide<A["float"], B["float"]> extends [
+      infer AInt extends Digit[],
+      infer BInt extends Digit[]
+    ]
   ? SignFloatNumber<MultiplySign<A["sign"], B["sign"]>, DivideInt<AInt, BInt>>
   : never
 
@@ -126,7 +131,7 @@ export type DivideSignFloatNumber<
  * Divide two numbers
  * @param Dividend The dividend
  * @param Divisor The divisor
- * 
+ *
  * ```
  * type Example = Divide<"5", "2">
  * ```
