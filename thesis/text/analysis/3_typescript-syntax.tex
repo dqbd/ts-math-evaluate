@@ -456,7 +456,7 @@ type FirstIfString<T> =
   \caption{Type constraints within infer}\label{lst:infer-constraint}
 \end{listing}
 
-When a union type is provided within the conditional type, the conditional type will be resolved for each member type in the union separately, effectively distributing the union type. In order to prevent such behaviour, the type argument can be wrapped in a tuple or any other structure type.
+When a union type is provided within the conditional type, the conditional type will be resolved for each member type in the union separately, effectively distributing the union type. In order to prevent such behaviour, the type argument can be wrapped in a tuple or any other structure type, as can be seen in Listing \ref{lst:distribute}.
 
 \begin{listing}[ht]
   \begin{minted}{TypeScript}
