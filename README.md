@@ -2,7 +2,9 @@
 
 # TS-Math-Evaluate
 
-Type-level math expression evaluator for TypeScript.
+`ts-math-evaluate` is a type-level library for evaluating mathematical expressions in TypeScript, developed as a master thesis, implementing core mathematical operations and the accompanying evaluator, demonstrating the power of the TypeScript type system and the ability to perform complex meta-programming within the type system itself. 
+
+A comprehensive guide to the TypeScript syntax and type-level programming techniques is provided to broaden the understanding of the capabilities of this language, seen [here (ctufit-thesis.pdf)](https://github.com/dqbd/ts-math-evaluate/blob/c7e71ed156ba0349e658ae805684cf46ecdc744d/thesis/ctufit-thesis.pdf). 
 
 ## Installation
 
