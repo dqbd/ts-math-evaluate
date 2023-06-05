@@ -15,7 +15,15 @@ npm install ts-math-evaluate
 ## Usage
 
 ```typescript
-type Value = Evaluate<"3.1 + 2.5 * (1 - 5.6) / 4.2 + truncate(root(4, 2))! * -floor(1.5) + abs(-1) + ceil(root(4, 2))">
+import type { Evaluate } from "ts-math-evaluate"
+
+type Basic = Evaluate<
+  "3.1 + 2.5 * (1 - 5.6) / 4.2"
+>
+
+type Advanced = Evaluate<
+  "truncate(root(4, 2))! * -floor(1.5) + abs(-1) + ceil(root(4, 2))"
+>
 ```
 
 For full documentation, please visit [https://ts-math-evaluate.vercel.app/](https://ts-math-evaluate.vercel.app/).
